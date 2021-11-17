@@ -1,1 +1,1 @@
-# badaso-lms-module
+# badaso/lms-module
