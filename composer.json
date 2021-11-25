@@ -1,0 +1,43 @@
+{
+    "name": "badaso/lms-module",
+    "version": "2.0.0",
+    "description": "Manage website LMS through badaso",
+    "keywords": [
+        "laravel",
+        "admin",
+        "panel",
+        "dashboard",
+        "pwa",
+        "vue",
+        "generator",
+        "blog",
+        "badaso"
+    ],
+    "license": "proprietary",
+    "homepage": "https://badaso.uatech.co.id/",
+    "support": {
+        "issues": "https://github.com/uasoft-indonesia/badaso-lms-module/issues",
+        "discussion": "https://github.com/uasoft-indonesia/badaso-lms-module/discussions",
+        "source": "https://github.com/uasoft-indonesia/badaso-lms-module"
+    },
+    "type": "library",
+    "authors": [
+        {
+            "name": "UASOFT",
+            "email": "hello@uatech.co.id"
+        }
+    ],
+    "minimum-stability": "alpha",
+    "autoload": {
+        "psr-4": {
+            "Uasoft\\Badaso\\Module\\Lms\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Uasoft\\Badaso\\Module\\Lms\\Providers\\BadasoLmsModuleServiceProvider"
+            ]
+        }
+    }
+}
