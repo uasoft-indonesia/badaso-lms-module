@@ -1,0 +1,15 @@
+{
+    "name": "nsire/badaso-lms-module",
+    "autoload": {
+        "psr-4": {
+            "Nsire\\BadasoLmsModule\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "nofamex",
+            "email": "nsiren517@gmail.com"
+        }
+    ],
+    "require": {}
+}
