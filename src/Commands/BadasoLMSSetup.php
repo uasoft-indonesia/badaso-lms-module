@@ -4,7 +4,8 @@ namespace Uasoft\Badaso\Module\LMS\Commands;
 
 use Illuminate\Console\Command;
 
-class BadasoLMSSetup extends Command {
+class BadasoLMSSetup extends Command
+{
     protected $file;
     /**
      * The console command name.
@@ -25,7 +26,8 @@ class BadasoLMSSetup extends Command {
      *
      * @return void
      */
-    public function __construct() {
+    public function __construct()
+    {
         $this->file = app('files');
         parent::__construct();
     }
@@ -35,7 +37,8 @@ class BadasoLMSSetup extends Command {
      *
      * @return void
      */
-    public function handle(): void {
+    public function handle(): void
+    {
         $this->addingBadasoEnv();
         $this->publishBadasoProvider();
         $this->addPostTablesToHiddenTables();
@@ -43,15 +46,27 @@ class BadasoLMSSetup extends Command {
         $this->generateSwagger();
     }
 
-    protected function generateSwagger() {}
+    protected function generateSwagger()
+    {
+    }
 
-    protected function publishBadasoProvider() {}
+    protected function publishBadasoProvider()
+    {
+    }
 
-    protected function linkStorage() {}
+    protected function linkStorage()
+    {
+    }
 
-    protected function envListUpload() {}
+    protected function envListUpload()
+    {
+    }
 
-    protected function addingBadasoEnv() {}
+    protected function addingBadasoEnv()
+    {
+    }
 
-    protected function addPostTablesToHiddenTables() {}
+    protected function addPostTablesToHiddenTables()
+    {
+    }
 }
