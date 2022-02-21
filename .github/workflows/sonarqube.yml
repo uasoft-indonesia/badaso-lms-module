@@ -9,7 +9,7 @@ jobs:
     - name: SonarQube Scan
       uses: kitabisa/sonarqube-action@v1.1.0
       with:
-        projectBaseDir: "/src"
+        projectBaseDir: "src/"
         projectKey: "badaso-lms-module"
         host: "http://35.224.113.103:9000"
         login: "69f012beb8463b6cfd65378dcfde0d89e000cbea"
