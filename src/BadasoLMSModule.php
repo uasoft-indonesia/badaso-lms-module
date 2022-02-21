@@ -2,7 +2,8 @@
 
 namespace Uasoft\Badaso\Module\LMS;
 
-class BadasoLMSModule {
+class BadasoLMSModule
+{
     protected $protected_tables = [];
 
     public function getProtectedTables(): array
@@ -10,4 +11,3 @@ class BadasoLMSModule {
         return $this->protected_tables;
     }
 }
-
