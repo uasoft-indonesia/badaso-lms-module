@@ -6,10 +6,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@master
-    - name: SonarQube Scan
-      uses: kitabisa/sonarqube-action@v1.1.0
       with:
-        projectBaseDir: "src/"
-        projectKey: "badaso-lms-module"
-        host: "http://35.224.113.103:9000"
-        login: "69f012beb8463b6cfd65378dcfde0d89e000cbea"
+        fetch-depth: 0
+    - name: SonarQube Scan
+      uses: sonarsource/sonarqube-scan-action@master
+      env:
+          SONAR_TOKEN: "69f012beb8463b6cfd65378dcfde0d89e000cbea"
+          SONAR_HOST_URL: "http://35.224.113.103:9000"
