@@ -11,5 +11,5 @@ jobs:
       with:
         projectBaseDir: "/src"
         projectKey: "Uasoft-LMS-Module"
-        host: ${{ secrets.SONARQUBE_HOST }}
-        login: ${{ secrets.SONARQUBE_TOKEN }}
+        host: "https://sonarqube.cs.ui.ac.id"
+        login: "7029081132e2359ad09d1802c21cee9235797cf3"
