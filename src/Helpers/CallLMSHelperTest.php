@@ -11,5 +11,10 @@ class CallLMSHelperTest
 
     }
 
+    public static function handleCreateClass()
+    {
+
+    }
+
     //TODO: CREATE START CLASS HELPER
 }
