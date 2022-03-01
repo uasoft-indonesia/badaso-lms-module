@@ -21,5 +21,10 @@ class CallLMSHelperTest
 
     }
 
+    public static function withAuthorizeBearer(TestCase $testCase): TestCase
+    {
+        return $testCase;
+    }
+
     //TODO: CREATE START CLASS HELPER
 }
