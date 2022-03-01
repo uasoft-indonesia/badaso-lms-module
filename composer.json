@@ -1,15 +1,32 @@
 {
-    "name": "nsire/badaso-lms-module",
-    "autoload": {
-        "psr-4": {
-            "Nsire\\BadasoLmsModule\\": "src/"
-        }
-    },
-    "authors": [
-        {
-            "name": "nofamex",
-            "email": "nsiren517@gmail.com"
-        }
-    ],
-    "require": {}
+  "name": "badaso/lms-module",
+  "version": "1.0.0",
+  "license": "proprietary",
+  "homepage": "https://badaso.uatech.co.id/",
+  "type": "library",
+  "require": {},
+  "authors": [
+    {
+      "name": "UASOFT",
+      "email": "hello@uatech.co.id"
+    }
+  ],
+  "minimum-stability": "alpha",
+  "autoload": {
+    "psr-4": {
+      "Uasoft\\Badaso\\Module\\LMSModule\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Uasoft\\Badaso\\Module\\LMSModule\\Tests\\": "tests/"
+    }
+  },
+  "extra": {
+    "laravel": {
+      "providers": [
+        "Uasoft\\Badaso\\Module\\LMSModule\\Providers\\LMSModuleProvider"
+      ]
+    }
+  }
 }
