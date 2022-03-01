@@ -27,4 +27,11 @@ class BadasoLMSViewClassTest extends TestCase
         $response = CallLMSHelperTest::withAuthorizeBearer($this)->json('GET', CallLMSHelperTest::getUrlApiV1Prefix("/class/{$NON_EXISTING_CLASS_ID}"));
         $this->assertEmpty($response);
     }
+
+    public function testUserBelongInClass() 
+    {
+        global $EXISTING_CLASS_ID, $USER_ID;
+        $response = CallLMSHelperTest::withAuthorizeBearer($this)->json('GET', CallLMSHelperTest::getUrlApiV1Prefix("/user-class/{$EXISTING_CLASS_ID}"));
+        $this->assertTrue($response['user_id'] == $USER_ID);
+    }
 }
