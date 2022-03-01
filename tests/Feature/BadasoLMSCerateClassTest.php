@@ -7,14 +7,9 @@ use Uasoft\Badaso\Helpers\CallHelperTest;
 
 class BadasoLMSCreateClassTest extends TestCase
 {
-    public function testStartInit()
-    {
-        // init user login as normal user
-        CallHelperTest::handleUserAdminAuthorize($this);
-    }
-
     public function testCreateClassWithAllFieldsValidExpectResponseStatus201()
     {
+        // TODO: log user in first
         $response = $this->postJson('/classes', [
             'name' => 'PPL with Badaso',
             'subject' => 'PPL',
