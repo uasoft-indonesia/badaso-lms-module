@@ -2,6 +2,7 @@
 
 namespace Uasoft\Badaso\Module\LMSModule\Providers;
 
+use Doctrine\DBAL\Schema\Schema;
 use Illuminate\Foundation\AliasLoader;
 use Illuminate\Support\ServiceProvider;
 use Uasoft\Badaso\Module\LMSModule\LMSModule;
@@ -24,6 +25,7 @@ class LMSModuleProvider extends ServiceProvider
             return new LMSModule();
         });
 
+        $this->loadMigrationsFrom(__DIR__.'/../Migrations');
         $this->loadRoutesFrom(__DIR__.'/../Routes/api.php');
 
         $this->publishes([
