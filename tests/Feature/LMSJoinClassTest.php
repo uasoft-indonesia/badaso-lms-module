@@ -22,10 +22,19 @@ class LMSJoinClassTest extends TestCase
     public function testClassCodeValid()
     {
         global $VALID_CLASS_CODE;
-        $response = Route::getController('ClassController@...');
-        $response->assertSuccessful();
+        $class = Route::getController('ClassController@...');
+        $class->assertSuccessful();
 
-        $this->assertEquals($VALID_CLASS_CODE, $response);
+        $this->assertEquals($VALID_CLASS_CODE, $class['code']);
+    }
+
+    public function testClassCodeInvalid()
+    {
+        global $INVALID_CLASS_CODE;
+        $class = Route::getController('ClassController@...');
+        $class->assertSuccessful();
+
+        $this->assertNotEquals($INVALID_CLASS_CODE, $class['code']);
     }
 
 
