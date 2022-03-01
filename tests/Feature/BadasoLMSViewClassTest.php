@@ -6,8 +6,7 @@ class BadasoLMSViewClassTest extends TestCase
 {
     public static int $EXISTING_CLASS_ID = 1;
     public static int $NON_EXISTING_CLASS_ID = 100;
-    public static string $CLASS_CODE = 'CLASS_CODE';
-    public static string $WRONG_CLASS_CODE = 'WRONG_CLASS_CODE';
+    public static int $USER_ID = 232;
 
     public function testStartInit()
     {
