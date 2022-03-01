@@ -26,5 +26,10 @@ class CallLMSHelperTest
         return $testCase;
     }
 
+    public static function getUrlApiV1Prefix($path)
+    {
+
+    }
+
     //TODO: CREATE START CLASS HELPER
 }
