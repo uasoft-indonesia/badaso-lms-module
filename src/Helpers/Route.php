@@ -7,14 +7,13 @@ class Route
     public static function getController($key)
     {
          // get config 'controllers' from config/badaso-post.php
-         $controllers = config('badaso-lms.controllers');
+         $controllers = config('badaso-lms-module.controllers');
 
          // if the key is not found, return $key
          if (! isset($controllers[$key])) {
-             return 'Uasoft\\Badaso\\Module\\LMS\\Controllers\\'.$key;
+             return 'Uasoft\\Badaso\\Module\\LMSModule\\Controllers\\'.$key;
          }
  
-         // return the value of the key
          return $controllers[$key];
     }
 }

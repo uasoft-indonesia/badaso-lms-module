@@ -4,9 +4,9 @@ namespace Uasoft\Badaso\Module\LMSModule\Providers;
 
 use Illuminate\Foundation\AliasLoader;
 use Illuminate\Support\ServiceProvider;
-use Uasoft\Badaso\Module\LMS\BadasoLMSModule;
-use Uasoft\Badaso\Module\LMS\Commands\BadasoLMSSetup;
-use Uasoft\Badaso\Module\LMS\Facades\BadasoLMSModule as FacadesBadasoLMS;
+use Uasoft\Badaso\Module\LMSModule\LMSModule;
+use Uasoft\Badaso\Module\LMSModule\Commands\LMSModuleSetup;
+use Uasoft\Badaso\Module\LMSModule\Facades\LMSModule as FacadesBadasoLMS;
 
 class LMSModuleProvider extends ServiceProvider 
 {
@@ -21,13 +21,13 @@ class LMSModuleProvider extends ServiceProvider
         $loader->alias('BadasoLMSModule', FacadesBadasoLMS::class);
 
         $this->app->singleton('badaso-lms-module', function() {
-            return new BadasoLMSModule();
+            return new LMSModule();
         });
 
         $this->loadRoutesFrom(__DIR__.'/../Routes/api.php');
 
         $this->publishes([
-            __DIR__.'Config/badaso-lms.php' => config_path('badaso-lms.php'),
+            __DIR__.'Config/badaso-lms-module.php' => config_path('badaso-lms-module.php'),
         ], 'BadasoLMSModule');
     }
 
@@ -49,6 +49,6 @@ class LMSModuleProvider extends ServiceProvider
      */
     private function registerConsoleComannds()
     {
-        $this->commands(BadasoLMSSetup::class);
+        $this->commands(LMSModuleSetup::class);
     }
 }

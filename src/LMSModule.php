@@ -13,4 +13,3 @@ class LMSModule
         return $this->protected_tables;
     }
 }
-

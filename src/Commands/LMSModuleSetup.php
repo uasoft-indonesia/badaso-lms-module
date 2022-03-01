@@ -5,7 +5,7 @@ namespace Uasoft\Badaso\Module\LMSModule\Commands;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Artisan;
 use Symfony\Component\VarExporter\VarExporter;
-use Uasoft\Badaso\Module\LMS\Facades\BadasoLMSModule;
+use Uasoft\Badaso\Module\LMSModule\Facades\LMSModule;
 
 class LMSModuleSetup extends Command {
     protected $file;
@@ -103,7 +103,7 @@ class LMSModuleSetup extends Command {
         try {
             $config_path = config_path('badaso-hidden-tables.php');
             $config_hidden_tables = require $config_path;
-            $tables = BadasoLMSModule::getProtectedTables();
+            $tables = LMSModule::getProtectedTables();
 
             foreach ($tables as $key => $value) {
                 if (! in_array($value, $config_hidden_tables)) {
