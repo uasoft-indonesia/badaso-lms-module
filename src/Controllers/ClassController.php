@@ -11,4 +11,8 @@ class ClassController extends Controller
         //join class
     }
 
+    public function getClassCode()
+    {
+        //retrieve class code
+    }
 }
