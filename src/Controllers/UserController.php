@@ -1,6 +1,6 @@
 <?php
 
-namespace Uasoft\Badaso\Module\LMS\Controllers;
+namespace Uasoft\Badaso\Module\LMSModule\Controllers;
 
 use Uasoft\Badaso\Controllers\Controller;
 use Uasoft\Badaso\Helpers\ApiResponse;

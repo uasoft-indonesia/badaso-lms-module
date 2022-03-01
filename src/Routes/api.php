@@ -2,7 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use Uasoft\Badaso\Middleware\ApiRequest;
-use Uasoft\Badaso\Module\LMS\Helpers\Route as HelpersRoute;
+use Uasoft\Badaso\Module\LMSModule\Helpers\Route as HelpersRoute;
 
 $api_route_prefix = config('Badaso.api_route_prefix', 'badaso-api');
 

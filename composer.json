@@ -14,18 +14,18 @@
   "minimum-stability": "alpha",
   "autoload": {
     "psr-4": {
-      "Uasoft\\Badaso\\Module\\LMS\\": "src/"
+      "Uasoft\\Badaso\\Module\\LMSModule\\": "src/"
     }
   },
   "autoload-dev": {
     "psr-4": {
-      "Uasoft\\Badaso\\Module\\LMS\\Tests\\": "tests/"
+      "Uasoft\\Badaso\\Module\\LMSModule\\Tests\\": "tests/"
     }
   },
   "extra": {
     "laravel": {
       "providers": [
-        "Uasoft\\Badaso\\Module\\LMS\\Providers\\BadasoLMSModuleServiceProvider"
+        "Uasoft\\Badaso\\Module\\LMSModule\\Providers\\LMSModuleProvider"
       ]
     }
   }

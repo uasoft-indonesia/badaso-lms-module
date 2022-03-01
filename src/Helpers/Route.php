@@ -1,6 +1,6 @@
 <?php
 
-namespace Uasoft\Badaso\Module\LMS\Helpers;
+namespace Uasoft\Badaso\Module\LMSModule\Helpers;
 
 class Route 
 {

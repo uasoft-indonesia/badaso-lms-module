@@ -1,6 +1,6 @@
 <?php
 
-namespace Uasoft\Badaso\Module\LMS\Providers;
+namespace Uasoft\Badaso\Module\LMSModule\Providers;
 
 use Illuminate\Foundation\AliasLoader;
 use Illuminate\Support\ServiceProvider;
@@ -8,7 +8,7 @@ use Uasoft\Badaso\Module\LMS\BadasoLMSModule;
 use Uasoft\Badaso\Module\LMS\Commands\BadasoLMSSetup;
 use Uasoft\Badaso\Module\LMS\Facades\BadasoLMSModule as FacadesBadasoLMS;
 
-class BadasoLMSModuleProvider extends ServiceProvider 
+class LMSModuleProvider extends ServiceProvider 
 {
     /**
      * Bootstrap any application services.

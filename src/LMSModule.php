@@ -1,8 +1,8 @@
 <?php
 
-namespace Uasoft\Badaso\Module\LMS;
+namespace Uasoft\Badaso\Module\LMSModule;
 
-class BadasoLMSModule 
+class LMSModule 
 {
     protected $protected_tables = [
         'lms_users',

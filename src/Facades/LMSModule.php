@@ -1,10 +1,10 @@
 <?php
 
-namespace Uasoft\Badaso\Module\LMS\Facades;
+namespace Uasoft\Badaso\Module\LMSModule\Facades;
 
 use Illuminate\Support\Facades\Facade;
 
-class BadasoLMSModule extends Facade 
+class LMSModule extends Facade 
 {
     /**
      * Get the registered name of the component

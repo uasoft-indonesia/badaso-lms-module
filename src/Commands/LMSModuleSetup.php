@@ -1,13 +1,13 @@
 <?php
 
-namespace Uasoft\Badaso\Module\LMS\Commands;
+namespace Uasoft\Badaso\Module\LMSModule\Commands;
 
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Artisan;
 use Symfony\Component\VarExporter\VarExporter;
 use Uasoft\Badaso\Module\LMS\Facades\BadasoLMSModule;
 
-class BadasoLMSSetup extends Command {
+class LMSModuleSetup extends Command {
     protected $file;
     /**
      * The console command name.
@@ -39,7 +39,7 @@ class BadasoLMSSetup extends Command {
      * @return void
      */
     public function handle() {
-        $this->addingBadasoEnv();
+        $this->addBadasoEnv();
         $this->publishBadasoProvider();
         $this->addLMSTablesToHiddenTables();
         $this->linkStorage();
@@ -62,7 +62,7 @@ class BadasoLMSSetup extends Command {
         ];
     }
 
-    protected function addingBadasoEnv() {
+    protected function addBadasoEnv() {
         try {
             $env_path = base_path('.env');
 
