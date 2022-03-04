@@ -4,7 +4,6 @@
   "license": "proprietary",
   "homepage": "https://badaso.uatech.co.id/",
   "type": "library",
-  "require": {},
   "authors": [
     {
       "name": "UASOFT",
@@ -28,5 +27,8 @@
         "Uasoft\\Badaso\\Module\\LMSModule\\Providers\\LMSModuleProvider"
       ]
     }
+  },
+  "require-dev": {
+    "orchestra/testbench": "^7.1"
   }
 }

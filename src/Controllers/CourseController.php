@@ -4,7 +4,7 @@ namespace Uasoft\Badaso\Module\LMSModule\Controllers;
 
 use Uasoft\Badaso\Controllers\Controller;
 
-class ClassController extends Controller
+class CourseController extends Controller
 {
     public function joinClass()
     {
