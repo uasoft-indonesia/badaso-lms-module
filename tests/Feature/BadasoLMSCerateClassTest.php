@@ -1,8 +1,8 @@
 <?php
 
-namespace Uasoft\Badaso\Module\LMS\Tests\Feature;
+namespace Uasoft\Badaso\Module\LMSModule\Tests\Feature;
 
-use Tests\TestCase;
+use Uasoft\Badaso\Module\LMSModule\Tests\TestCase;
 use Uasoft\Badaso\Helpers\CallHelperTest;
 
 class BadasoLMSCreateClassTest extends TestCase
