@@ -11,5 +11,11 @@ Route::group(['prefix' => $api_route_prefix, 'as' => 'badaso.', 'middleware' => 
         Route::group(['prefix' => 'user'], function() {
             Route::get('/home', HelpersRoute::getController('UserController@home'));
         });
+
+        Route::group(['prefix' => 'course', 'as' => 'course.'], function() {
+            Route::get('/', HelpersRoute::getController('CourseController@index'));
+            Route::post('/', HelpersRoute::getController('CourseController@store'))->name('store');
+            Route::get('/{course}', HelpersRoute::getController('CourseController@show'));
+        });
     });
 });
