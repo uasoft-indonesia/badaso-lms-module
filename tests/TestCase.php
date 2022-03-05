@@ -2,6 +2,8 @@
 
 namespace Uasoft\Badaso\Module\LMSModule\Tests;
 
+use Uasoft\Badaso\Module\LMSModule\Providers\LMSModuleProvider;
+
 class TestCase extends \Orchestra\Testbench\TestCase
 {
     protected $loadEnvironmentVariables = true;
@@ -15,7 +17,7 @@ class TestCase extends \Orchestra\Testbench\TestCase
     protected function getPackageProviders($app)
     {
         return [
-            // BlogPackageServiceProvider::class,
+            LMSModuleProvider::class,
         ];
     }
 
