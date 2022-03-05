@@ -26,6 +26,8 @@ class CourseController extends Controller
      */
     public function store(Request $request)
     {
+        // TODO: check token validity,
+        // would be even better to use middleware
         $bearerToken = $request->bearerToken();
         if (!$bearerToken) {
             return response()->json([

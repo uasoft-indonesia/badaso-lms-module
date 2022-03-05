@@ -10,6 +10,7 @@ class BadasoLMSCreateClassTest extends TestCase
     public function testCreateClassWithoutLoginExpectResponseStatus401()
     {
         $url = route('badaso.course.store');
+
         $response = $this->postJson($url, [
             'name' => 'PPL with Badaso',
             'subject' => 'PPL',
@@ -21,9 +22,13 @@ class BadasoLMSCreateClassTest extends TestCase
 
     public function testCreateClassWithAllFieldsValidExpectResponseStatus201()
     {
-        // TODO: log user in first
         $url = route('badaso.course.store');
-        $response = $this->postJson($url, [
+        
+        // TODO: log user in first, then use it in the request
+        // Or just use a valid dummy token
+        $response = $this->withHeader(
+            'Authorization', 'Bearer ' . 'dummy token'
+        )->postJson($url, [
             'name' => 'PPL with Badaso',
             'subject' => 'PPL',
             'room' => '2-2403',
