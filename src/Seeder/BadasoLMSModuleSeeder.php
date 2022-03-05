@@ -1,6 +1,6 @@
 <?php
 
-namespace Database\Seeders\Badaso\LMS;
+namespace Database\Seeders\Badaso\LMSModule;
 
 use Illuminate\Database\Seeder;
 
