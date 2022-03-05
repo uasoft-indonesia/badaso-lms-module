@@ -9,7 +9,8 @@ class BadasoLMSCreateClassTest extends TestCase
 {
     public function testCreateClassWithoutLoginExpectResponseStatus401()
     {
-        $response = $this->postJson('/classes', [
+        $url = route('badaso.course.store');
+        $response = $this->postJson($url, [
             'name' => 'PPL with Badaso',
             'subject' => 'PPL',
             'room' => '2-2403',
@@ -21,7 +22,8 @@ class BadasoLMSCreateClassTest extends TestCase
     public function testCreateClassWithAllFieldsValidExpectResponseStatus201()
     {
         // TODO: log user in first
-        $response = $this->postJson('/classes', [
+        $url = route('badaso.course.store');
+        $response = $this->postJson($url, [
             'name' => 'PPL with Badaso',
             'subject' => 'PPL',
             'room' => '2-2403',
