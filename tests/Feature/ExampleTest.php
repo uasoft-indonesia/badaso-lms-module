@@ -2,7 +2,7 @@
 
 namespace Uasoft\Badaso\Module\LMSModule\Tests\Feature;
 
-use Uasoft\Badaso\Module\LMSModule\Tests\TestCase;
+use Tests\TestCase;
 
 class ExampleTest extends TestCase
 {
