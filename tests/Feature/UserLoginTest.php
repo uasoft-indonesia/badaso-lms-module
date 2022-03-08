@@ -2,7 +2,7 @@
 
 namespace Uasoft\Badaso\Module\LMSModule\Tests\Feature;
 
-use Tests\TestCase;
+use Uasoft\Badaso\Module\LMSModule\Tests\TestCase;
 
 class UserLoginTest extends TestCase
 {
@@ -13,13 +13,8 @@ class UserLoginTest extends TestCase
      */
     public function testUserLogin()
     {
-        $response = $this->post('/', [
-            'fullName' => 'Nofaldi Atmam',
-            'userame' => 'nofamex',
-            'email' => 'nsiren@gmail.com',
-            'password' => 'password', 
-        ]);
+        $response = $this->get('/');
 
-        $response->assertStatus(200);
+        $response->assertStatus(404);
     }
 }

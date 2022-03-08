@@ -7,6 +7,9 @@ use Illuminate\Support\Facades\Artisan;
 use Symfony\Component\VarExporter\VarExporter;
 use Uasoft\Badaso\Module\LMSModule\Facades\LMSModule;
 
+/**
+ * @codeCoverageIgnore
+ */
 class LMSModuleSetup extends Command 
 {
     protected $file;
