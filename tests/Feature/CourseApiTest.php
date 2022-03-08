@@ -67,4 +67,37 @@ class BadasoCourseApiTest extends TestCase
         $this->assertEquals('Test subject', $courseData['subject']);
         $this->assertEquals('Test room', $courseData['room']);
     }
+
+    public function testCreateCourseAsLoggedInUserWithValidDataExpectCourseCreated()
+    {
+        $loginUrl = '/admin/v1/auth/login';
+        $user = User::factory()->create();
+
+        $loginResponse = $this->json('POST', $loginUrl, [
+            'email' => $user->email,
+            'password' => 'password',
+        ]);
+
+        $token = $loginResponse->json('accessToken');
+
+        $courseCountBefore = Course::count();
+
+        $url = route('badaso.course.add');
+        $this->json('POST', $url, [
+            'name' => 'Test course',
+            'subject' => 'Test subject',
+            'room' => 'Test room',
+        ], [
+            'Authorization' => 'Bearer ' . $token,
+        ]);
+
+        $courseCountAfter = Course::count();
+        $course = Course::first();
+
+        $this->assertEquals(0, $courseCountBefore);
+        $this->assertEquals(1, $courseCountAfter);
+        $this->assertEquals('Test course', $course->name);
+        $this->assertEquals('Test subject', $course->subject);
+        $this->assertEquals('Test room', $course->room);
+    }
 }
