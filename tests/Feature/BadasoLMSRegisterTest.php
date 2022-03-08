@@ -19,7 +19,7 @@ class BadasoLMSRegisterTest extends TestCase
     }
 
    /** @test */
-   public function testAddUser()
+   public function testAddUserDatabase()
     {
         $name = Str::random(10);
         $create_user = [
@@ -32,8 +32,40 @@ class BadasoLMSRegisterTest extends TestCase
         $this->assertEquals($create_user['name'] ,$user->name);
         $this->assertEquals($create_user['username'] ,$user->username);
         $this->assertEquals($create_user['email'] ,$user->email);
-        $this->assertEquals($create_user['pasword'] ,$user->password);
+        $this->assertEquals($create_user['password'] ,$user->password);
 
         $user->delete();
+    }
+
+    public function testAddUser()
+    {
+        $name = Str::random(10);
+        $password = Hash::make($name);
+        $create_user = [
+            'name' => $name,
+            'username' => $name,
+            'email' => $name.'@gmail.com',
+            'password' => $password,
+            'password_confirmation' => $password
+        ];
+
+        $response = $this->json("POST", route('badaso.user.register'), $create_user);
+        $response->assertStatus(400);
+    }
+
+
+    public function testAddUserWithNotEnoughParameter()
+    {
+        $name = Str::random(10);
+        $password = Hash::make($name);
+        $create_user = [
+            'name' => $name,
+            'username' => $name,
+            'email' => $name.'@gmail.com',
+            'password' => $password,
+        ];
+
+        $response = $this->json("POST", route('badaso.user.register'), $create_user);
+        $response->assertStatus(400);
     }
 }
