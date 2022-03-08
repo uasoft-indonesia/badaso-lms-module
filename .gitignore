@@ -2,5 +2,4 @@
 composer.lock
 .phpunit.result.cache
 /coverage/
-tests-report.xml
-coverage-report.xml
+/reports/
