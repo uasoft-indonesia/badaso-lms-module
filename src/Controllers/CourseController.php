@@ -2,7 +2,10 @@
 
 namespace Uasoft\Badaso\Module\LMSModule\Controllers;
 
+use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\ValidationException;
 use Nette\Utils\Random;
 use Uasoft\Badaso\Controllers\Controller;
 use Uasoft\Badaso\Helpers\ApiResponse;
@@ -19,6 +22,12 @@ class CourseController extends Controller
         try {
             $user = auth()->user();
 
+            $request->validate([
+                'name' => 'required|string|max:255',
+                'subject' => 'required|string|max:255',
+                'room' => 'required|string|max:255',
+            ]);
+
             $course = Course::create([
                 'name' => $request->input('name'),
                 'subject' => $request->input('subject'),
@@ -33,25 +42,17 @@ class CourseController extends Controller
                 'role' => CourseUserRole::TEACHER,
             ]);
 
-            $request->validate([
-                'name' => 'required|string|max:255',
-                'subject' => 'required|string|max:255',
-                'room' => 'required|string|max:255',
-            ]);
-
             DB::commit();
 
-            return ApiResponse::success([
-                'id' => 1,
-                'name' => $request->input('name'),
-                'subject' => $request->input('subject'),
-                'room' => $request->input('room'),
-            ]);
+            return ApiResponse::success($course);
         } catch (Exception $e) {
             DB::rollBack();
-            if ($e instanceof ValidationException) {
-                return response('', 422);
 
+            if ($e instanceof ValidationException) {
+                return ApiResponse::failed($e);
+            }
+
+            return ApiResponse::failed('Failed to create course, please try again');
         }
     }
 }

@@ -130,7 +130,7 @@ class BadasoCourseApiTest extends TestCase
         $this->assertEquals(CourseUserRole::TEACHER, $user->courses->first()->pivot->role);
     }
 
-    public function testCreateCourseAsLoggedInUserWithoutEitherNameSubjectOrRoomExpectResponse422()
+    public function testCreateCourseAsLoggedInUserWithoutEitherNameSubjectOrRoomExpectResponse400()
     {
         $loginUrl = '/admin/v1/auth/login';
         $user = User::factory()->create();
@@ -162,9 +162,9 @@ class BadasoCourseApiTest extends TestCase
             'Authorization' => 'Bearer ' . $token,
         ]);
 
-        $response1->assertStatus(422);
-        $response2->assertStatus(422);
-        $response3->assertStatus(422);
+        $response1->assertStatus(400);
+        $response2->assertStatus(400);
+        $response3->assertStatus(400);
     }
 
     public function testCreateCourseAsLoggedInUserWithoutEitherNameSubjectOrRoomExpectNoCourseAndCourseUserCreated()
