@@ -14,7 +14,7 @@ class LMSModuleSetup extends Command {
      *
      * @var string
      */
-    protected $name = 'badaso-lms:setup';
+    protected $name = 'badaso-lms-module:setup';
 
     /**
      * The console command description.
@@ -74,7 +74,7 @@ class LMSModuleSetup extends Command {
             $new_env_adding = [];
             foreach ($env_will_adding as $key_add_env => $val_add_env) {
                 $status_adding = true;
-                foreach ($arr_env_file as $key_env_file => $val_env_file) {
+                foreach ($arr_env_file as $val_env_file) {
                     $val_env_file = trim($val_env_file);
                     if (substr($val_env_file, 0, 1) != '#' && $val_env_file != '' && strstr($val_env_file, $key_add_env)) {
                         $status_adding = false;
@@ -86,7 +86,7 @@ class LMSModuleSetup extends Command {
                 }
             }
 
-            foreach ($new_env_adding as $index_env_add => $val_env_add) {
+            foreach ($new_env_adding as $val_env_add) {
                 $arr_env_file[] = $val_env_add;
             }
 
@@ -105,7 +105,7 @@ class LMSModuleSetup extends Command {
             $config_hidden_tables = require $config_path;
             $tables = LMSModule::getProtectedTables();
 
-            foreach ($tables as $key => $value) {
+            foreach ($tables as $value) {
                 if (! in_array($value, $config_hidden_tables)) {
                     array_push($config_hidden_tables, $value);
                 }
