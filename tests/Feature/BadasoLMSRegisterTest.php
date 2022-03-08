@@ -24,13 +24,13 @@ class BadasoLMSRegisterTest extends TestCase
             'name' => $name,
             'username' => $name,
             'email' => $name.'@gmail.com',
-            'password' => $name,
+            'password' => Hash::make($name),
         ];
         $user = User::create($create_user);
-        $this->assertEquals($create_user['name'], $user->name);
-        $this->assertEquals($create_user['username'], $user->username);
-        $this->assertEquals($create_user['email'], $user->email);
-        $this->assertTrue(Hash::check($create_user['password'], $user->password));
+        $this->assertEquals($create_user['name'] ,$user->name);
+        $this->assertEquals($create_user['username'] ,$user->username);
+        $this->assertEquals($create_user['email'] ,$user->email);
+        $this->assertEquals($create_user['password'] ,$user->password);
 
         $user->delete();
     }
