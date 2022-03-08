@@ -3,7 +3,9 @@
 namespace Uasoft\Badaso\Module\LMSModule\Tests\Feature;
 
 use Tests\TestCase;
+use Uasoft\Badaso\Module\LMSModule\Enums\CourseUserRole;
 use Uasoft\Badaso\Module\LMSModule\Models\Course;
+use Uasoft\Badaso\Module\LMSModule\Models\CourseUser;
 use Uasoft\Badaso\Module\LMSModule\Models\User;
 
 class BadasoCourseApiTest extends TestCase
@@ -163,5 +165,41 @@ class BadasoCourseApiTest extends TestCase
         $response1->assertStatus(422);
         $response2->assertStatus(422);
         $response3->assertStatus(422);
+    }
+
+    public function testCreateCourseAsLoggedInUserWithoutEitherNameSubjectOrRoomExpectNoCourseAndCourseUserCreated()
+    {
+        $loginUrl = '/admin/v1/auth/login';
+        $user = User::factory()->create();
+
+        $loginResponse = $this->json('POST', $loginUrl, [
+            'email' => $user->email,
+            'password' => 'password',
+        ]);
+
+        $token = $loginResponse->json('accessToken');
+
+        $url = route('badaso.course.add');
+        $this->json('POST', $url, [
+            'subject' => 'Test subject',
+            'room' => 'Test room',
+        ], [
+            'Authorization' => 'Bearer ' . $token,
+        ]);
+        $this->json('POST', $url, [
+            'name' => 'Test course',
+            'room' => 'Test room',
+        ], [
+            'Authorization' => 'Bearer ' . $token,
+        ]);
+        $this->json('POST', $url, [
+            'name' => 'Test course',
+            'subject' => 'Test subject',
+        ], [
+            'Authorization' => 'Bearer ' . $token,
+        ]);
+
+        $this->assertEquals(0, Course::count());
+        $this->assertEquals(0, CourseUser::count());
     }
 }
