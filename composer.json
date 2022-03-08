@@ -14,18 +14,14 @@
   "autoload": {
     "psr-4": {
       "Uasoft\\Badaso\\Module\\LMSModule\\": "src/",
-      "Uasoft\\Badaso\\Module\\LMSModule\\Seeders\\": "src/Seeders"
+      "Uasoft\\Badaso\\Module\\LMSModule\\Seeders\\": "src/Seeders",
+      "Uasoft\\Badaso\\Module\\LMSModule\\Factories\\": "src/Factories"
     }
   },
   "autoload-dev": {
     "psr-4": {
       "Uasoft\\Badaso\\Module\\LMSModule\\Tests\\": "tests/"
     }
-  },
-  "scripts": {
-    "post-autoload-dump": [
-      "@php ./vendor/bin/testbench package:discover --ansi"
-    ]
   },
   "extra": {
     "laravel": {

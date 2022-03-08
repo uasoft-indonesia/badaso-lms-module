@@ -2,7 +2,7 @@
 
 namespace Uasoft\Badaso\Module\LMSModule\Tests\Feature;
 
-use Uasoft\Badaso\Module\LMSModule\Tests\TestCase;
+use Tests\TestCase;
 
 class UserLoginTest extends TestCase
 {
@@ -15,6 +15,6 @@ class UserLoginTest extends TestCase
     {
         $response = $this->get('/');
 
-        $response->assertStatus(404);
+        $response->assertStatus(500);
     }
 }

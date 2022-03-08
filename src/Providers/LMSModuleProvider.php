@@ -31,6 +31,7 @@ class LMSModuleProvider extends ServiceProvider
 
         $this->publishes([
             __DIR__.'Config/badaso-lms-module.php' => config_path('badaso-lms-module.php'),
+            __DIR__.'Seeders' => database_path('seeders/Badaso/LMS'),
         ], 'BadasoLMSModule');
     }
 
