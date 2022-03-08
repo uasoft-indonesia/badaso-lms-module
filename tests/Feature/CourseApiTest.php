@@ -100,4 +100,31 @@ class BadasoCourseApiTest extends TestCase
         $this->assertEquals('Test subject', $course->subject);
         $this->assertEquals('Test room', $course->room);
     }
+
+    public function testCreateCourseAsLoggedInUsertWithValidDataExpectUserHasTheRoleTeacherForTheCreatedCourse()
+    {
+        $loginUrl = '/admin/v1/auth/login';
+        $user = User::factory()->create();
+
+        $loginResponse = $this->json('POST', $loginUrl, [
+            'email' => $user->email,
+            'password' => 'password',
+        ]);
+
+        $token = $loginResponse->json('accessToken');
+
+        $url = route('badaso.course.add');
+        $this->json('POST', $url, [
+            'name' => 'Test course',
+            'subject' => 'Test subject',
+            'room' => 'Test room',
+        ], [
+            'Authorization' => 'Bearer ' . $token,
+        ]);
+
+        $user->fresh();
+        $this->assertEquals(1, CourseUser::count());
+        $this->assertEquals(1, $user->courses->count());
+        $this->assertEquals(CourseUserRole::TEACHER, $user->courses->first()->pivot->role);
+    }
 }
