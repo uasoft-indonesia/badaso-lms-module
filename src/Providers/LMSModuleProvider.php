@@ -25,7 +25,8 @@ class LMSModuleProvider extends ServiceProvider
             return new LMSModule();
         });
 
-        $this->loadMigrationsFrom(__DIR__.'/../Migrations');
+        $this->loadMigrationsFrom(__DIR__ . '/../../database/migrations');
+
         $this->loadRoutesFrom(__DIR__.'/../Routes/api.php');
 
         $this->publishes([
