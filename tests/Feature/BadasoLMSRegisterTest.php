@@ -6,9 +6,7 @@ use Tests\TestCase;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Hash;
 use Uasoft\Badaso\Helpers\CallHelperTest;
-use Uasoft\Badaso\Models\Role;
-use Uasoft\Badaso\Models\User;
-use Uasoft\Badaso\Models\UserRole;
+use Uasoft\Badaso\Module\LMSModule\Models\User;
 
 class BadasoLMSRegisterTest extends TestCase
 {
@@ -26,13 +24,13 @@ class BadasoLMSRegisterTest extends TestCase
             'name' => $name,
             'username' => $name,
             'email' => $name.'@gmail.com',
-            'password' => Hash::make($name),
+            'password' => $name,
         ];
         $user = User::create($create_user);
-        $this->assertEquals($create_user['name'] ,$user->name);
-        $this->assertEquals($create_user['username'] ,$user->username);
-        $this->assertEquals($create_user['email'] ,$user->email);
-        $this->assertEquals($create_user['password'] ,$user->password);
+        $this->assertEquals($create_user['name'], $user->name);
+        $this->assertEquals($create_user['username'], $user->username);
+        $this->assertEquals($create_user['email'], $user->email);
+        $this->assertTrue(Hash::check($create_user['password'], $user->password));
 
         $user->delete();
     }
@@ -50,7 +48,7 @@ class BadasoLMSRegisterTest extends TestCase
         ];
 
         $response = $this->json("POST", route('badaso.user.register'), $create_user);
-        $response->assertStatus(400);
+        $response->assertStatus(200);
     }
 
 
@@ -64,6 +62,48 @@ class BadasoLMSRegisterTest extends TestCase
             'email' => $name.'@gmail.com',
             'password' => $password,
         ];
+
+        $response = $this->json("POST", route('badaso.user.register'), $create_user);
+        $response->assertStatus(400);
+    }
+
+    public function testAddUserWithExistingUsername() {
+        $name = Str::random(10);
+        $password = Hash::make($name);
+        $create_user = [
+            'name' => $name,
+            'username' => $name,
+            'email' => $name.'@gmail.com',
+            'password' => $password,
+        ];
+
+        User::factory()->create([
+            'name' => "test",
+            'username' => $name,
+            'email' => 'test@gmail.com',
+            'password' => $password,
+        ]);
+
+        $response = $this->json("POST", route('badaso.user.register'), $create_user);
+        $response->assertStatus(400);
+    }
+
+    public function testAddUserWithExistingEmail() {
+        $name = Str::random(10);
+        $password = Hash::make($name);
+        $create_user = [
+            'name' => $name,
+            'username' => $name,
+            'email' => $name.'@gmail.com',
+            'password' => $password,
+        ];
+
+        User::factory()->create([
+            'name' => "test",
+            'username' => "test",
+            'email' => $name.'@gmail.com',
+            'password' => $password,
+        ]);
 
         $response = $this->json("POST", route('badaso.user.register'), $create_user);
         $response->assertStatus(400);
