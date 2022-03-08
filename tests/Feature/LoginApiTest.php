@@ -41,4 +41,23 @@ class LoginApiTest extends TestCase
         $this->assertNull($data);
         $this->assertEquals($errorMessage, "authentication failed");
     }
+
+    public function testLoginSuccesfully()
+    {
+        $user = User::factory()->create();
+        $user->rawPassword = "password";
+        
+        $url = route('badaso.auth.login');
+        $response = $this->json('POST', $url, [
+            'email' => $user->email,
+            'password' => $user->rawPassword,
+        ]);
+
+        $data = $response->json('data');
+
+        $response->assertStatus(200);
+        $this->assertNotNull($data['accessToken']);
+        $this->assertEquals($data['tokenType'], 'bearer');
+        $this->assertEquals($data['user']['name'], $user->name);
+    }
 }
