@@ -34,4 +34,10 @@ class Course extends Model
         return $this->belongsTo(User::class, 'created_by');
     }
 
+    public function users()
+    {
+        return $this->belongsToMany(User::class, app(CourseUser::class)->getTable())
+            ->using(CourseUser::class)
+            ->withPivot('role');
+    }
 }

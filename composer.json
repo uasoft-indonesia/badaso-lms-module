@@ -13,7 +13,8 @@
   "minimum-stability": "alpha",
   "autoload": {
     "psr-4": {
-      "Uasoft\\Badaso\\Module\\LMSModule\\": "src/"
+      "Uasoft\\Badaso\\Module\\LMSModule\\": "src/",
+      "Uasoft\\Badaso\\Module\\LMSModule\\Seeders": "src/seeders"
     }
   },
   "autoload-dev": {

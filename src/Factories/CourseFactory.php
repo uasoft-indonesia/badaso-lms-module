@@ -3,11 +3,11 @@
 namespace Uasoft\Badaso\Module\LMSModule\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Uasoft\Badaso\Module\LMSModule\Models\User;
+use Uasoft\Badaso\Module\LMSModule\Models\Course;
 
-class UserFactory extends Factory
+class CourseFactory extends Factory
 {
-    protected $model = User::class;
+    protected $model = Course::class;
 
     /**
      * Define the model's default state.
@@ -18,8 +18,9 @@ class UserFactory extends Factory
     {
         return [
             'name' => $this->faker->name(),
-            'email' => $this->faker->unique()->safeEmail(),
-            'password' => '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', // password
+            'subject' => $this->faker->name(),
+            'room' => $this->faker->buildingNumber(),
+            'join_code' => $this->faker->unique()->randomAscii(),
         ];
     }
 }
