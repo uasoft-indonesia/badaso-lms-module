@@ -15,4 +15,26 @@ class BadasoCourseApiTest extends TestCase
         $response->assertStatus(401);
     }
 
+    public function testCreateCourseAsLoggedInUserWithValidDataExpectResponse200()
+    {
+        $loginUrl = '/admin/v1/auth/login';
+        $user = User::factory()->create();
+
+        $loginResponse = $this->json('POST', $loginUrl, [
+            'email' => $user->email,
+            'password' => 'password',
+        ]);
+
+        $token = $loginResponse->json('accessToken');
+
+        $url = route('badaso.course.add');
+        $response = $this->json('POST', $url, [
+            'name' => 'Test course',
+            'subject' => 'Test subject',
+            'room' => 'Test room',
+        ], [
+            'Authorization' => 'Bearer ' . $token,
+        ]);
+        $response->assertStatus(200);
+    }
 }
