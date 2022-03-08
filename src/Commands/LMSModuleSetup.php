@@ -7,7 +7,8 @@ use Illuminate\Support\Facades\Artisan;
 use Symfony\Component\VarExporter\VarExporter;
 use Uasoft\Badaso\Module\LMSModule\Facades\LMSModule;
 
-class LMSModuleSetup extends Command {
+class LMSModuleSetup extends Command 
+{
     protected $file;
     /**
      * The console command name.
@@ -28,7 +29,8 @@ class LMSModuleSetup extends Command {
      *
      * @return void
      */
-    public function __construct() {
+    public function __construct() 
+    {
         $this->file = app('files');
         parent::__construct();
     }
@@ -38,31 +40,36 @@ class LMSModuleSetup extends Command {
      *
      * @return void
      */
-    public function handle() {
+    public function handle() 
+    {
         $this->addBadasoEnv();
         $this->publishBadasoProvider();
         $this->addLMSTablesToHiddenTables();
         $this->linkStorage();
     }
 
-    protected function publishBadasoProvider() {
+    protected function publishBadasoProvider() 
+    {
         Artisan::call('vendor:publish', ['--tag' => 'BadasoLMSModule']);
 
         $this->info('Badaso LMS provider published');
     }
 
-    protected function linkStorage() {
+    protected function linkStorage() 
+    {
         Artisan::call('storage:link');
     }
 
-    protected function envListUpload() {
+    protected function envListUpload() 
+    {
         return [
             'MIX_LMS_URL_PREFIX' => '/lms',
             'MIX_FRONTEND_URL' => 'http://localhost:8000',
         ];
     }
 
-    protected function addBadasoEnv() {
+    protected function addBadasoEnv() 
+    {
         try {
             $env_path = base_path('.env');
 
@@ -99,7 +106,8 @@ class LMSModuleSetup extends Command {
         }
     }
 
-    protected function addLMSTablesToHiddenTables() {
+    protected function addLMSTablesToHiddenTables() 
+    {
         try {
             $config_path = config_path('badaso-hidden-tables.php');
             $config_hidden_tables = require $config_path;

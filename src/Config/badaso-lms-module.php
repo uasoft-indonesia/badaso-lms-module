@@ -8,5 +8,6 @@ return [
      * Overriding controllers.
      */
 
+     
      'controllers' => [],
 ];
