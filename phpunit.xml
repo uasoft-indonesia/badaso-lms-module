@@ -35,4 +35,8 @@
     <server name="DB_CONNECTION" value="sqlite"/>
     <server name="DB_DATABASE" value=":memory:"/>
   </php>
+  <logging>
+    <log type="coverage-clover" target="coverage-report.xml"/>
+    <log type="junit" target="tests-report.xml"/>
+  </logging>
 </phpunit>
