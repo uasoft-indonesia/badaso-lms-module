@@ -13,7 +13,8 @@
   "minimum-stability": "alpha",
   "autoload": {
     "psr-4": {
-      "Uasoft\\Badaso\\Module\\LMSModule\\": "src/"
+      "Uasoft\\Badaso\\Module\\LMSModule\\": "src/",
+      "Uasoft\\Badaso\\Module\\LMSModule\\Seeders\\": "src/seeders"
     }
   },
   "autoload-dev": {
@@ -29,9 +30,6 @@
     }
   },
   "require-dev": {
-    "orchestra/testbench": "^7.1",
-      "phpunit/phpunit": "^9.5"
-  },
-  "require": {
+    "phpunit/phpunit": "^9.5"
   }
 }
