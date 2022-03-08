@@ -127,4 +127,41 @@ class BadasoCourseApiTest extends TestCase
         $this->assertEquals(1, $user->courses->count());
         $this->assertEquals(CourseUserRole::TEACHER, $user->courses->first()->pivot->role);
     }
+
+    public function testCreateCourseAsLoggedInUserWithoutEitherNameSubjectOrRoomExpectResponse422()
+    {
+        $loginUrl = '/admin/v1/auth/login';
+        $user = User::factory()->create();
+
+        $loginResponse = $this->json('POST', $loginUrl, [
+            'email' => $user->email,
+            'password' => 'password',
+        ]);
+
+        $token = $loginResponse->json('accessToken');
+
+        $url = route('badaso.course.add');
+        $response1 = $this->json('POST', $url, [
+            'subject' => 'Test subject',
+            'room' => 'Test room',
+        ], [
+            'Authorization' => 'Bearer ' . $token,
+        ]);
+        $response2 = $this->json('POST', $url, [
+            'name' => 'Test course',
+            'room' => 'Test room',
+        ], [
+            'Authorization' => 'Bearer ' . $token,
+        ]);
+        $response3 = $this->json('POST', $url, [
+            'name' => 'Test course',
+            'subject' => 'Test subject',
+        ], [
+            'Authorization' => 'Bearer ' . $token,
+        ]);
+
+        $response1->assertStatus(422);
+        $response2->assertStatus(422);
+        $response3->assertStatus(422);
+    }
 }
