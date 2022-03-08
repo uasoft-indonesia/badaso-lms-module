@@ -7,6 +7,7 @@ use Uasoft\Badaso\Module\LMSModule\Enums\CourseUserRole;
 use Uasoft\Badaso\Module\LMSModule\Models\Course;
 use Uasoft\Badaso\Module\LMSModule\Models\CourseUser;
 use Uasoft\Badaso\Module\LMSModule\Models\User;
+use Uasoft\Badaso\Module\LMSModule\Tests\Helpers\AuthHelper;
 
 class BadasoCourseApiTest extends TestCase
 {
@@ -19,48 +20,30 @@ class BadasoCourseApiTest extends TestCase
 
     public function testCreateCourseAsLoggedInUserWithValidDataExpectResponse200()
     {
-        $loginUrl = '/admin/v1/auth/login';
         $user = User::factory()->create();
-
-        $loginResponse = $this->json('POST', $loginUrl, [
-            'email' => $user->email,
-            'password' => 'password',
-        ]);
-
-        $token = $loginResponse->json('accessToken');
+        $user->rawPassword = 'password';
 
         $url = route('badaso.course.add');
-        $response = $this->json('POST', $url, [
+
+        $response = AuthHelper::asUser($this, $user)->json('POST', $url, [
             'name' => 'Test course',
             'subject' => 'Test subject',
             'room' => 'Test room',
-        ], [
-            'Authorization' => 'Bearer ' . $token,
         ]);
         $response->assertStatus(200);
     }
 
     public function testCreateCourseAsLoggedInUserWithValidDataExpectResponseCreatedCourseWithId()
     {
-        $loginUrl = '/admin/v1/auth/login';
         $user = User::factory()->create();
-
-        $loginResponse = $this->json('POST', $loginUrl, [
-            'email' => $user->email,
-            'password' => 'password',
-        ]);
-
-        $token = $loginResponse->json('accessToken');
+        $user->rawPassword = 'password';
 
         $url = route('badaso.course.add');
-        $response = $this->json('POST', $url, [
+        $response = AuthHelper::asUser($this, $user)->json('POST', $url, [
             'name' => 'Test course',
             'subject' => 'Test subject',
             'room' => 'Test room',
-        ], [
-            'Authorization' => 'Bearer ' . $token,
         ]);
-        $response->assertStatus(200);
 
         $courseData = $response->json('data');
         $this->assertArrayHasKey('id', $courseData);
@@ -72,25 +55,16 @@ class BadasoCourseApiTest extends TestCase
 
     public function testCreateCourseAsLoggedInUserWithValidDataExpectCourseCreated()
     {
-        $loginUrl = '/admin/v1/auth/login';
         $user = User::factory()->create();
-
-        $loginResponse = $this->json('POST', $loginUrl, [
-            'email' => $user->email,
-            'password' => 'password',
-        ]);
-
-        $token = $loginResponse->json('accessToken');
+        $user->rawPassword = 'password';
 
         $courseCountBefore = Course::count();
 
         $url = route('badaso.course.add');
-        $this->json('POST', $url, [
+        AuthHelper::asUser($this, $user)->json('POST', $url, [
             'name' => 'Test course',
             'subject' => 'Test subject',
             'room' => 'Test room',
-        ], [
-            'Authorization' => 'Bearer ' . $token,
         ]);
 
         $courseCountAfter = Course::count();
@@ -105,23 +79,14 @@ class BadasoCourseApiTest extends TestCase
 
     public function testCreateCourseAsLoggedInUsertWithValidDataExpectUserHasTheRoleTeacherForTheCreatedCourse()
     {
-        $loginUrl = '/admin/v1/auth/login';
         $user = User::factory()->create();
-
-        $loginResponse = $this->json('POST', $loginUrl, [
-            'email' => $user->email,
-            'password' => 'password',
-        ]);
-
-        $token = $loginResponse->json('accessToken');
+        $user->rawPassword = 'password';
 
         $url = route('badaso.course.add');
-        $this->json('POST', $url, [
+        AuthHelper::asUser($this, $user)->json('POST', $url, [
             'name' => 'Test course',
             'subject' => 'Test subject',
             'room' => 'Test room',
-        ], [
-            'Authorization' => 'Bearer ' . $token,
         ]);
 
         $user->fresh();
@@ -132,34 +97,21 @@ class BadasoCourseApiTest extends TestCase
 
     public function testCreateCourseAsLoggedInUserWithoutEitherNameSubjectOrRoomExpectResponse400()
     {
-        $loginUrl = '/admin/v1/auth/login';
         $user = User::factory()->create();
-
-        $loginResponse = $this->json('POST', $loginUrl, [
-            'email' => $user->email,
-            'password' => 'password',
-        ]);
-
-        $token = $loginResponse->json('accessToken');
+        $user->rawPassword = 'password';
 
         $url = route('badaso.course.add');
-        $response1 = $this->json('POST', $url, [
+        $response1 = AuthHelper::asUser($this, $user)->json('POST', $url, [
             'subject' => 'Test subject',
             'room' => 'Test room',
-        ], [
-            'Authorization' => 'Bearer ' . $token,
         ]);
-        $response2 = $this->json('POST', $url, [
+        $response2 = AuthHelper::asUser($this, $user)->json('POST', $url, [
             'name' => 'Test course',
             'room' => 'Test room',
-        ], [
-            'Authorization' => 'Bearer ' . $token,
         ]);
-        $response3 = $this->json('POST', $url, [
+        $response3 = AuthHelper::asUser($this, $user)->json('POST', $url, [
             'name' => 'Test course',
             'subject' => 'Test subject',
-        ], [
-            'Authorization' => 'Bearer ' . $token,
         ]);
 
         $response1->assertStatus(400);
@@ -169,34 +121,21 @@ class BadasoCourseApiTest extends TestCase
 
     public function testCreateCourseAsLoggedInUserWithoutEitherNameSubjectOrRoomExpectNoCourseAndCourseUserCreated()
     {
-        $loginUrl = '/admin/v1/auth/login';
         $user = User::factory()->create();
-
-        $loginResponse = $this->json('POST', $loginUrl, [
-            'email' => $user->email,
-            'password' => 'password',
-        ]);
-
-        $token = $loginResponse->json('accessToken');
+        $user->rawPassword = 'password';
 
         $url = route('badaso.course.add');
-        $this->json('POST', $url, [
+        AuthHelper::asUser($this, $user)->json('POST', $url, [
             'subject' => 'Test subject',
             'room' => 'Test room',
-        ], [
-            'Authorization' => 'Bearer ' . $token,
         ]);
-        $this->json('POST', $url, [
+        AuthHelper::asUser($this, $user)->json('POST', $url, [
             'name' => 'Test course',
             'room' => 'Test room',
-        ], [
-            'Authorization' => 'Bearer ' . $token,
         ]);
-        $this->json('POST', $url, [
+        AuthHelper::asUser($this, $user)->json('POST', $url, [
             'name' => 'Test course',
             'subject' => 'Test subject',
-        ], [
-            'Authorization' => 'Bearer ' . $token,
         ]);
 
         $this->assertEquals(0, Course::count());
