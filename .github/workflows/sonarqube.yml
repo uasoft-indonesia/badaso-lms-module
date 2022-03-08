@@ -12,7 +12,7 @@ jobs:
         uses: sonarsource/sonarqube-scan-action@master
         with:
           args: >
-            -Dsonar.branch.name=${{ github.ref.name }}
+            -Dsonar.branch.name=${{ github.ref_name }}
         env:
           SONAR_TOKEN: "0052493ad45d69d2bc55d9bd64e9f8cc9da0bec0"
           SONAR_HOST_URL: "https://pmpl.cs.ui.ac.id/sonarqube"
