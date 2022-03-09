@@ -16,6 +16,6 @@ class CourseUser extends Pivot
     public function __construct(array $attributes = [])
     {
         parent::__construct($attributes);
-        $this->setTable(config('badaso.database.prefix') . 'course_user');
+        $this->setTable(config('badaso.database.prefix').'course_user');
     }
 }

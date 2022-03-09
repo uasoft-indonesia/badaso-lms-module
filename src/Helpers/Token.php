@@ -2,7 +2,7 @@
 
 namespace Uasoft\Badaso\Module\LMSModule\Helpers;
 use stdClass;
-class Token 
+class Token
 {
     public static function createNewToken($token, $user)
     {
