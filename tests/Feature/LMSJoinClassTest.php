@@ -18,7 +18,7 @@ class LMSJoinClassTest extends TestCase
     $response->assertStatus(401);
   }
 
-  public function testJoinClassAsAuthorizedUserWithUnknownClassCodeExpectResponseStatus500()
+  public function testJoinClassAsAuthorizedUserWithUnknownClassCodeExpectResponseStatus404()
   {
     $user = User::factory()->create();
     $user->rawPassword = 'password';
@@ -28,7 +28,7 @@ class LMSJoinClassTest extends TestCase
     $response = AuthHelper::asUser($this, $user)->json('POST', $url, [
       'code' => 'xxx'
     ]);
-    $response->assertStatus(500);
+    $response->assertStatus(404);
   }
 
   public function testJoinClassAsAuthorizedUserWithNoClassCodeAsInputExpectResponseStatus400()
