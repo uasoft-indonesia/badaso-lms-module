@@ -6,6 +6,7 @@ use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use stdClass;
+use TokenHelper;
 use Tymon\JWTAuth\Exceptions\JWTException;
 use Uasoft\Badaso\Controllers\Controller;
 use Uasoft\Badaso\Helpers\ApiResponse;
@@ -28,7 +29,8 @@ class AuthController extends Controller
             $token = Auth::attempt($credentials);
 
             if ($token) {
-                return $this->createNewToken($token, Auth::user(), $remember);
+                $data =  TokenHelper::createNewToken($token, Auth::user(), $remember);
+                return ApiResponse::success($data);
             }
 
             return ApiResponse::failed("authentication failed");
@@ -37,15 +39,5 @@ class AuthController extends Controller
         } catch (Exception $e) {
             return ApiResponse::failed($e);
         }
-    }
-
-    protected function createNewToken($token, $user, $remember = false)
-    {
-        $obj = new stdClass();
-        $obj->access_token = $token;
-        $obj->token_type = 'bearer';
-        $obj->user = $user;
-
-        return ApiResponse::success($obj);
     }
 }
