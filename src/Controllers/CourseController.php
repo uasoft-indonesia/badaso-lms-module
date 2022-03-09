@@ -82,14 +82,14 @@ class CourseController extends Controller
             DB::commit();
 
             return ApiResponse::success($courseUser);
-        } catch (Exception $e){
+        } catch (Exception $e) {
             DB::rollBack();
 
-            if ($e instanceof ValidationException){
+            if ($e instanceof ValidationException) {
                 return ApiResponse::failed($e);
-            } else if ($e instanceof ModelNotFoundException){
+            } else if ($e instanceof ModelNotFoundException) {
                 abort(404, 'Class not found');
-            } else if ($e instanceof QueryException){
+            } else if ($e instanceof QueryException) {
                 return ApiResponse::failed('You have been registered in this class already');
             }
             return ApiResponse::failed('Failed to join class, please try again');
