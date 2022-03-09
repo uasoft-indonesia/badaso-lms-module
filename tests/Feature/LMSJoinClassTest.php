@@ -2,8 +2,10 @@
 
 namespace Uasoft\Badaso\Module\LMSModule\Tests\Feature;
 
+use Uasoft\Badaso\Module\LMSModule\Models\User;
 use Uasoft\Badaso\Module\LMSModule\Helpers\Route;
 use Tests\TestCase;
+use Uasoft\Badaso\Module\LMSModule\Tests\Helpers\AuthHelper;
 
 class LMSJoinClassTest extends TestCase
 {
@@ -17,8 +19,12 @@ class LMSJoinClassTest extends TestCase
 
   public function testJoinClassAsAuthorizedUserWithUnknownClassCodeExpectResponseStatus404()
   {
+      $user = User::factory()->create();
+      $user->rawPassword = 'password';
+
       $url = route('badaso.course.join');
-      $response = $this->json('POST', $url, [
+
+      $response = AuthHelper::asUser($this, $user)->json('POST', $url, [
           'code' => 'xxx'
       ]);
       $response->assertStatus(404);
