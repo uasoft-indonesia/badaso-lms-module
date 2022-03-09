@@ -5,13 +5,12 @@ namespace Uasoft\Badaso\Module\LMSModule\Controllers;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use stdClass;
-use TokenHelper;
 use Tymon\JWTAuth\Exceptions\JWTException;
 use Uasoft\Badaso\Controllers\Controller;
 use Uasoft\Badaso\Helpers\ApiResponse;
+use Uasoft\Badaso\Module\LMSModule\Helpers\Token;
 
-class AuthController extends Controller 
+class AuthController extends Controller
 {
     public function login(Request $request)
     {
@@ -28,11 +27,12 @@ class AuthController extends Controller
             $token = Auth::attempt($credentials);
 
             if ($token) {
-                $data =  TokenHelper::createNewToken($token, Auth::user());
+                $data = Token::createNewToken($token, Auth::user());
+
                 return ApiResponse::success($data);
             }
 
-            return ApiResponse::failed("authentication failed");
+            return ApiResponse::failed('authentication failed');
         } catch (JWTException $e) {
             return ApiResponse::failed($e);
         } catch (Exception $e) {

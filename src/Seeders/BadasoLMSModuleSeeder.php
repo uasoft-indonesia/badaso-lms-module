@@ -4,7 +4,7 @@ namespace Uasoft\Badaso\Module\LMSModule\Seeders;
 
 use Illuminate\Database\Seeder;
 
-class BadasoLMSModuleSeeder extends Seeder 
+class BadasoLMSModuleSeeder extends Seeder
 {
     public function run()
     {

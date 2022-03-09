@@ -19,7 +19,7 @@ class LoginApiTest extends TestCase
         $url = route('badaso.auth.login');
 
         $response = $this->json('POST', $url, [
-            'email' => "test@email.com",
+            'email' => 'test@email.com',
         ]);
         $response->assertStatus(400);
     }
@@ -27,7 +27,6 @@ class LoginApiTest extends TestCase
     public function testLoginWithWrongCredential()
     {
         $user = User::factory()->create();
-        
         $url = route('badaso.auth.login');
         $response = $this->json('POST', $url, [
             'email' => $user->email,
@@ -39,14 +38,14 @@ class LoginApiTest extends TestCase
 
         $response->assertStatus(500);
         $this->assertNull($data);
-        $this->assertEquals($errorMessage, "authentication failed");
+        $this->assertEquals($errorMessage, 'authentication failed');
     }
 
     public function testLoginSuccesfully()
     {
         $user = User::factory()->create();
-        $user->rawPassword = "password";
-        
+        $user->rawPassword = 'password';
+
         $url = route('badaso.auth.login');
         $response = $this->json('POST', $url, [
             'email' => $user->email,

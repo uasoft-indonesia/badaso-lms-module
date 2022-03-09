@@ -2,12 +2,11 @@
 
 namespace Uasoft\Badaso\Module\LMSModule\Providers;
 
-use Doctrine\DBAL\Schema\Schema;
 use Illuminate\Foundation\AliasLoader;
 use Illuminate\Support\ServiceProvider;
-use Uasoft\Badaso\Module\LMSModule\LMSModule;
 use Uasoft\Badaso\Module\LMSModule\Commands\LMSModuleSetup;
 use Uasoft\Badaso\Module\LMSModule\Facades\LMSModule as FacadesBadasoLMS;
+use Uasoft\Badaso\Module\LMSModule\LMSModule;
 
 class LMSModuleProvider extends ServiceProvider
 {
@@ -21,11 +20,11 @@ class LMSModuleProvider extends ServiceProvider
         $loader = AliasLoader::getInstance();
         $loader->alias('BadasoLMSModule', FacadesBadasoLMS::class);
 
-        $this->app->singleton('lms-module', function() {
+        $this->app->singleton('badaso-lms-module', function () {
             return new LMSModule();
         });
 
-        $this->loadMigrationsFrom(__DIR__ . '/../Migrations');
+        $this->loadMigrationsFrom(__DIR__.'/../Migrations');
 
         $this->loadRoutesFrom(__DIR__.'/../Routes/api.php');
 
@@ -40,7 +39,6 @@ class LMSModuleProvider extends ServiceProvider
      *
      * @return void
      */
-
     public function register()
     {
         $this->registerConsoleComannds();
