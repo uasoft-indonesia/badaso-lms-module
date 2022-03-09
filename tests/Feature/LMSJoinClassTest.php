@@ -3,7 +3,7 @@
 namespace Uasoft\Badaso\Module\LMSModule\Tests\Feature;
 
 use Uasoft\Badaso\Module\LMSModule\Helpers\Route;
-use Uasoft\Badaso\Module\LMSModule\Tests\TestCase;
+use Tests\TestCase;
 
 class LMSJoinClassTest extends TestCase
 {
