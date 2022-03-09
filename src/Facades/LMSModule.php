@@ -11,7 +11,6 @@ class LMSModule extends Facade
      *
      * @return string
      */
-
     protected static function getFacadeAccessor()
     {
         return 'badaso-lms-module';
