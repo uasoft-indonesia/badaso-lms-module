@@ -30,6 +30,17 @@ class LMSJoinClassTest extends TestCase
       $response->assertStatus(500);
   }
 
+  public function testJoinClassAsAuthorizedUserWithNoClassCodeAsInputExpectResponseStatus400()
+  {
+      $user = User::factory()->create();
+      $user->rawPassword = 'password';
+
+      $url = route('badaso.course.join');
+
+      $response = AuthHelper::asUser($this, $user)->json('POST', $url, []);
+      $response->assertStatus(400);
+  }
+
 
 
 
