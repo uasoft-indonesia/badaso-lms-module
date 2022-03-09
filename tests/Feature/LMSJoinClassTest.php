@@ -2,6 +2,7 @@
 
 namespace Uasoft\Badaso\Module\LMSModule\Tests\Feature;
 
+use Uasoft\Badaso\Module\LMSModule\Factories\CourseFactory;
 use Uasoft\Badaso\Module\LMSModule\Models\Course;
 use Uasoft\Badaso\Module\LMSModule\Models\CourseUser;
 use Uasoft\Badaso\Module\LMSModule\Models\User;
@@ -50,14 +51,7 @@ class LMSJoinClassTest extends TestCase
     $userStudent = User::factory()->create();
     $userStudent->rawPassword = 'password';
 
-    $courseUrl = route('badaso.course.add');
-    AuthHelper::asUser($this, $userTeacher)->json('POST', $courseUrl, [
-      'name' => 'Test Course',
-      'subject' => 'Test Subject',
-      'room' => 'Test room',
-    ]);
-
-    $course = Course::first();
+    $course = Course::factory()->create(['created_by' => $userTeacher->id]);
 
     $joinUrl = route('badaso.course.join');
     $response = AuthHelper::asUser($this, $userStudent)->json('POST', $joinUrl, [
@@ -75,14 +69,8 @@ class LMSJoinClassTest extends TestCase
     $userStudent = User::factory()->create();
     $userStudent->rawPassword = 'password';
 
-    $course_url = route('badaso.course.add');
-    AuthHelper::asUser($this, $userTeacher)->json('POST', $course_url, [
-      'name' => 'Test Course',
-      'subject' => 'Test Subject',
-      'room' => 'Test room',
-    ]);
+    $course = Course::factory()->create(['created_by' => $userTeacher->id]);
 
-    $course = Course::first();
     $courseUserBeforeCount = CourseUser::where(
       'course_id', $course->id)
       ->where('role', 'student')
