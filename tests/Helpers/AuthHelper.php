@@ -7,7 +7,7 @@ use Tests\TestCase;
 
 class AuthHelper
 {
-    protected static $loginUrl = '/admin/v1/auth/login';
+    protected static $loginUrl = '/badaso-api/module/lms/v1/auth/login';
 
     protected static $cache = [];
 

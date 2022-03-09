@@ -9,7 +9,7 @@ use Uasoft\Badaso\Module\LMSModule\Models\CourseUser;
 use Uasoft\Badaso\Module\LMSModule\Models\User;
 use Uasoft\Badaso\Module\LMSModule\Tests\Helpers\AuthHelper;
 
-class BadasoCourseApiTest extends TestCase
+class CourseApiTest extends TestCase
 {
     public function testCreateCourseWithoutLoginExpectResponse401()
     {
