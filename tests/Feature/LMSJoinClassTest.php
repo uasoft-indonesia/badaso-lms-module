@@ -5,7 +5,6 @@ namespace Uasoft\Badaso\Module\LMSModule\Tests\Feature;
 use Uasoft\Badaso\Module\LMSModule\Models\Course;
 use Uasoft\Badaso\Module\LMSModule\Models\CourseUser;
 use Uasoft\Badaso\Module\LMSModule\Models\User;
-use Uasoft\Badaso\Module\LMSModule\Helpers\Route;
 use Tests\TestCase;
 use Uasoft\Badaso\Module\LMSModule\Tests\Helpers\AuthHelper;
 
@@ -91,7 +90,7 @@ class LMSJoinClassTest extends TestCase
           ->count();
 
       $join_url = route('badaso.course.join');
-      $response = AuthHelper::asUser($this, $user_student)->json('POST', $join_url, [
+      AuthHelper::asUser($this, $user_student)->json('POST', $join_url, [
           'code' => $course->join_code,
       ]);
 
