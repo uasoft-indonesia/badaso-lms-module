@@ -46,6 +46,7 @@ class AuthHelper
     public static function getCachedUserToken($user)
     {
         $cacheKey = static::getCacheKey($user);
+
         return self::$cache[$cacheKey] ?? null;
     }
 

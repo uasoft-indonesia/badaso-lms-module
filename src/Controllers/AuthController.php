@@ -28,7 +28,7 @@ class AuthController extends Controller
 
             if ($token) {
                 $data = Token::createNewToken($token, Auth::user());
-                
+
                 return ApiResponse::success($data);
             }
 

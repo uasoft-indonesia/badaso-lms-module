@@ -45,7 +45,7 @@ class LoginApiTest extends TestCase
     {
         $user = User::factory()->create();
         $user->rawPassword = 'password';
-        
+
         $url = route('badaso.auth.login');
         $response = $this->json('POST', $url, [
             'email' => $user->email,

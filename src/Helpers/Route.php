@@ -2,7 +2,7 @@
 
 namespace Uasoft\Badaso\Module\LMSModule\Helpers;
 
-class Route 
+class Route
 {
     public static function getController($key)
     {
@@ -11,7 +11,7 @@ class Route
         if (! isset($controllers[$key])) {
             return 'Uasoft\\Badaso\\Module\\LMSModule\\Controllers\\'.$key;
         }
- 
+
         return $controllers[$key];
     }
 }
