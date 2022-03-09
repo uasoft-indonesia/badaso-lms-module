@@ -1,7 +1,7 @@
 <?php
 
 class TokenHelper {
-    public static function createNewToken($token, $user, $remember = false)
+    public static function createNewToken($token, $user)
     {
         $obj = new stdClass();
         $obj->accessToken = $token;

@@ -16,7 +16,6 @@ class AuthController extends Controller
     public function login(Request $request)
     {
         try {
-            $remember = $request->get('remember', false);
             $credentials = [
                 'email'    => $request->email,
                 'password' => $request->password,
@@ -29,7 +28,7 @@ class AuthController extends Controller
             $token = Auth::attempt($credentials);
 
             if ($token) {
-                $data =  TokenHelper::createNewToken($token, Auth::user(), $remember);
+                $data =  TokenHelper::createNewToken($token, Auth::user());
                 return ApiResponse::success($data);
             }
 
