@@ -12,7 +12,7 @@ class CreateCourseUserTable extends Migration
     public function __construct()
     {
         $this->tableNamePrefix = config('badaso.database.prefix');
-        $this->tableName = $this->tableNamePrefix . 'course_user';
+        $this->tableName = $this->tableNamePrefix.'course_user';
     }
 
     /**
@@ -31,12 +31,12 @@ class CreateCourseUserTable extends Migration
             $table->primary(['course_id', 'user_id']);
             $table->foreign('course_id')
                 ->references('id')
-                ->on($this->tableNamePrefix . 'courses')
+                ->on($this->tableNamePrefix.'courses')
                 ->onDelete('cascade')
                 ->onUpdate('cascade');
             $table->foreign('user_id')
                 ->references('id')
-                ->on($this->tableNamePrefix . 'users')
+                ->on($this->tableNamePrefix.'users')
                 ->onDelete('cascade')
                 ->onUpdate('cascade');
         });

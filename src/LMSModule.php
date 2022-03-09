@@ -2,7 +2,7 @@
 
 namespace Uasoft\Badaso\Module\LMSModule;
 
-class LMSModule 
+class LMSModule
 {
     protected $protected_tables = [
         'course_user',
