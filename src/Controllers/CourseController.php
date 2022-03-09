@@ -2,10 +2,7 @@
 
 namespace Uasoft\Badaso\Module\LMSModule\Controllers;
 
-use Doctrine\DBAL\Exception\ConstraintViolationException;
-use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Exception;
-use Facade\FlareClient\Http\Exceptions\NotFound;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
@@ -17,7 +14,6 @@ use Uasoft\Badaso\Helpers\ApiResponse;
 use Uasoft\Badaso\Module\LMSModule\Enums\CourseUserRole;
 use Uasoft\Badaso\Module\LMSModule\Models\Course;
 use Uasoft\Badaso\Module\LMSModule\Models\CourseUser;
-use UniSharp\LaravelFilemanager\Exceptions\DuplicateFileNameException;
 
 class CourseController extends Controller
 {
