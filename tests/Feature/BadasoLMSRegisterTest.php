@@ -47,7 +47,7 @@ class BadasoLMSRegisterTest extends TestCase
             'password_confirmation' => $password
         ];
 
-        $response = $this->json("POST", route('badaso.user.register'), $create_user);
+        $response = $this->json("POST", route('badaso.auth.register'), $create_user);
         $response->assertStatus(200);
     }
 
@@ -63,7 +63,7 @@ class BadasoLMSRegisterTest extends TestCase
             'password' => $password,
         ];
 
-        $response = $this->json("POST", route('badaso.user.register'), $create_user);
+        $response = $this->json("POST", route('badaso.auth.register'), $create_user);
         $response->assertStatus(400);
     }
 
@@ -84,7 +84,7 @@ class BadasoLMSRegisterTest extends TestCase
             'password' => $password,
         ]);
 
-        $response = $this->json("POST", route('badaso.user.register'), $create_user);
+        $response = $this->json("POST", route('badaso.auth.register'), $create_user);
         $response->assertStatus(400);
     }
 
@@ -105,7 +105,7 @@ class BadasoLMSRegisterTest extends TestCase
             'password' => $password,
         ]);
 
-        $response = $this->json("POST", route('badaso.user.register'), $create_user);
+        $response = $this->json("POST", route('badaso.auth.register'), $create_user);
         $response->assertStatus(400);
     }
 }
