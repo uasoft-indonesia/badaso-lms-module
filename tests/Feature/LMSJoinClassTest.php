@@ -15,5 +15,14 @@ class LMSJoinClassTest extends TestCase
     $response->assertStatus(401);
   }
 
+  public function testJoinClassAsAuthorizedUserWithUnknownClassCodeExpectResponseStatus404()
+  {
+      $url = route('badaso.course.join');
+      $response = $this->json('POST', $url, [
+          'code' => 'xxx'
+      ]);
+      $response->assertStatus(404);
+  }
+
 
 }
