@@ -84,8 +84,8 @@ class LMSJoinClassTest extends TestCase
 
     $course = Course::first();
     $courseUserBeforeCount = CourseUser::where(
-      'course_id', '=', $course->id, 'and')
-      ->where('role', '=', 'student')
+      'course_id', $course->id)
+      ->where('role', 'student')
       ->count();
 
     $joinUrl = route('badaso.course.join');
@@ -94,8 +94,8 @@ class LMSJoinClassTest extends TestCase
     ]);
 
     $courseUserAfterCount = CourseUser::where(
-      'course_id', '=', $course->id, 'and')
-      ->where('role', '=', 'student')
+      'course_id', $course->id)
+      ->where('role', 'student')
       ->count();
 
     $this->assertEquals(0, $courseUserBeforeCount);
