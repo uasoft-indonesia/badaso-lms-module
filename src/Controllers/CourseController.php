@@ -88,7 +88,7 @@ class CourseController extends Controller
             if ($e instanceof ValidationException){
                 return ApiResponse::failed($e);
             } else if ($e instanceof ModelNotFoundException){
-                return ApiResponse::failed('Class code is invalid');
+                abort(404, 'Class not found');
             } else if ($e instanceof QueryException){
                 return ApiResponse::failed('You have been registered in this class already');
             }
