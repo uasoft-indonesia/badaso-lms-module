@@ -92,6 +92,7 @@ class CourseController extends Controller
             } elseif ($e instanceof QueryException) {
                 return ApiResponse::failed('You have been registered in this class already');
             }
+
             return ApiResponse::failed('Failed to join class, please try again');
         }
     }
