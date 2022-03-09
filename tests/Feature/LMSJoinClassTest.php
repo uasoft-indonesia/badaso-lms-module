@@ -27,8 +27,10 @@ class LMSJoinClassTest extends TestCase
       $response = AuthHelper::asUser($this, $user)->json('POST', $url, [
           'code' => 'xxx'
       ]);
-      $response->assertStatus(404);
+      $response->assertStatus(500);
   }
+
+
 
 
 }
