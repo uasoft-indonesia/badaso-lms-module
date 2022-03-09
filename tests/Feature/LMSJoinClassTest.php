@@ -17,7 +17,7 @@ class LMSJoinClassTest extends TestCase
     $response->assertStatus(401);
   }
 
-  public function testJoinClassAsAuthorizedUserWithUnknownClassCodeExpectResponseStatus404()
+  public function testJoinClassAsAuthorizedUserWithUnknownClassCodeExpectResponseStatus500()
   {
       $user = User::factory()->create();
       $user->rawPassword = 'password';
