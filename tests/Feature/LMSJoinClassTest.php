@@ -44,14 +44,14 @@ class LMSJoinClassTest extends TestCase
 
   public function testJoinClassAsAuthorizedUserWithValidClassCodeExpectResponseStatus200()
   {
-    $user_teacher = User::factory()->create();
-    $user_teacher->rawPassword = 'password';
+    $userTeacher = User::factory()->create();
+    $userTeacher->rawPassword = 'password';
 
-    $user_student = User::factory()->create();
-    $user_student->rawPassword = 'password';
+    $userStudent = User::factory()->create();
+    $userStudent->rawPassword = 'password';
 
-    $course_url = route('badaso.course.add');
-    AuthHelper::asUser($this, $user_teacher)->json('POST', $course_url, [
+    $courseUrl = route('badaso.course.add');
+    AuthHelper::asUser($this, $userTeacher)->json('POST', $courseUrl, [
       'name' => 'Test Course',
       'subject' => 'Test Subject',
       'room' => 'Test room',
@@ -59,8 +59,8 @@ class LMSJoinClassTest extends TestCase
 
     $course = Course::first();
 
-    $join_url = route('badaso.course.join');
-    $response = AuthHelper::asUser($this, $user_student)->json('POST', $join_url, [
+    $joinUrl = route('badaso.course.join');
+    $response = AuthHelper::asUser($this, $userStudent)->json('POST', $joinUrl, [
       'code' => $course->join_code,
     ]);
 
@@ -69,36 +69,36 @@ class LMSJoinClassTest extends TestCase
 
   public function testJoinClassAsAuthorizeUserWithValidClassCodeShouldAddStudent()
   {
-    $user_teacher = User::factory()->create();
-    $user_teacher->rawPassword = 'password';
+    $userTeacher = User::factory()->create();
+    $userTeacher->rawPassword = 'password';
 
-    $user_student = User::factory()->create();
-    $user_student->rawPassword = 'password';
+    $userStudent = User::factory()->create();
+    $userStudent->rawPassword = 'password';
 
     $course_url = route('badaso.course.add');
-    AuthHelper::asUser($this, $user_teacher)->json('POST', $course_url, [
+    AuthHelper::asUser($this, $userTeacher)->json('POST', $course_url, [
       'name' => 'Test Course',
       'subject' => 'Test Subject',
       'room' => 'Test room',
     ]);
 
     $course = Course::first();
-    $course_user_before_count = CourseUser::where(
+    $courseUserBeforeCount = CourseUser::where(
       'course_id', '=', $course->id, 'and')
       ->where('role', '=', 'student')
       ->count();
 
-    $join_url = route('badaso.course.join');
-    AuthHelper::asUser($this, $user_student)->json('POST', $join_url, [
+    $joinUrl = route('badaso.course.join');
+    AuthHelper::asUser($this, $userStudent)->json('POST', $joinUrl, [
       'code' => $course->join_code,
     ]);
 
-    $course_user_after_count = CourseUser::where(
+    $courseUserAfterCount = CourseUser::where(
       'course_id', '=', $course->id, 'and')
       ->where('role', '=', 'student')
       ->count();
 
-    $this->assertEquals(0, $course_user_before_count);
-    $this->assertEquals(1, $course_user_after_count);
+    $this->assertEquals(0, $courseUserBeforeCount);
+    $this->assertEquals(1, $courseUserAfterCount);
   }
 }
