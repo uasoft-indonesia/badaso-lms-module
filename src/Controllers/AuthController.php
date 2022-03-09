@@ -12,7 +12,7 @@ use Uasoft\Badaso\Module\LMSModule\Models\User;
 use Illuminate\Support\Facades\Hash;
 
 
-class UserController extends Controller
+class AuthController extends Controller
 {
     public function register(Request $request)
     {

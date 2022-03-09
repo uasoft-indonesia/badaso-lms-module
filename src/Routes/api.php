@@ -10,7 +10,7 @@ $api_route_prefix = config('Badaso.api_route_prefix', 'badaso-api');
 Route::group(['prefix' => $api_route_prefix, 'as' => 'badaso.', 'middleware' => [ApiRequest::class]], function() {
     Route::group(['prefix' => 'module/lms/v1'], function() {
         Route::group(['prefix' => 'user', 'as' => 'user.'], function() {
-            Route::post('/register', HelpersRoute::getController('UserController@register'))->name('register');
+            Route::post('/register', HelpersRoute::getController('AuthController@register'))->name('register');
         });
 
         Route::group(['prefix' => 'course', 'as' => 'course.'], function() {
