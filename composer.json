@@ -1,11 +1,36 @@
 {
-    "name": "nsire/badaso-lms-module",
+    "name": "badaso/lms-module",
+    "version": "0.1.0",
+    "description": "Learning management system on badaso",
+    "keywords": [
+        "laravel",
+        "admin",
+        "panel",
+        "dashboard",
+        "pwa",
+        "vue",
+        "generator",
+        "lms",
+        "badaso"
+    ],
+    "license": "MIT",
+    "homepage": "https://badaso-lms.uatech.co.id/",
+    "support": {
+        "issues": "https://github.com/uasoft-indonesia/badaso-lms-module/issues",
+        "discussion": "https://github.com/uasoft-indonesia/badaso-lms-module/discussions",
+        "source": "https://github.com/uasoft-indonesia/badaso-lms-module"
+    },
+    "type": "library",
     "autoload": {
         "psr-4": {
-            "Nsire\\BadasoLmsModule\\": "src/"
+            "Uasoft\\Badaso\\Module\\LMS\\": "src/"
         }
     },
     "authors": [
+        {
+            "name": "Uasoft",
+            "email": "hello@uatech.co.id"
+        },
         {
             "name": "nofamex",
             "email": "nsiren517@gmail.com"
