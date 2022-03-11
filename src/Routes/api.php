@@ -18,5 +18,11 @@ Route::group(['prefix' => $api_route_prefix, 'as' => 'badaso.', 'middleware' => 
                 ->middleware(BadasoAuthenticate::class)
                 ->name('add');
         });
+
+        Route::group(['prefix' => 'courseuser', 'as' => 'courseuser.'], function() {
+            Route::get('/', HelpersRoute::getController('CourseUserController@view'))
+                ->middleware(BadasoAuthenticate::class)
+                ->name('view');
+        });
     });
 });
