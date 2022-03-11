@@ -7,16 +7,21 @@ use Uasoft\Badaso\Module\LMSModule\Helpers\Route as HelpersRoute;
 
 $api_route_prefix = config('Badaso.api_route_prefix', 'badaso-api');
 
-Route::group(['prefix' => $api_route_prefix, 'as' => 'badaso.', 'middleware' => [ApiRequest::class]], function() {
-    Route::group(['prefix' => 'module/lms/v1'], function() {
-        Route::group(['prefix' => 'user'], function() {
-            Route::get('/home', HelpersRoute::getController('UserController@home'));
+Route::group(['prefix' => $api_route_prefix, 'as' => 'badaso.', 'middleware' => [ApiRequest::class]], function () {
+    Route::group(['prefix' => 'module/lms/v1'], function () {
+        Route::group(['prefix' => 'auth', 'as' => 'auth.'], function () {
+            Route::post('/login', HelpersRoute::getController('AuthController@login'))
+                ->name('login');
         });
 
-        Route::group(['prefix' => 'course', 'as' => 'course.'], function() {
+        Route::group(['prefix' => 'course', 'as' => 'course.'], function () {
             Route::post('/', HelpersRoute::getController('CourseController@add'))
                 ->middleware(BadasoAuthenticate::class)
                 ->name('add');
+
+            Route::post('/join', HelpersRoute::getController('CourseController@join'))
+                ->middleware(BadasoAuthenticate::class)
+                ->name('join');
         });
 
         Route::group(['prefix' => 'courseuser', 'as' => 'courseuser.'], function() {

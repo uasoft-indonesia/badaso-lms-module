@@ -3,11 +3,10 @@
 namespace Uasoft\Badaso\Module\LMSModule\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Uasoft\Badaso\Models\User as BadasoUser;
+use Uasoft\Badaso\Models\User as ModelsUser;
 use Uasoft\Badaso\Module\LMSModule\Factories\UserFactory;
-use Uasoft\Badaso\Module\LMSModule\Models\Course;
 
-class User extends BadasoUser
+class User extends ModelsUser
 {
     use HasFactory;
 
