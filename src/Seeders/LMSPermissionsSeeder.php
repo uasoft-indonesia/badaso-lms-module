@@ -10,5 +10,6 @@ class LMSPermissionsSeeder extends Seeder
     public function run()
     {
         Permission::generateFor('courses');
+        Permission::generateFor('auth');
     }
 }

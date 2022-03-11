@@ -14,7 +14,8 @@
   "autoload": {
     "psr-4": {
       "Uasoft\\Badaso\\Module\\LMSModule\\": "src/",
-      "Uasoft\\Badaso\\Module\\LMSModule\\Seeders\\": "src/seeders"
+      "Uasoft\\Badaso\\Module\\LMSModule\\Seeders\\": "src/Seeders",
+      "Uasoft\\Badaso\\Module\\LMSModule\\Factories\\": "src/Factories"
     }
   },
   "autoload-dev": {

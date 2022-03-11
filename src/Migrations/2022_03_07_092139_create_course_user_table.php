@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateCoursesTable extends Migration
+class CreateCourseUserTable extends Migration
 {
     private $tableNamePrefix;
     private $tableName;
@@ -12,7 +12,7 @@ class CreateCoursesTable extends Migration
     public function __construct()
     {
         $this->tableNamePrefix = config('badaso.database.prefix');
-        $this->tableName = $this->tableNamePrefix . 'courses';
+        $this->tableName = $this->tableNamePrefix.'course_user';
     }
 
     /**
@@ -23,17 +23,20 @@ class CreateCoursesTable extends Migration
     public function up()
     {
         Schema::create($this->tableName, function (Blueprint $table) {
-            $table->id();
-            $table->string('name', 255)->nullable();
-            $table->string('subject', 255)->nullable();
-            $table->string('room', 255)->nullable();
-            $table->string('join_code', 63)->unique();
-            $table->foreignId('created_by');
+            $table->foreignId('course_id');
+            $table->foreignId('user_id');
+            $table->enum('role', ['student', 'teacher']);
             $table->timestamps();
 
-            $table->foreign('created_by')
+            $table->primary(['course_id', 'user_id']);
+            $table->foreign('course_id')
                 ->references('id')
-                ->on($this->tableNamePrefix . 'users')
+                ->on($this->tableNamePrefix.'courses')
+                ->onDelete('cascade')
+                ->onUpdate('cascade');
+            $table->foreign('user_id')
+                ->references('id')
+                ->on($this->tableNamePrefix.'users')
                 ->onDelete('cascade')
                 ->onUpdate('cascade');
         });
