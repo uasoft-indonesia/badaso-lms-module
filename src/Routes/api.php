@@ -25,7 +25,7 @@ Route::group(['prefix' => $api_route_prefix, 'as' => 'badaso.', 'middleware' => 
         });
 
         Route::group(['prefix' => 'courseuser', 'as' => 'courseuser.'], function() {
-            Route::get('/', HelpersRoute::getController('CourseUserController@view'))
+            Route::get('/view', HelpersRoute::getController('CourseUserController@view'))
                 ->middleware(BadasoAuthenticate::class)
                 ->name('view');
         });
