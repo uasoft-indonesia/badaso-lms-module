@@ -33,6 +33,7 @@ class CourseUserController extends Controller
                 )->pluck('name')->toArray();
                 $crs->created_by = $teacher[0];
             }
+            
             return ApiResponse::success($courses);
         } catch (Exception $e) {
             if ($e instanceof ValidationException) {
