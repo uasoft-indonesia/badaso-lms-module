@@ -7,14 +7,18 @@ use Illuminate\Support\Facades\Artisan;
 use Symfony\Component\VarExporter\VarExporter;
 use Uasoft\Badaso\Module\LMSModule\Facades\LMSModule;
 
-class LMSModuleSetup extends Command {
+/**
+ * @codeCoverageIgnore
+ */
+class LMSModuleSetup extends Command
+{
     protected $file;
     /**
      * The console command name.
      *
      * @var string
      */
-    protected $name = 'badaso-lms:setup';
+    protected $name = 'badaso-lms-module:setup';
 
     /**
      * The console command description.
@@ -28,7 +32,8 @@ class LMSModuleSetup extends Command {
      *
      * @return void
      */
-    public function __construct() {
+    public function __construct()
+    {
         $this->file = app('files');
         parent::__construct();
     }
@@ -38,31 +43,36 @@ class LMSModuleSetup extends Command {
      *
      * @return void
      */
-    public function handle() {
+    public function handle()
+    {
         $this->addBadasoEnv();
         $this->publishBadasoProvider();
         $this->addLMSTablesToHiddenTables();
         $this->linkStorage();
     }
 
-    protected function publishBadasoProvider() {
+    protected function publishBadasoProvider()
+    {
         Artisan::call('vendor:publish', ['--tag' => 'BadasoLMSModule']);
 
         $this->info('Badaso LMS provider published');
     }
 
-    protected function linkStorage() {
+    protected function linkStorage()
+    {
         Artisan::call('storage:link');
     }
 
-    protected function envListUpload() {
+    protected function envListUpload()
+    {
         return [
             'MIX_LMS_URL_PREFIX' => '/lms',
             'MIX_FRONTEND_URL' => 'http://localhost:8000',
         ];
     }
 
-    protected function addBadasoEnv() {
+    protected function addBadasoEnv()
+    {
         try {
             $env_path = base_path('.env');
 
@@ -74,7 +84,7 @@ class LMSModuleSetup extends Command {
             $new_env_adding = [];
             foreach ($env_will_adding as $key_add_env => $val_add_env) {
                 $status_adding = true;
-                foreach ($arr_env_file as $key_env_file => $val_env_file) {
+                foreach ($arr_env_file as $val_env_file) {
                     $val_env_file = trim($val_env_file);
                     if (substr($val_env_file, 0, 1) != '#' && $val_env_file != '' && strstr($val_env_file, $key_add_env)) {
                         $status_adding = false;
@@ -86,7 +96,7 @@ class LMSModuleSetup extends Command {
                 }
             }
 
-            foreach ($new_env_adding as $index_env_add => $val_env_add) {
+            foreach ($new_env_adding as $val_env_add) {
                 $arr_env_file[] = $val_env_add;
             }
 
@@ -99,13 +109,14 @@ class LMSModuleSetup extends Command {
         }
     }
 
-    protected function addLMSTablesToHiddenTables() {
+    protected function addLMSTablesToHiddenTables()
+    {
         try {
             $config_path = config_path('badaso-hidden-tables.php');
             $config_hidden_tables = require $config_path;
             $tables = LMSModule::getProtectedTables();
 
-            foreach ($tables as $key => $value) {
+            foreach ($tables as $value) {
                 if (! in_array($value, $config_hidden_tables)) {
                     array_push($config_hidden_tables, $value);
                 }
