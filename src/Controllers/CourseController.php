@@ -99,4 +99,37 @@ class CourseController extends Controller
             return ApiResponse::failed('Failed to join class, please try again');
         }
     }
+
+    public function people(Request $request, $id)
+    {
+        try {
+            $userIds = CourseUser::where(
+                'course_id',
+                '=',
+                $id
+            )->pluck('user_id')->toArray();
+
+            $people = [];
+
+            foreach ($userIds as $uid) {
+                $role = CourseUser::where([
+                    ['course_id', '=', $id],
+                    ['user_id', '=', $uid]
+                ])->pluck('role')->toArray();
+
+                $name = User::find(
+                    $uid
+                )->name;
+
+                $person = array('name' => $name, 'role' => $role[0]);
+                array_push($people, $person);
+            }
+
+            return ApiResponse::success($people);
+        } catch (Exception $e) {
+            if ($e instanceof ValidationException) {
+                return ApiResponse::failed($e);
+            }
+        }
+    }
 }

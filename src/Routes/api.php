@@ -22,6 +22,10 @@ Route::group(['prefix' => $api_route_prefix, 'as' => 'badaso.', 'middleware' => 
             Route::post('/join', HelpersRoute::getController('CourseController@join'))
                 ->middleware(BadasoAuthenticate::class)
                 ->name('join');
+
+            Route::get('/{id}/people', HelpersRoute::getController('CourseController@people'))
+                ->middleware(BadasoAuthenticate::class)
+                ->name('people');
         });
     });
 });
