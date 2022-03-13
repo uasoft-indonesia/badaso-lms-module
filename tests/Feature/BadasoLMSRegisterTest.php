@@ -63,7 +63,7 @@ class BadasoLMSRegisterTest extends TestCase
             'password' => $password,
         ];
 
-        $response = $this->json("POST", route('badaso.auth.register'), $create_user);
+        $response = $this->json('POST', route('badaso.auth.register'), $create_user);
         $response->assertStatus(400);
     }
 
@@ -89,7 +89,8 @@ class BadasoLMSRegisterTest extends TestCase
         $response->assertStatus(400);
     }
 
-    public function testAddUserWithExistingEmail() {
+    public function testAddUserWithExistingEmail()
+    {
         $name = Str::random(10);
         $password = Hash::make($name);
         $create_user = [

@@ -47,7 +47,7 @@ class AuthController extends Controller
         } catch (Exception $e) {
             DB::rollBack();
 
-            if($e instanceof ValidationException) {
+            if ($e instanceof ValidationException) {
                 return ApiResponse::failed($e);
             }
 
