@@ -3,14 +3,13 @@
 namespace Uasoft\Badaso\Module\LMSModule\Controllers;
 
 use Exception;
-use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
 use Uasoft\Badaso\Controllers\Controller;
 use Uasoft\Badaso\Helpers\ApiResponse;
 
-use Uasoft\Badaso\Module\LMSModule\Models\User;
 use Uasoft\Badaso\Module\LMSModule\Models\Course;
 use Uasoft\Badaso\Module\LMSModule\Models\CourseUser;
+use Uasoft\Badaso\Module\LMSModule\Models\User;
 
 class CourseUserController extends Controller
 {
@@ -25,14 +24,12 @@ class CourseUserController extends Controller
 
             $courses = [];
 
-            foreach ($courseUsers as $cid) 
-            {
+            foreach ($courseUsers as $cid) {
                 $course = Course::find($cid);
                 array_push($courses, $course);
             }
 
-            foreach ($courses as $crs)
-            {
+            foreach ($courses as $crs) {
                 $teacher = User::find(
                     $crs->createdBy
                 )->pluck('name')->toArray();
@@ -43,7 +40,7 @@ class CourseUserController extends Controller
             // return $courses;
             return ApiResponse::success($courses);
         } catch (Exception $e) {
-            if ($e instanceof ValidationException){
+            if ($e instanceof ValidationException) {
                 
                 return ApiResponse::failed($e);
             }
