@@ -32,13 +32,11 @@ class CourseUserController extends Controller
                 $teacher = User::find(
                     $crs->createdBy
                 )->pluck('name')->toArray();
-                
                 $crs->created_by = $teacher[0];
             }
             return ApiResponse::success($courses);
         } catch (Exception $e) {
             if ($e instanceof ValidationException) {
-                
                 return ApiResponse::failed($e);
             }
         }
