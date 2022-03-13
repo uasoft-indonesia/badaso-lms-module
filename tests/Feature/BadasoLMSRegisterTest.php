@@ -2,22 +2,22 @@
 
 namespace Uasoft\Badaso\Module\LMS\Tests\Feature;
 
-use Tests\TestCase;
-use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
+use Tests\TestCase;
 use Uasoft\Badaso\Helpers\CallHelperTest;
 use Uasoft\Badaso\Module\LMSModule\Models\User;
 
 class BadasoLMSRegisterTest extends TestCase
 {
-   public function testStartInit()
+    public function testStartInit()
     {
         // init user login
         CallHelperTest::handleUserAdminAuthorize($this);
     }
 
-   /** @test */
-   public function testAddUserDatabase()
+    /** @test */
+    public function testAddUserDatabase()
     {
         $name = Str::random(10);
         $create_user = [
@@ -27,10 +27,10 @@ class BadasoLMSRegisterTest extends TestCase
             'password' => Hash::make($name),
         ];
         $user = User::create($create_user);
-        $this->assertEquals($create_user['name'] ,$user->name);
-        $this->assertEquals($create_user['username'] ,$user->username);
-        $this->assertEquals($create_user['email'] ,$user->email);
-        $this->assertEquals($create_user['password'] ,$user->password);
+        $this->assertEquals($create_user['name'], $user->name);
+        $this->assertEquals($create_user['username'], $user->username);
+        $this->assertEquals($create_user['email'], $user->email);
+        $this->assertEquals($create_user['password'], $user->password);
 
         $user->delete();
     }
@@ -44,10 +44,10 @@ class BadasoLMSRegisterTest extends TestCase
             'username' => $name,
             'email' => $name.'@gmail.com',
             'password' => $password,
-            'password_confirmation' => $password
+            'password_confirmation' => $password,
         ];
 
-        $response = $this->json("POST", route('badaso.auth.register'), $create_user);
+        $response = $this->json('POST', route('badaso.auth.register'), $create_user);
         $response->assertStatus(200);
     }
 
@@ -67,7 +67,8 @@ class BadasoLMSRegisterTest extends TestCase
         $response->assertStatus(400);
     }
 
-    public function testAddUserWithExistingUsername() {
+    public function testAddUserWithExistingUsername()
+    {
         $name = Str::random(10);
         $password = Hash::make($name);
         $create_user = [
@@ -78,13 +79,13 @@ class BadasoLMSRegisterTest extends TestCase
         ];
 
         User::factory()->create([
-            'name' => "test",
+            'name' => 'test',
             'username' => $name,
             'email' => 'test@gmail.com',
             'password' => $password,
         ]);
 
-        $response = $this->json("POST", route('badaso.auth.register'), $create_user);
+        $response = $this->json('POST', route('badaso.auth.register'), $create_user);
         $response->assertStatus(400);
     }
 
@@ -99,13 +100,13 @@ class BadasoLMSRegisterTest extends TestCase
         ];
 
         User::factory()->create([
-            'name' => "test",
-            'username' => "test",
+            'name' => 'test',
+            'username' => 'test',
             'email' => $name.'@gmail.com',
             'password' => $password,
         ]);
 
-        $response = $this->json("POST", route('badaso.auth.register'), $create_user);
+        $response = $this->json('POST', route('badaso.auth.register'), $create_user);
         $response->assertStatus(400);
     }
 }

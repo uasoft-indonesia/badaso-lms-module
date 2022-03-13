@@ -4,15 +4,15 @@ namespace Uasoft\Badaso\Module\LMSModule\Controllers;
 
 use Exception;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Validation\ValidationException;
-use Uasoft\Badaso\Module\LMSModule\Models\User;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\ValidationException;
 use Tymon\JWTAuth\Exceptions\JWTException;
 use Uasoft\Badaso\Controllers\Controller;
 use Uasoft\Badaso\Helpers\ApiResponse;
 use Uasoft\Badaso\Module\LMSModule\Helpers\Token;
+use Uasoft\Badaso\Module\LMSModule\Models\User;
 
 class AuthController extends Controller
 {
