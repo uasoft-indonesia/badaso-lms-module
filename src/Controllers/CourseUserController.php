@@ -17,21 +17,21 @@ class CourseUserController extends Controller
         try {
             $user = auth()->user();
 
-            $courseUsers = CourseUser::where(
+            $courseUserIds = CourseUser::where(
                 'user_id', '=', $user->id
             )->pluck('course_id')->toArray();
             $courses = [];
 
-            foreach ($courseUsers as $cid) {
-                $course = Course::find($cid);
+            foreach ($courseUserIds as $courseUserId) {
+                $course = Course::find($courseUserId);
                 array_push($courses, $course);
             }
 
-            foreach ($courses as $crs) {
+            foreach ($courses as $course) {
                 $teacher = User::find(
-                    $crs->createdBy
+                    $course->createdBy
                 )->pluck('name')->toArray();
-                $crs->created_by = $teacher[0];
+                $course->created_by = $teacher[0];
             }
 
             return ApiResponse::success($courses);
