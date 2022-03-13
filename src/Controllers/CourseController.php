@@ -12,9 +12,9 @@ use Nette\Utils\Random;
 use Uasoft\Badaso\Controllers\Controller;
 use Uasoft\Badaso\Helpers\ApiResponse;
 use Uasoft\Badaso\Module\LMSModule\Enums\CourseUserRole;
-use Uasoft\Badaso\Module\LMSModule\Models\User;
 use Uasoft\Badaso\Module\LMSModule\Models\Course;
 use Uasoft\Badaso\Module\LMSModule\Models\CourseUser;
+use Uasoft\Badaso\Module\LMSModule\Models\User;
 
 class CourseController extends Controller
 {
@@ -114,14 +114,14 @@ class CourseController extends Controller
             foreach ($userIds as $uid) {
                 $role = CourseUser::where([
                     ['course_id', '=', $id],
-                    ['user_id', '=', $uid]
+                    ['user_id', '=', $uid],
                 ])->pluck('role')->toArray();
 
                 $name = User::find(
                     $uid
                 )->name;
 
-                $person = array('name' => $name, 'role' => $role[0]);
+                $person = ['name' => $name, 'role' => $role[0]];
                 array_push($people, $person);
             }
 
