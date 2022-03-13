@@ -14,6 +14,7 @@ use Uasoft\Badaso\Helpers\ApiResponse;
 use Uasoft\Badaso\Module\LMSModule\Enums\CourseUserRole;
 use Uasoft\Badaso\Module\LMSModule\Models\Course;
 use Uasoft\Badaso\Module\LMSModule\Models\CourseUser;
+use Uasoft\Badaso\Module\LMSModule\Models\User;
 
 class CourseController extends Controller
 {
@@ -70,7 +71,9 @@ class CourseController extends Controller
             ]);
 
             $course = Course::where(
-                'join_code', '=', $request->input('code')
+                'join_code',
+                '=',
+                $request->input('code')
             )->firstOrFail();
 
             $courseUser = CourseUser::create([
@@ -94,6 +97,39 @@ class CourseController extends Controller
             }
 
             return ApiResponse::failed('Failed to join class, please try again');
+        }
+    }
+
+    public function people(Request $request, $id)
+    {
+        try {
+            $userIds = CourseUser::where(
+                'course_id',
+                '=',
+                $id
+            )->pluck('user_id')->toArray();
+
+            $people = [];
+
+            foreach ($userIds as $uid) {
+                $role = CourseUser::where([
+                    ['course_id', '=', $id],
+                    ['user_id', '=', $uid],
+                ])->pluck('role')->toArray();
+
+                $name = User::find(
+                    $uid
+                )->name;
+
+                $person = ['name' => $name, 'role' => $role[0]];
+                array_push($people, $person);
+            }
+
+            return ApiResponse::success($people);
+        } catch (Exception $e) {
+            if ($e instanceof ValidationException) {
+                return ApiResponse::failed($e);
+            }
         }
     }
 }
