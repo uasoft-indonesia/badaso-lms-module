@@ -51,7 +51,6 @@ class BadasoLMSRegisterTest extends TestCase
         $response->assertStatus(200);
     }
 
-
     public function testAddUserWithNotEnoughParameter()
     {
         $name = Str::random(10);
