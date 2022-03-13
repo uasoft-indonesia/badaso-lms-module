@@ -21,7 +21,6 @@ class CourseUserController extends Controller
             $courseUsers = CourseUser::where(
                 'user_id', '=', $user->id
             )->pluck('course_id')->toArray();
-
             $courses = [];
 
             foreach ($courseUsers as $cid) {
@@ -36,8 +35,6 @@ class CourseUserController extends Controller
                 
                 $crs->created_by = $teacher[0];
             }
-            
-            // return $courses;
             return ApiResponse::success($courses);
         } catch (Exception $e) {
             if ($e instanceof ValidationException) {
