@@ -33,7 +33,7 @@ class AuthController extends Controller
                 return ApiResponse::failed('Password does not match, please try again');
             }
 
-            $user = User::factory()->create([
+            $user = User::create([
                 'name' => $request->input('name'),
                 'email' => $request->input('email'),
                 'username' => $request->input('username'),
