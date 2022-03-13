@@ -29,8 +29,6 @@ class RegisterTest extends TestCase
         $this->assertEquals($create_user['username'], $user->username);
         $this->assertEquals($create_user['email'], $user->email);
         $this->assertEquals($create_user['password'], $user->password);
-
-        $user->delete();
     }
 
     public function testAddUser()
