@@ -12,6 +12,8 @@ Route::group(['prefix' => $api_route_prefix, 'as' => 'badaso.', 'middleware' => 
         Route::group(['prefix' => 'auth', 'as' => 'auth.'], function () {
             Route::post('/login', HelpersRoute::getController('AuthController@login'))
                 ->name('login');
+            Route::post('/register', HelpersRoute::getController('AuthController@register'))
+                ->name('register');
         });
 
         Route::group(['prefix' => 'course', 'as' => 'course.'], function () {
