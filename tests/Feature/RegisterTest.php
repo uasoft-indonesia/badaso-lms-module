@@ -8,15 +8,13 @@ use Tests\TestCase;
 use Uasoft\Badaso\Helpers\CallHelperTest;
 use Uasoft\Badaso\Module\LMSModule\Models\User;
 
-class BadasoLMSRegisterTest extends TestCase
+class RegisterTest extends TestCase
 {
     public function testStartInit()
     {
-        // init user login
         CallHelperTest::handleUserAdminAuthorize($this);
     }
 
-    /** @test */
     public function testAddUserDatabase()
     {
         $name = Str::random(10);
