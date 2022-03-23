@@ -47,7 +47,7 @@ class CourseController extends Controller
             }
         }
     }
-    
+
     public function add(Request $request)
     {
         DB::beginTransaction();
