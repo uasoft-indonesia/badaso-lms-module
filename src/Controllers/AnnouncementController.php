@@ -90,6 +90,8 @@ class AnnouncementController extends Controller
 
             $announcement->content = $request->input('content');
             $announcement->save();
+
+            return ApiResponse::success($announcement->toArray());
         } catch (Exception $e) {
             return ApiResponse::failed($e);
         }
