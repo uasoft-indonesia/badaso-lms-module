@@ -67,6 +67,10 @@ class AnnouncementController extends Controller
     public function edit(Request $request, $id)
     {
         try {
+            $request->validate([
+                'content' => 'required|string|max:65535',
+            ]);
+
             if (! $announcement = Announcement::find($id)) {
                 throw ValidationException::withMessages([
                     'id' => 'Announcement not found',
