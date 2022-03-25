@@ -190,7 +190,24 @@ class AnnouncementApiTest extends TestCase
         $user->rawPassword = 'password';
 
         $url = route('badaso.announcement.edit', ['id' => 1]);
-        $response = AuthHelper::asUser($this, $user)->json('PUT', $url);
+        $response = AuthHelper::asUser($this, $user)->json('PUT', $url, [
+            'content' => 'Test content',
+        ]);
+
+        $response->assertStatus(400);
+    }
+
+    public function testEditAnnouncementGivenUserIsNotCreatorExpectResponse400()
+    {
+        $user = User::factory()->create();
+        $user->rawPassword = 'password';
+
+        $announcement = Announcement::factory()->create();
+
+        $url = route('badaso.announcement.edit', ['id' => $announcement->id]);
+        $response = AuthHelper::asUser($this, $user)->json('PUT', $url, [
+            'content' => 'Test content',
+        ]);
 
         $response->assertStatus(400);
     }
