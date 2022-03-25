@@ -87,6 +87,9 @@ class AnnouncementController extends Controller
                     'id' => 'Must enroll the course to edit the announcement',
                 ]);
             }
+
+            $announcement->content = $request->input('content');
+            $announcement->save();
         } catch (Exception $e) {
             return ApiResponse::failed($e);
         }
