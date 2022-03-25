@@ -98,4 +98,11 @@ class AnnonuncementApiTest extends TestCase
         $this->assertEquals($announcementData['content'], 'Test content');
         $this->assertEquals($announcementData['createdBy'], $user->id);
     }
-}
+
+    public function testBrowseAnnouncementWithoutLoginExpectResponse401()
+    {
+        $url = route('badaso.announcement.browse');
+        $response = $this->json('GET', $url);
+        $response->assertStatus(401);
+    }
+}   
