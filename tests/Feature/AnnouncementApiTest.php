@@ -157,4 +157,4 @@ class AnnouncementApiTest extends TestCase
             'content' => $announcement->content,
         ]);
     }
-}   
+}
