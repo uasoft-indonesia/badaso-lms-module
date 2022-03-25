@@ -63,4 +63,17 @@ class AnnouncementController extends Controller
             return ApiResponse::failed($e);
         }
     }
+
+    public function edit(Request $request, $id)
+    {
+        try {
+            if (! $announcement = Announcement::find($id)) {
+                throw ValidationException::withMessages([
+                    'id' => 'Announcement not found',
+                ]);
+            }
+        } catch (Exception $e) {
+            return ApiResponse::failed($e);
+        }
+    }
 }
