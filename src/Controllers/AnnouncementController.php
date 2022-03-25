@@ -71,7 +71,12 @@ class AnnouncementController extends Controller
                 'content' => 'required|string|max:65535',
             ]);
 
-            if (! $announcement = Announcement::find($id)) {
+            $user = auth()->user();
+            $announcement = Announcement::where('id', $id)
+                ->where('created_by', $user->id)
+                ->first();
+
+            if (! $announcement) {
                 throw ValidationException::withMessages([
                     'id' => 'Announcement not found',
                 ]);
