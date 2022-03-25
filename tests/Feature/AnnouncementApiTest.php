@@ -242,7 +242,7 @@ class AnnouncementApiTest extends TestCase
             ->for($course)
             ->create([
                 'created_by' => $user->id,
-                'content' => 'old content'
+                'content' => 'old content',
             ]);
 
         $url = route('badaso.announcement.edit', ['id' => $announcement->id]);
@@ -267,7 +267,7 @@ class AnnouncementApiTest extends TestCase
             ->for($course)
             ->create([
                 'created_by' => $user->id,
-                'content' => 'old content'
+                'content' => 'old content',
             ]);
 
         $url = route('badaso.announcement.edit', ['id' => $announcement->id]);
