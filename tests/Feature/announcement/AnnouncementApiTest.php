@@ -74,4 +74,28 @@ class AnnonuncementApiTest extends TestCase
             ]
         );
     }
+
+    public function testCreateAnnouncementInEnrolledCourseWithValidDataExpectReturnCreatedAnnouncement()
+    {
+        $user = User::factory()->create();
+        $user->rawPassword = 'password';
+
+        $course = Course::factory()
+            ->hasAttached($user, ['role' => CourseUserRole::TEACHER])
+            ->create();
+
+        $url = route('badaso.announcement.add');
+        $response = AuthHelper::asUser($this, $user)->json('POST', $url, [
+            'course_id' => $course->id,
+            'content' => 'Test content',
+        ]);
+
+        $announcementData = $response->json('data');
+
+        $response->assertStatus(200);
+        $this->assertArrayHasKey('id', $announcementData);
+        $this->assertEquals($announcementData['courseId'], $course->id);
+        $this->assertEquals($announcementData['content'], 'Test content');
+        $this->assertEquals($announcementData['createdBy'], $user->id);
+    }
 }
