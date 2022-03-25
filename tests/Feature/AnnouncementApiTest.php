@@ -165,6 +165,25 @@ class AnnouncementApiTest extends TestCase
         $response->assertStatus(401);
     }
 
+    public function testEditAnnouncementGivenNoContentExpectResponse400()
+    {
+        $user = User::factory()->create();
+        $user->rawPassword = 'password';
+
+        $course = Course::factory()
+            ->hasAttached($user, ['role' => CourseUserRole::TEACHER])
+            ->create();
+
+        $announcement = Announcement::factory()
+            ->for($course)
+            ->create();
+
+        $url = route('badaso.announcement.edit', ['id' => $announcement->id]);
+        $response = AuthHelper::asUser($this, $user)->json('PUT', $url);
+
+        $response->assertStatus(400);
+    }
+
     public function testEditAnnouncementGivenAnnouncementDoesNotExistExpectResponse400()
     {
         $user = User::factory()->create();
