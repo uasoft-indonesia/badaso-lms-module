@@ -157,4 +157,11 @@ class AnnouncementApiTest extends TestCase
             'content' => $announcement->content,
         ]);
     }
+
+    public function testEditAnnouncementWithoutLoginExpectResponse401()
+    {
+        $url = route('badaso.announcement.edit', ['id' => 1]);
+        $response = $this->json('PUT', $url);
+        $response->assertStatus(401);
+    }
 }
