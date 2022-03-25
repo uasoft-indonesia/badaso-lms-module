@@ -211,4 +211,21 @@ class AnnouncementApiTest extends TestCase
 
         $response->assertStatus(400);
     }
+
+    public function testEditAnnouncementGivenCorrectUserHasUnenrolledTheCourseExpectResponse400()
+    {
+        $user = User::factory()->create();
+        $user->rawPassword = 'password';
+
+        $announcement = Announcement::factory()->create([
+            'created_by' => $user->id,
+        ]);
+
+        $url = route('badaso.announcement.edit', ['id' => $announcement->id]);
+        $response = AuthHelper::asUser($this, $user)->json('PUT', $url, [
+            'content' => 'Test content',
+        ]);
+
+        $response->assertStatus(400);
+    }
 }
