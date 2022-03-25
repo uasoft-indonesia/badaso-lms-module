@@ -4,6 +4,7 @@ namespace Uasoft\Badaso\Module\LMSModule\Tests\Feature;
 
 use Tests\TestCase;
 use Uasoft\Badaso\Module\LMSModule\Enums\CourseUserRole;
+use Uasoft\Badaso\Module\LMSModule\Models\Announcement;
 use Uasoft\Badaso\Module\LMSModule\Models\Course;
 use Uasoft\Badaso\Module\LMSModule\Models\User;
 use Uasoft\Badaso\Module\LMSModule\Tests\Helpers\AuthHelper;
@@ -46,5 +47,31 @@ class AnnonuncementApiTest extends TestCase
         ]);
 
         $response->assertStatus(400);
+    }
+
+    public function testCreateAnnouncementInEnrolledCourseWithValidDataExpectInsertedToDatabase()
+    {
+        $user = User::factory()->create();
+        $user->rawPassword = 'password';
+
+        $course = Course::factory()
+            ->hasAttached($user, ['role' => CourseUserRole::TEACHER])
+            ->create();
+
+        $url = route('badaso.announcement.add');
+        AuthHelper::asUser($this, $user)->json('POST', $url, [
+            'course_id' => $course->id,
+            'content' => 'Test content',
+        ]);
+
+        $this->assertEquals(1, Announcement::count());
+        $this->assertDatabaseHas(
+            app(Announcement::class)->getTable(),
+            [
+                'course_id' => $course->id,
+                'content' => 'Test content',
+                'created_by' => $user->id,
+            ]
+        );
     }
 }
