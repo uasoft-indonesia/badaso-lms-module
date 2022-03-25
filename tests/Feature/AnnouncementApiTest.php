@@ -164,4 +164,15 @@ class AnnouncementApiTest extends TestCase
         $response = $this->json('PUT', $url);
         $response->assertStatus(401);
     }
+
+    public function testEditAnnouncementGivenAnnouncementDoesNotExistExpectResponse400()
+    {
+        $user = User::factory()->create();
+        $user->rawPassword = 'password';
+
+        $url = route('badaso.announcement.edit', ['id' => 1]);
+        $response = AuthHelper::asUser($this, $user)->json('PUT', $url);
+
+        $response->assertStatus(400);
+    }
 }
