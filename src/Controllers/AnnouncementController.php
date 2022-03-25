@@ -33,7 +33,7 @@ class AnnouncementController extends Controller
                 'created_by' => $user->id,
             ]);
 
-            return ApiResponse::success($announcement);
+            return ApiResponse::success($announcement->toArray());
         } catch (Exception $e) {
             return ApiResponse::failed($e);
         }
@@ -55,10 +55,9 @@ class AnnouncementController extends Controller
 
             $announcements = Announcement::where('course_id', $request->query('course_id'))
                 ->orderBy('created_at', 'desc')
-                ->get()
-                ->toArray();
+                ->get();
 
-            return ApiResponse::success($announcements);
+            return ApiResponse::success($announcements->toArray());
         } catch (Exception $e) {
             return ApiResponse::failed($e);
         }
