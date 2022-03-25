@@ -38,4 +38,15 @@ class AnnouncementController extends Controller
             return ApiResponse::failed($e);
         }
     }
+
+    public function browse(Request $request)
+    {
+        try {
+            $request->validate([
+                'course_id' => 'required|integer',
+            ]);
+        } catch (Exception $e) {
+            return ApiResponse::failed($e);
+        }
+    }
 }
