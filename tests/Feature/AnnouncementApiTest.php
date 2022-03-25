@@ -105,4 +105,15 @@ class AnnonuncementApiTest extends TestCase
         $response = $this->json('GET', $url);
         $response->assertStatus(401);
     }
+
+    public function testBrowseAnnouncementWithoutCourseIdExpectResponse400()
+    {
+        $user = User::factory()->create();
+        $user->rawPassword = 'password';
+
+        $url = route('badaso.announcement.browse');
+        $response = AuthHelper::asUser($this, $user)->json('GET', $url);
+
+        $response->assertStatus(400);
+    }
 }   
