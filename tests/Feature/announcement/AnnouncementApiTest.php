@@ -3,6 +3,8 @@
 namespace Uasoft\Badaso\Module\LMSModule\Tests\Feature;
 
 use Tests\TestCase;
+use Uasoft\Badaso\Module\LMSModule\Models\User;
+use Uasoft\Badaso\Module\LMSModule\Tests\Helpers\AuthHelper;
 
 class AnnonuncementApiTest extends TestCase
 {
@@ -11,5 +13,19 @@ class AnnonuncementApiTest extends TestCase
         $url = route('badaso.announcement.add');
         $response = $this->json('POST', $url);
         $response->assertStatus(401);
+    }
+
+    public function testCreateAnnouncementInAnUnerolledCourseExpectResponse400()
+    {
+        $user = User::factory()->create();
+        $user->rawPassword = 'password';
+
+        $url = route('badaso.announcement.add');
+        $response = AuthHelper::asUser($this, $user)->json('POST', $url, [
+            'course_id' => 1,
+            'content' => 'Test content',
+        ]);
+
+        $response->assertStatus(400);
     }
 }
