@@ -17,6 +17,7 @@ class AnnouncementController extends Controller
             $user = auth()->user();
             $request->validate([
                 'course_id' => 'required|integer',
+                'content' => 'required|string|max:65535',
             ]);
 
             if (!CourseUserHelper::isUserInCourse($user->id, $request->input('course_id'))) {
