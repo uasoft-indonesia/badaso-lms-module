@@ -228,4 +228,29 @@ class AnnouncementApiTest extends TestCase
 
         $response->assertStatus(400);
     }
+
+    public function testEditAnnouncementGivenValidDataExpectUpdated()
+    {
+        $user = User::factory()->create();
+        $user->rawPassword = 'password';
+
+        $course = Course::factory()
+            ->hasAttached($user, ['role' => CourseUserRole::TEACHER])
+            ->create();
+
+        $announcement = Announcement::factory()
+            ->for($course)
+            ->create([
+                'created_by' => $user->id,
+                'content' => 'old content'
+            ]);
+
+        $url = route('badaso.announcement.edit', ['id' => $announcement->id]);
+        AuthHelper::asUser($this, $user)->json('PUT', $url, [
+            'content' => 'new content',
+        ]);
+
+        $newAnnouncement = Announcement::find($announcement->id);
+        $this->assertEquals($newAnnouncement->content, 'new content');
+    }
 }
