@@ -45,6 +45,14 @@ class AnnouncementController extends Controller
             $request->validate([
                 'course_id' => 'required|integer',
             ]);
+
+            $user = auth()->user();
+            if (! CourseUserHelper::isUserInCourse($user->id, $request->query('course_id'))) {
+                throw ValidationException::withMessages([
+                    'course_id' => 'Course not found',
+                ]);
+            }
+
         } catch (Exception $e) {
             return ApiResponse::failed($e);
         }
