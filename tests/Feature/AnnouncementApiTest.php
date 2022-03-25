@@ -116,4 +116,17 @@ class AnnonuncementApiTest extends TestCase
 
         $response->assertStatus(400);
     }
+
+    public function testBrowseAnnouncementGivenUnenrolledCourseIdExpectResponse400()
+    {
+        $user = User::factory()->create();
+        $user->rawPassword = 'password';
+
+        $url = route('badaso.announcement.browse');
+        $response = AuthHelper::asUser($this, $user)->json('GET', $url, [
+            'course_id' => 413423,
+        ]);
+
+        $response->assertStatus(400);
+    }
 }   
