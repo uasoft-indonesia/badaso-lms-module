@@ -9,7 +9,7 @@ use Uasoft\Badaso\Module\LMSModule\Models\Course;
 use Uasoft\Badaso\Module\LMSModule\Models\User;
 use Uasoft\Badaso\Module\LMSModule\Tests\Helpers\AuthHelper;
 
-class AnnonuncementApiTest extends TestCase
+class AnnouncementApiTest extends TestCase
 {
     public function testCreateAnnouncementWithoutLoginExpectResponse401()
     {
@@ -128,5 +128,33 @@ class AnnonuncementApiTest extends TestCase
         ]);
 
         $response->assertStatus(400);
+    }
+
+    public function testBrowseAnnouncementGivenEnrolledCourseIdExpectResponseCorrectAnnouncements()
+    {
+        $user = User::factory()->create();
+        $user->rawPassword = 'password';
+
+        $course = Course::factory()
+            ->hasAttached($user, ['role' => CourseUserRole::TEACHER])
+            ->create();
+
+        // Announcements that belong to another courses
+        // Should not be returned
+        Announcement::factory()->count(5)->create();
+
+        $announcement = Announcement::factory()
+            ->for($course)
+            ->create();
+
+        $url = route('badaso.announcement.browse', ['course_id' => $course->id]);
+        $response = AuthHelper::asUser($this, $user)->json('GET', $url);
+
+        $response->assertStatus(200);
+        $response->assertJsonCount(1, 'data');
+        $response->assertJsonFragment([
+            'id' => $announcement->id,
+            'content' => $announcement->content,
+        ]);
     }
 }   
