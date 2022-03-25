@@ -8,6 +8,7 @@ use Illuminate\Validation\ValidationException;
 use Uasoft\Badaso\Controllers\Controller;
 use Uasoft\Badaso\Helpers\ApiResponse;
 use Uasoft\Badaso\Module\LMSModule\Helpers\CourseUserHelper;
+use Uasoft\Badaso\Module\LMSModule\Models\Announcement;
 
 class AnnouncementController extends Controller
 {
@@ -26,6 +27,11 @@ class AnnouncementController extends Controller
                 ]);
             }
 
+            $announcement = Announcement::create([
+                'course_id' => $request->input('course_id'),
+                'content' => $request->input('content'),
+                'created_by' => $user->id,
+            ]);
         } catch (Exception $e) {
             return ApiResponse::failed($e);
         }
