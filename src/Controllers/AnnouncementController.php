@@ -81,6 +81,12 @@ class AnnouncementController extends Controller
                     'id' => 'Announcement not found',
                 ]);
             }
+
+            if (! CourseUserHelper::isUserInCourse($user->id, $announcement->course_id)) {
+                throw ValidationException::withMessages([
+                    'id' => 'Must enroll the course to edit the announcement',
+                ]);
+            }
         } catch (Exception $e) {
             return ApiResponse::failed($e);
         }
