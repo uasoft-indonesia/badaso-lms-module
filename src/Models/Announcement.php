@@ -27,6 +27,11 @@ class Announcement extends Model
         'updated_at',
     ];
 
+    public function course()
+    {
+        return $this->belongsTo(Course::class, 'course_id');
+    }
+
     public function createdBy()
     {
         return $this->belongsTo(User::class, 'created_by');

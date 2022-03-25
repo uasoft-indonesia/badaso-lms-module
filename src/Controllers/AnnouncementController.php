@@ -53,6 +53,12 @@ class AnnouncementController extends Controller
                 ]);
             }
 
+            $announcements = Announcement::where('course_id', $request->query('course_id'))
+                ->orderBy('created_at', 'desc')
+                ->get()
+                ->toArray();
+
+            return ApiResponse::success($announcements);
         } catch (Exception $e) {
             return ApiResponse::failed($e);
         }
