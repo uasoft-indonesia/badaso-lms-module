@@ -32,6 +32,8 @@ class AnnouncementController extends Controller
                 'content' => $request->input('content'),
                 'created_by' => $user->id,
             ]);
+
+            return ApiResponse::success($announcement);
         } catch (Exception $e) {
             return ApiResponse::failed($e);
         }
