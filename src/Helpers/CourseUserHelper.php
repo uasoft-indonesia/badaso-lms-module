@@ -12,7 +12,7 @@ class CourseUserHelper
             ->where('course_id', $courseId)
             ->first();
 
-        if (!$courseUser) {
+        if (! $courseUser) {
             return false;
         }
 

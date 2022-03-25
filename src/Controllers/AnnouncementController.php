@@ -21,9 +21,9 @@ class AnnouncementController extends Controller
                 'content' => 'required|string|max:65535',
             ]);
 
-            if (!CourseUserHelper::isUserInCourse($user->id, $request->input('course_id'))) {
+            if (! CourseUserHelper::isUserInCourse($user->id, $request->input('course_id'))) {
                 throw ValidationException::withMessages([
-                    'course_id' => 'Course not found'
+                    'course_id' => 'Course not found',
                 ]);
             }
 
