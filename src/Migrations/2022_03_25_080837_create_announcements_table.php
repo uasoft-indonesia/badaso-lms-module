@@ -24,7 +24,7 @@ class CreateAnnouncementsTable extends Migration
         Schema::create($this->tableName, function (Blueprint $table) {
             $table->id();
             $table->foreignId('course_id');
-            $table->text('content', 255)->nullable();
+            $table->text('content')->nullable();
             $table->foreignId('created_by');
             $table->timestamps();
 
