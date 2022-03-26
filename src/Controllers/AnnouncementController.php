@@ -38,4 +38,29 @@ class AnnouncementController extends Controller
             return ApiResponse::failed($e);
         }
     }
+
+    public function browse(Request $request)
+    {
+        try {
+            $request->validate([
+                'course_id' => 'required|integer',
+            ]);
+
+            $user = auth()->user();
+            if (! CourseUserHelper::isUserInCourse($user->id, $request->query('course_id'))) {
+                throw ValidationException::withMessages([
+                    'course_id' => 'Course not found',
+                ]);
+            }
+
+            $announcements = Announcement::where('course_id', $request->query('course_id'))
+                ->orderBy('created_at', 'desc')
+                ->get()
+                ->toArray();
+
+            return ApiResponse::success($announcements);
+        } catch (Exception $e) {
+            return ApiResponse::failed($e);
+        }
+    }
 }
