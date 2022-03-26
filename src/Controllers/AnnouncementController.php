@@ -33,7 +33,7 @@ class AnnouncementController extends Controller
                 'created_by' => $user->id,
             ]);
 
-            return ApiResponse::success($announcement);
+            return ApiResponse::success($announcement->toArray());
         } catch (Exception $e) {
             return ApiResponse::failed($e);
         }
@@ -55,10 +55,42 @@ class AnnouncementController extends Controller
 
             $announcements = Announcement::where('course_id', $request->query('course_id'))
                 ->orderBy('created_at', 'desc')
-                ->get()
-                ->toArray();
+                ->get();
 
-            return ApiResponse::success($announcements);
+            return ApiResponse::success($announcements->toArray());
+        } catch (Exception $e) {
+            return ApiResponse::failed($e);
+        }
+    }
+
+    public function edit(Request $request, $id)
+    {
+        try {
+            $request->validate([
+                'content' => 'required|string|max:65535',
+            ]);
+
+            $user = auth()->user();
+            $announcement = Announcement::where('id', $id)
+                ->where('created_by', $user->id)
+                ->first();
+
+            if (! $announcement) {
+                throw ValidationException::withMessages([
+                    'id' => 'Announcement not found',
+                ]);
+            }
+
+            if (! CourseUserHelper::isUserInCourse($user->id, $announcement->course_id)) {
+                throw ValidationException::withMessages([
+                    'id' => 'Must enroll the course to edit the announcement',
+                ]);
+            }
+
+            $announcement->content = $request->input('content');
+            $announcement->save();
+
+            return ApiResponse::success($announcement->toArray());
         } catch (Exception $e) {
             return ApiResponse::failed($e);
         }

@@ -157,4 +157,128 @@ class AnnouncementApiTest extends TestCase
             'content' => $announcement->content,
         ]);
     }
+
+    public function testEditAnnouncementWithoutLoginExpectResponse401()
+    {
+        $url = route('badaso.announcement.edit', ['id' => 1]);
+        $response = $this->json('PUT', $url);
+        $response->assertStatus(401);
+    }
+
+    public function testEditAnnouncementGivenNoContentExpectResponse400()
+    {
+        $user = User::factory()->create();
+        $user->rawPassword = 'password';
+
+        $course = Course::factory()
+            ->hasAttached($user, ['role' => CourseUserRole::TEACHER])
+            ->create();
+
+        $announcement = Announcement::factory()
+            ->for($course)
+            ->create();
+
+        $url = route('badaso.announcement.edit', ['id' => $announcement->id]);
+        $response = AuthHelper::asUser($this, $user)->json('PUT', $url);
+
+        $response->assertStatus(400);
+    }
+
+    public function testEditAnnouncementGivenAnnouncementDoesNotExistExpectResponse400()
+    {
+        $user = User::factory()->create();
+        $user->rawPassword = 'password';
+
+        $url = route('badaso.announcement.edit', ['id' => 1]);
+        $response = AuthHelper::asUser($this, $user)->json('PUT', $url, [
+            'content' => 'Test content',
+        ]);
+
+        $response->assertStatus(400);
+    }
+
+    public function testEditAnnouncementGivenUserIsNotCreatorExpectResponse400()
+    {
+        $user = User::factory()->create();
+        $user->rawPassword = 'password';
+
+        $announcement = Announcement::factory()->create();
+
+        $url = route('badaso.announcement.edit', ['id' => $announcement->id]);
+        $response = AuthHelper::asUser($this, $user)->json('PUT', $url, [
+            'content' => 'Test content',
+        ]);
+
+        $response->assertStatus(400);
+    }
+
+    public function testEditAnnouncementGivenCorrectUserHasUnenrolledTheCourseExpectResponse400()
+    {
+        $user = User::factory()->create();
+        $user->rawPassword = 'password';
+
+        $announcement = Announcement::factory()->create([
+            'created_by' => $user->id,
+        ]);
+
+        $url = route('badaso.announcement.edit', ['id' => $announcement->id]);
+        $response = AuthHelper::asUser($this, $user)->json('PUT', $url, [
+            'content' => 'Test content',
+        ]);
+
+        $response->assertStatus(400);
+    }
+
+    public function testEditAnnouncementGivenValidDataExpectUpdated()
+    {
+        $user = User::factory()->create();
+        $user->rawPassword = 'password';
+
+        $course = Course::factory()
+            ->hasAttached($user, ['role' => CourseUserRole::TEACHER])
+            ->create();
+
+        $announcement = Announcement::factory()
+            ->for($course)
+            ->create([
+                'created_by' => $user->id,
+                'content' => 'old content',
+            ]);
+
+        $url = route('badaso.announcement.edit', ['id' => $announcement->id]);
+        AuthHelper::asUser($this, $user)->json('PUT', $url, [
+            'content' => 'new content',
+        ]);
+
+        $newAnnouncement = Announcement::find($announcement->id);
+        $this->assertEquals($newAnnouncement->content, 'new content');
+    }
+
+    public function testEditAnnouncementGivenValidDataExpectReturnUpdatedAnnouncement()
+    {
+        $user = User::factory()->create();
+        $user->rawPassword = 'password';
+
+        $course = Course::factory()
+            ->hasAttached($user, ['role' => CourseUserRole::TEACHER])
+            ->create();
+
+        $announcement = Announcement::factory()
+            ->for($course)
+            ->create([
+                'created_by' => $user->id,
+                'content' => 'old content',
+            ]);
+
+        $url = route('badaso.announcement.edit', ['id' => $announcement->id]);
+        $response = AuthHelper::asUser($this, $user)->json('PUT', $url, [
+            'content' => 'new content',
+        ]);
+
+        $response->assertStatus(200);
+        $response->assertJsonFragment([
+            'id' => $announcement->id,
+            'content' => 'new content',
+        ]);
+    }
 }
