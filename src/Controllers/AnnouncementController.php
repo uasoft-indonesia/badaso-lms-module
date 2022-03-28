@@ -107,7 +107,6 @@ class AnnouncementController extends Controller
             ]);
 
             $announcement = Announcement::where('id', $request->input('announcement_id'))
-                ->where('created_by', $user->id)
                 ->first();
 
             if (! $announcement) {
