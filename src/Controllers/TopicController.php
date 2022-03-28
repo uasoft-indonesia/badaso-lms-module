@@ -43,7 +43,7 @@ class TopicController extends Controller
     {
         try {
             $request->validate([
-                'course_id' => 'required|integer', 
+                'course_id' => 'required|integer',
             ]);
 
             $user = auth()->user();
