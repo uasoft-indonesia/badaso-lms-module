@@ -34,6 +34,7 @@ class TopicController extends Controller
             ]);
 
             return ApiResponse::Success($topic->toArray());
+            
         } catch(Exception $e) {
             return ApiResponse::failed($e);
         }
