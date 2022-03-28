@@ -62,4 +62,37 @@ class TopicController extends Controller
             return ApiResponse::failed($e);
         }
     }
+
+    public function edit(Request $request, $id)
+    {
+        try {
+            $request->validate([
+                'title' => 'required|string|max:65535',
+            ]);
+
+            $user = auth()->user();
+            $topic = Topic::where('id', $id)
+                ->where('created_by', $user->id)
+                ->first();
+
+            if (! $topic) {
+                throw ValidationException::withMessages([
+                    'id' => 'Topic not found',
+                ]);
+            }
+
+            if (! CourseUserHelper::isUserInCourse($user->id, $topic->course_id)) {
+                throw ValidationException::withMessages([
+                    'id' => 'Must enroll the course to edit the topic',
+                ]);
+            }
+
+            $topic->title = $request->input('title');
+            $topic->save();
+
+            return ApiResponse::success($topic->toArray());
+        } catch (Exception $e) {
+            return ApiResponse::failed($e);
+        }
+    }
 }

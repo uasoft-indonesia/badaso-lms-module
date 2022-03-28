@@ -55,6 +55,9 @@ Route::group(['prefix' => $api_route_prefix, 'as' => 'badaso.', 'middleware' => 
             Route::get('/', HelpersRoute::getController('TopicController@browse'))
                 ->middleware(BadasoAuthenticate::class)
                 ->name('browse');
+            Route::put('/{id}', HelpersRoute::getController('TopicController@edit'))
+                ->middleware(BadasoAuthenticate::class)
+                ->name('edit');
         });
     });
 });
