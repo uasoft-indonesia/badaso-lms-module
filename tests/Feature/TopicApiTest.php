@@ -130,7 +130,7 @@ class TopicApiTest extends TestCase
         $response->assertStatus(400);
     }
 
-    public function testBrowseTopicGivenEnrolledCourseIdExpectResponseCorrectAnnouncements()
+    public function testBrowseTopicGivenEnrolledCourseIdExpectResponseCorrectTopic()
     {
         $user = User::factory()->create();
         $user->rawPassword = 'password';
@@ -154,7 +154,7 @@ class TopicApiTest extends TestCase
         $response->assertJsonCount(1, 'data');
         $response->assertJsonFragment([
             'id' => $topic->id,
-            'topic' => $topic->title,
+            'title' => $topic->title,
         ]);
     }
 }

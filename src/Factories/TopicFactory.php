@@ -4,6 +4,7 @@ namespace Uasoft\Badaso\Module\LMSModule\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Uasoft\Badaso\Module\LMSModule\Models\Course;
+use Uasoft\Badaso\Module\LMSModule\Models\Topic;
 use Uasoft\Badaso\Module\LMSModule\Models\User;
 
 class TopicFactory extends Factory
