@@ -3,7 +3,6 @@
 namespace Uasoft\Badaso\Module\LMSModule\Controllers;
 
 use Exception;
-use GrahamCampbell\ResultType\Success;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
 use Uasoft\Badaso\Controllers\Controller;
