@@ -98,4 +98,63 @@ class TopicApiTest extends TestCase
         $this->assertEquals($topicData['title'], 'Topic 1');
         $this->assertEquals($topicData['createdBy'], $user->id);
     }
+
+    public function testBrowseTopicWithoutLogin()
+    {
+        $url = route('badaso.topic.browse');
+        $response = $this->json('GET', $url);
+        $response->assertStatus(401);
+    }
+
+    public function testBrowseTopicWithoutCourseId()
+    {
+        $user = User::factory()->create();
+        $user->rawPassword = 'password';
+
+        $url = route('badaso.topic.browse');
+        $response = AuthHelper::asUser($this, $user)->json('GET', $url);
+
+        $response->assertStatus(400);
+    }
+
+    public function testBrowseTopicGivenUnenrolledCourseId()
+    {
+        $user = User::factory()->create();
+        $user->rawPassword = 'password';
+
+        $url = route('badaso.topic.browse');
+        $response = AuthHelper::asUser($this, $user)->json('GET', $url, [
+            'course_id' => 413423,
+        ]);
+
+        $response->assertStatus(400);
+    }
+
+    public function testBrowseTopicGivenEnrolledCourseIdExpectResponseCorrectAnnouncements()
+    {
+        $user = User::factory()->create();
+        $user->rawPassword = 'password';
+
+        $course = Course::factory()
+            ->hasAttached($user, ['role' => CourseUserRole::TEACHER])
+            ->create();
+
+        // Announcements that belong to another courses
+        // Should not be returned
+        Topic::factory()->count(5)->create();
+
+        $topic = Topic::factory()
+            ->for($course)
+            ->create();
+
+        $url = route('badaso.topic.browse', ['course_id' => $course->id]);
+        $response = AuthHelper::asUser($this, $user)->json('GET', $url);
+
+        $response->assertStatus(200);
+        $response->assertJsonCount(1, 'data');
+        $response->assertJsonFragment([
+            'id' => $topic->id,
+            'topic' => $topic->title,
+        ]);
+    }
 }
