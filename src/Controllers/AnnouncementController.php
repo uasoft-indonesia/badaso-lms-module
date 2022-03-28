@@ -54,7 +54,9 @@ class AnnouncementController extends Controller
             }
 
             $announcements = Announcement::where('course_id', $request->query('course_id'))
-                ->orderBy('created_at', 'desc')
+                ->join('badaso_users', 'badaso_users.id', '=', 'badaso_announcements.created_by')
+                ->orderBy('badaso_announcements.created_at', 'desc')
+                ->select('badaso_announcements.*', 'badaso_users.name as author')
                 ->get();
 
             return ApiResponse::success($announcements->toArray());
