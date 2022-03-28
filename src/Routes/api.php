@@ -58,6 +58,9 @@ Route::group(['prefix' => $api_route_prefix, 'as' => 'badaso.', 'middleware' => 
             Route::put('/{id}', HelpersRoute::getController('TopicController@edit'))
                 ->middleware(BadasoAuthenticate::class)
                 ->name('edit');
+            Route::delete('/{id}', HelpersRoute::getController('TopicController@delete'))
+                ->middleware(BadasoAuthenticate::class)
+                ->name('delete');
         });
     });
 });

@@ -95,4 +95,32 @@ class TopicController extends Controller
             return ApiResponse::failed($e);
         }
     }
+
+    public function delete($id)
+    {
+        try {
+            $user = auth()->user();
+            $topic = Topic::where('id', $id)
+                ->where('created_by', $user->id)
+                ->first();
+
+            if (! $topic) {
+                throw ValidationException::withMessages([
+                    'id' => 'Topic not found',
+                ]);
+            }
+
+            if (! CourseUserHelper::isUserInCourse($user->id, $topic->course_id)) {
+                throw ValidationException::withMessages([
+                    'id' => 'Must enroll the course to delete the topic',
+                ]);
+            }
+
+            $topic->delete();
+
+            return ApiResponse::success($topic->toArray());
+        } catch (Exception $e) {
+            return ApiResponse::failed($e);
+        }
+    }
 }
