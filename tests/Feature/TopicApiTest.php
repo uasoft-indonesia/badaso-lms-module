@@ -69,7 +69,7 @@ class TopicApiTest extends TestCase
             app(Topic::class)->getTable(),
             [
                 'course_id' => $course->id,
-                'content' => 'Topic 1',
+                'title' => 'Topic 1',
                 'created_by' => $user->id,
             ]
         );
