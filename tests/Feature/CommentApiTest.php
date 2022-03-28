@@ -40,7 +40,7 @@ class CommentApiTest extends TestCase
 
         $url = $url = route('badaso.announcement.comment');
         $response = AuthHelper::asUser($this, $user)->json('POST', $url, [
-            'announcement_id' => 1
+            'announcement_id' => 1,
         ]);
 
         $response->assertStatus(400);
