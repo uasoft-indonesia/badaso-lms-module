@@ -258,4 +258,76 @@ class TopicApiTest extends TestCase
         ]);
         $this->assertEquals($newTopic->title, 'Topic 2');
     }
+
+    public function testDeleteTopicWithoutLogin()
+    {
+        $url = route('badaso.topic.delete', ['id' => 1]);
+        $response = $this->json('DELETE', $url);
+        $response->assertStatus(401);
+    }
+
+    public function testDeleteTopicGivenTopicDoesNotExist()
+    {
+        $user = User::factory()->create();
+        $user->rawPassword = 'password';
+
+        $url = route('badaso.topic.delete', ['id' => 1]);
+        $response = AuthHelper::asUser($this, $user)->json('DELETE', $url);
+
+        $response->assertStatus(400);
+    }
+
+    public function testDeleteTopicGivenUserIsNotCreator()
+    {
+        $user = User::factory()->create();
+        $user->rawPassword = 'password';
+
+        $topic = Topic::factory()->create();
+
+        $url = route('badaso.topic.delete', ['id' => $topic->id]);
+        $response = AuthHelper::asUser($this, $user)->json('DELETE', $url);
+
+        $response->assertStatus(400);
+    }
+
+    public function testDeleteTopicGivenCorrectUserHasUnenrolledTheCourse()
+    {
+        $user = User::factory()->create();
+        $user->rawPassword = 'password';
+
+        $topic = Topic::factory()->create([
+            'created_by' => $user->id,
+        ]);
+
+        $url = route('badaso.topic.delete', ['id' => $topic->id]);
+        $response = AuthHelper::asUser($this, $user)->json('DELETE', $url);
+
+        $response->assertStatus(400);
+    }
+
+    public function testDeleteTopicGivenValidDataExpectRemoved()
+    {
+        $user = User::factory()->create();
+        $user->rawPassword = 'password';
+
+        $course = Course::factory()
+            ->hasAttached($user, ['role' => CourseUserRole::TEACHER])
+            ->create();
+
+        $topic = Topic::factory()
+            ->for($course)
+            ->create([
+                'created_by' => $user->id,
+                'title' => 'Topic',
+            ]);
+
+        $url = route('badaso.topic.delete', ['id' => $topic->id]);
+        $response = AuthHelper::asUser($this, $user)->json('DELETE', $url);
+
+        $response->assertStatus(200);
+        $response->assertJsonFragment([
+            'id' => $topic->id,
+            'title' => $topic->title,
+        ]);
+    }
 }
