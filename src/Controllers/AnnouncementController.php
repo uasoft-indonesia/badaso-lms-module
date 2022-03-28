@@ -106,6 +106,16 @@ class AnnouncementController extends Controller
                 'content' => 'required|string|max:65535',
             ]);
 
+            $announcement = Announcement::where('id', $request->input('announcement_id'))
+                ->where('created_by', $user->id)
+                ->first();
+
+            if (! $announcement) {
+                throw ValidationException::withMessages([
+                    'announcement_id' => 'Announcement not found',
+                ]);
+            }
+
             $comment = Comment::create([
                 'announcement_id' => $request->input('announcement_id'),
                 'content' => $request->input('content'),
