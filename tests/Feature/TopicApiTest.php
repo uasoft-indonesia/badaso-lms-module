@@ -1,38 +1,38 @@
 <?php
 
-namespace Uasoft\Badaso\Module\LMSModule\Tests\Feature;
+namespace Uasoft\Badaso\Module\LMS\Tests\Feature;
 
 use Tests\TestCase;
 use Uasoft\Badaso\Module\LMSModule\Enums\CourseUserRole;
-use Uasoft\Badaso\Module\LMSModule\Models\Announcement;
 use Uasoft\Badaso\Module\LMSModule\Models\Course;
+use Uasoft\Badaso\Module\LMSModule\Models\Topic;
 use Uasoft\Badaso\Module\LMSModule\Models\User;
 use Uasoft\Badaso\Module\LMSModule\Tests\Helpers\AuthHelper;
 
-class AnnonuncementApiTest extends TestCase
+class TopicApiTest extends TestCase
 {
-    public function testCreateAnnouncementWithoutLoginExpectResponse401()
+    public function testCreateTopicWithoutLogin()
     {
-        $url = route('badaso.announcement.add');
+        $url = route('badaso.topic.add');
         $response = $this->json('POST', $url);
         $response->assertStatus(401);
     }
 
-    public function testCreateAnnouncementInAnUnerolledCourseExpectResponse400()
+    public function testCreateTopicInAnUnerolledCourse()
     {
         $user = User::factory()->create();
         $user->rawPassword = 'password';
 
-        $url = route('badaso.announcement.add');
+        $url = route('badaso.topic.add');
         $response = AuthHelper::asUser($this, $user)->json('POST', $url, [
             'course_id' => 1,
-            'content' => 'Test content',
+            'title' => 'Topic 1',
         ]);
 
         $response->assertStatus(400);
     }
 
-    public function testCreateAnnouncementInEnrolledCourseWithNoContentExpectResponse400()
+    public function testCreateTopicInEnrolledCourseWithNoContent()
     {
         $user = User::factory()->create();
         $user->rawPassword = 'password';
@@ -41,7 +41,7 @@ class AnnonuncementApiTest extends TestCase
             ->hasAttached($user, ['role' => CourseUserRole::TEACHER])
             ->create();
 
-        $url = route('badaso.announcement.add');
+        $url = route('badaso.topic.add');
         $response = AuthHelper::asUser($this, $user)->json('POST', $url, [
             'course_id' => $course->id,
         ]);
@@ -49,7 +49,7 @@ class AnnonuncementApiTest extends TestCase
         $response->assertStatus(400);
     }
 
-    public function testCreateAnnouncementInEnrolledCourseWithValidDataExpectInsertedToDatabase()
+    public function testCreateTopicInEnrolledCourseWithValidDataExpectInsertedToDatabase()
     {
         $user = User::factory()->create();
         $user->rawPassword = 'password';
@@ -58,24 +58,24 @@ class AnnonuncementApiTest extends TestCase
             ->hasAttached($user, ['role' => CourseUserRole::TEACHER])
             ->create();
 
-        $url = route('badaso.announcement.add');
+        $url = route('badaso.topic.add');
         AuthHelper::asUser($this, $user)->json('POST', $url, [
             'course_id' => $course->id,
-            'content' => 'Test content',
+            'title' => 'Topic 1',
         ]);
 
-        $this->assertEquals(1, Announcement::count());
+        $this->assertEquals(1, Topic::count());
         $this->assertDatabaseHas(
-            app(Announcement::class)->getTable(),
+            app(Topic::class)->getTable(),
             [
                 'course_id' => $course->id,
-                'content' => 'Test content',
+                'content' => 'Topic 1',
                 'created_by' => $user->id,
             ]
         );
     }
 
-    public function testCreateAnnouncementInEnrolledCourseWithValidDataExpectReturnCreatedAnnouncement()
+    public function testCreateTopicInEnrolledCourseWithValidDataExpectReturnCreatedAnnouncement()
     {
         $user = User::factory()->create();
         $user->rawPassword = 'password';
@@ -84,18 +84,18 @@ class AnnonuncementApiTest extends TestCase
             ->hasAttached($user, ['role' => CourseUserRole::TEACHER])
             ->create();
 
-        $url = route('badaso.announcement.add');
+        $url = route('badaso.topic.add');
         $response = AuthHelper::asUser($this, $user)->json('POST', $url, [
             'course_id' => $course->id,
-            'content' => 'Test content',
+            'title' => 'Topic 1',
         ]);
 
-        $announcementData = $response->json('data');
+        $topicData = $response->json('data');
 
         $response->assertStatus(200);
-        $this->assertArrayHasKey('id', $announcementData);
-        $this->assertEquals($announcementData['courseId'], $course->id);
-        $this->assertEquals($announcementData['content'], 'Test content');
-        $this->assertEquals($announcementData['createdBy'], $user->id);
+        $this->assertArrayHasKey('id', $topicData);
+        $this->assertEquals($topicData['courseId'], $course->id);
+        $this->assertEquals($topicData['title'], 'Topic 1');
+        $this->assertEquals($topicData['createdBy'], $user->id);
     }
 }
