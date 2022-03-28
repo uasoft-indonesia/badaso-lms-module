@@ -157,4 +157,105 @@ class TopicApiTest extends TestCase
             'title' => $topic->title,
         ]);
     }
+
+    public function testEditTopicWithoutLogin()
+    {
+        $url = route('badaso.topic.edit', ['id' => 1]);
+        $response = $this->json('PUT', $url);
+        $response->assertStatus(401);
+    }
+
+    public function testEditTopicGivenNoContent()
+    {
+        $user = User::factory()->create();
+        $user->rawPassword = 'password';
+
+        $course = Course::factory()
+            ->hasAttached($user, ['role' => CourseUserRole::TEACHER])
+            ->create();
+
+        $topic = Topic::factory()
+            ->for($course)
+            ->create();
+
+        $url = route('badaso.topic.edit', ['id' => $topic->id]);
+        $response = AuthHelper::asUser($this, $user)->json('PUT', $url);
+
+        $response->assertStatus(400);
+    }
+
+    public function testEditTopicGivenTopicDoesNotExist()
+    {
+        $user = User::factory()->create();
+        $user->rawPassword = 'password';
+
+        $url = route('badaso.topic.edit', ['id' => 1]);
+        $response = AuthHelper::asUser($this, $user)->json('PUT', $url, [
+            'title' => 'Title 2',
+        ]);
+
+        $response->assertStatus(400);
+    }
+
+    public function testEditTopicGivenUserIsNotCreator()
+    {
+        $user = User::factory()->create();
+        $user->rawPassword = 'password';
+
+        $topic = Topic::factory()->create();
+
+        $url = route('badaso.topic.edit', ['id' => $topic->id]);
+        $response = AuthHelper::asUser($this, $user)->json('PUT', $url, [
+            'title' => 'Title 2',
+        ]);
+
+        $response->assertStatus(400);
+    }
+
+    public function testEditTopicGivenCorrectUserHasUnenrolledTheCourse()
+    {
+        $user = User::factory()->create();
+        $user->rawPassword = 'password';
+
+        $topic = Topic::factory()->create([
+            'created_by' => $user->id,
+        ]);
+
+        $url = route('badaso.topic.edit', ['id' => $topic->id]);
+        $response = AuthHelper::asUser($this, $user)->json('PUT', $url, [
+            'title' => 'Title 2',
+        ]);
+
+        $response->assertStatus(400);
+    }
+
+    public function testEditTopicGivenValidDataExpectUpdated()
+    {
+        $user = User::factory()->create();
+        $user->rawPassword = 'password';
+
+        $course = Course::factory()
+            ->hasAttached($user, ['role' => CourseUserRole::TEACHER])
+            ->create();
+
+        $topic = Topic::factory()
+            ->for($course)
+            ->create([
+                'created_by' => $user->id,
+                'title' => 'Title 1',
+            ]);
+
+        $url = route('badaso.topic.edit', ['id' => $topic->id]);
+        $response = AuthHelper::asUser($this, $user)->json('PUT', $url, [
+            'title' => 'Topic 2',
+        ]);
+
+        $newTopic = Topic::find($topic->id);
+        $response->assertStatus(200);
+        $response->assertJsonFragment([
+            'id' => $topic->id,
+            'title' => 'Topic 2',
+        ]);
+        $this->assertEquals($newTopic->title, 'Topic 2');
+    }
 }
