@@ -10,26 +10,22 @@ class ViewApiTest extends TestCase
 {
     public function testCreateCommentWithoutLoginExpectResponse401()
     {
-        $url = route('badaso.course.addcomment');
-        $response = $this->json('GET', $url);
+        $url = route('badaso.announcement.comment');
+        $response = $this->json('POST', $url);
         $response->assertStatus(401);
     }
 
-    public function testCreateCommentAsLoggedInUserWithValidDataExpectResponse200()
+    public function testCreateCommentInNonExistingAnnouncementExpectResponse400()
     {
         $user = User::factory()->create();
         $user->rawPassword = 'password';
 
-        //create announcement w factory
-        $announcement_id = 0;
-
-        $url = route('badaso.course.addcomment');
-
+        $url = $url = route('badaso.announcement.comment');
         $response = AuthHelper::asUser($this, $user)->json('POST', $url, [
-            'announcement_id' => $announcement_id,
-            'content' => 'Test comment'
+            'announcement_id' => 1,
+            'content' => 'Test content',
         ]);
 
-        $response->assertStatus(200);
+        $response->assertStatus(400);
     }
 }
