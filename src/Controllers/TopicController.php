@@ -43,7 +43,7 @@ class TopicController extends Controller
     {
         try {
             $request->validate([
-               'course_id' => 'required|integer', 
+                'course_id' => 'required|integer', 
             ]);
 
             $user = auth()->user();
@@ -58,7 +58,7 @@ class TopicController extends Controller
                 ->get();
 
             return ApiResponse::success($topic->toArray());
-        } catch(Exception $e) {
+        } catch (Exception $e) {
             return ApiResponse::failed($e);
         }
     }
