@@ -114,7 +114,7 @@ class CommentApiTest extends TestCase
         $comment_B = Comment::factory()
             ->for($announcement_B)
             ->create();
-        
+
         $url = route('badaso.announcement.browse', ['course_id' => $course->id]);
         $response = AuthHelper::asUser($this, $user)->json('GET', $url);
 
@@ -140,7 +140,7 @@ class CommentApiTest extends TestCase
                         'content' => $comment_B->content,
                     ],
                 ],
-            ]
+            ],
         ]]);
     }
 }
