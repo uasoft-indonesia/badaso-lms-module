@@ -29,7 +29,7 @@ class Comment extends Model
 
     public function announcement()
     {
-        return $this->belongsTo(Course::class, 'announcement_id');
+        return $this->belongsTo(Announcement::class, 'announcement_id');
     }
 
     public function createdBy()
