@@ -18,7 +18,7 @@ class TopicController extends Controller
             $user = auth()->user();
             $request->validate([
                 'course_id' => 'required|integer',
-                'title' => 'required|string|max:65535',
+                'title' => 'required|string|max:265',
             ]);
 
             if (! CourseUserHelper::isUserInCourse($user->id, $request->input('course_id'))) {
@@ -67,7 +67,7 @@ class TopicController extends Controller
     {
         try {
             $request->validate([
-                'title' => 'required|string|max:65535',
+                'title' => 'required|string|max:265',
             ]);
 
             $user = auth()->user();

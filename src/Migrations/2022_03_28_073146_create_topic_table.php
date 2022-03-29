@@ -11,7 +11,7 @@ class CreateTopicTable extends Migration
 
     public function __construct()
     {
-        $this->tableName = DatabaseHelper::getBadasoTableName('topic');
+        $this->tableName = DatabaseHelper::getBadasoTableName('topics');
     }
 
     /**
@@ -23,7 +23,7 @@ class CreateTopicTable extends Migration
     {
         Schema::create($this->tableName, function (Blueprint $table) {
             $table->id();
-            $table->text('title');
+            $table->string('title', 265);
             $table->foreignId('course_id');
             $table->foreignId('created_by');
             $table->timestamps();
@@ -48,6 +48,6 @@ class CreateTopicTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('topic');
+        Schema::dropIfExists($this->tableName);
     }
 }

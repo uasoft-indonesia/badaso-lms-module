@@ -139,8 +139,6 @@ class TopicApiTest extends TestCase
             ->hasAttached($user, ['role' => CourseUserRole::TEACHER])
             ->create();
 
-        // Announcements that belong to another courses
-        // Should not be returned
         Topic::factory()->count(5)->create();
 
         $topic = Topic::factory()
@@ -323,7 +321,9 @@ class TopicApiTest extends TestCase
 
         $url = route('badaso.topic.delete', ['id' => $topic->id]);
         $response = AuthHelper::asUser($this, $user)->json('DELETE', $url);
-
+        $removedTopic = Topic::find($topic->id);
+        
+        $this->assertEmpty($removedTopic);
         $response->assertStatus(200);
         $response->assertJsonFragment([
             'id' => $topic->id,
