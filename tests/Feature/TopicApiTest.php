@@ -322,7 +322,7 @@ class TopicApiTest extends TestCase
         $url = route('badaso.topic.delete', ['id' => $topic->id]);
         $response = AuthHelper::asUser($this, $user)->json('DELETE', $url);
         $removedTopic = Topic::find($topic->id);
-        
+
         $this->assertEmpty($removedTopic);
         $response->assertStatus(200);
         $response->assertJsonFragment([
