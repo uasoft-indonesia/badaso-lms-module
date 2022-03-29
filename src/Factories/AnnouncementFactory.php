@@ -3,12 +3,13 @@
 namespace Uasoft\Badaso\Module\LMSModule\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Uasoft\Badaso\Module\LMSModule\Models\Announcement;
 use Uasoft\Badaso\Module\LMSModule\Models\Course;
 use Uasoft\Badaso\Module\LMSModule\Models\User;
 
-class CourseFactory extends Factory
+class AnnouncementFactory extends Factory
 {
-    protected $model = Course::class;
+    protected $model = Announcement::class;
 
     /**
      * Define the model's default state.
@@ -18,10 +19,8 @@ class CourseFactory extends Factory
     public function definition()
     {
         return [
-            'name' => $this->faker->name(),
-            'subject' => $this->faker->name(),
-            'room' => $this->faker->buildingNumber(),
-            'join_code' => $this->faker->unique()->randomAscii(),
+            'course_id' => Course::factory(),
+            'content' => $this->faker->text(),
             'created_by' => User::factory(),
         ];
     }
