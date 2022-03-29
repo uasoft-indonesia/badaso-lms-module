@@ -23,24 +23,22 @@ class CourseController extends Controller
         try {
             $user = auth()->user();
 
-            $courseUserIds = CourseUser::where(
-                'user_id', '=', $user->id
-            )->pluck('course_id')->toArray();
-            $courses = [];
+            $courseUsers = CourseUser::where('user_id', '=', $user->id)
+                ->join('badaso_courses', 'badaso_courses.id', '=', 'badaso_course_user.course_id')
+                ->join('badaso_users', 'badaso_users.id', '=', 'badaso_courses.created_by')
+                ->select(
+                    'badaso_course_user.user_id', 
+                    'badaso_course_user.course_id', 
+                    'badaso_courses.name', 
+                    'badaso_courses.subject',
+                    'badaso_courses.room', 
+                    'badaso_courses.join_code',
+                    'badaso_users.name as created_by'
+                )
+                ->get()
+                ->toArray();
 
-            foreach ($courseUserIds as $courseUserId) {
-                $course = Course::find($courseUserId);
-                array_push($courses, $course);
-            }
-
-            foreach ($courses as $course) {
-                $teacher = User::find(
-                    $course->createdBy
-                )->pluck('name')->toArray();
-                $course->created_by = $teacher[0];
-            }
-
-            return ApiResponse::success($courses);
+            return ApiResponse::success($courseUsers);
         } catch (Exception $e) {
             if ($e instanceof ValidationException) {
                 return ApiResponse::failed($e);
