@@ -3,8 +3,10 @@
 namespace Uasoft\Badaso\Module\LMSModule\Tests\Feature;
 
 use Tests\TestCase;
+use Uasoft\Badaso\Module\LMSModule\Enums\CourseUserRole;
 use Uasoft\Badaso\Module\LMSModule\Models\Announcement;
 use Uasoft\Badaso\Module\LMSModule\Models\Comment;
+use Uasoft\Badaso\Module\LMSModule\Models\Course;
 use Uasoft\Badaso\Module\LMSModule\Models\User;
 use Uasoft\Badaso\Module\LMSModule\Tests\Helpers\AuthHelper;
 
@@ -88,5 +90,57 @@ class CommentApiTest extends TestCase
         $this->assertEquals($commentData['announcementId'], $announcement->id);
         $this->assertEquals($commentData['content'], 'This is my comment');
         $this->assertEquals($commentData['createdBy'], $user->id);
+    }
+
+    public function testBrowseAnnouncementAlsoReturnCommentsOfEachAnnouncementCorrectly()
+    {
+        $user = User::factory()->create();
+        $user->rawPassword = 'password';
+
+        $course = Course::factory()
+            ->hasAttached($user, ['role' => CourseUserRole::TEACHER])
+            ->create();
+
+        $announcement_A = Announcement::factory()
+            ->for($course)
+            ->create();
+        $comment_A = Comment::factory()
+            ->for($announcement_A)
+            ->create();
+
+        $announcement_B = Announcement::factory()
+            ->for($course)
+            ->create();
+        $comment_B = Comment::factory()
+            ->for($announcement_B)
+            ->create();
+        
+        $url = route('badaso.announcement.browse', ['course_id' => $course->id]);
+        $response = AuthHelper::asUser($this, $user)->json('GET', $url);
+
+        $response->assertStatus(200);
+        $response->assertJsonCount(2, 'data');
+        $response->assertJson(['data' => [
+            [
+                'id' => $announcement_A->id,
+                'comments' => [
+                    [
+                        'id' => $comment_A->id,
+                        'announcementId' => $announcement_A->id,
+                        'content' => $comment_A->content,
+                    ],
+                ],
+            ],
+            [
+                'id' => $announcement_B->id,
+                'comments' => [
+                    [
+                        'id' => $comment_B->id,
+                        'announcementId' => $announcement_B->id,
+                        'content' => $comment_B->content,
+                    ],
+                ],
+            ]
+        ]]);
     }
 }
