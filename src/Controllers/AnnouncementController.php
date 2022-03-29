@@ -58,6 +58,14 @@ class AnnouncementController extends Controller
                 ->orderBy('created_at', 'desc')
                 ->get();
 
+            foreach ($announcements as $announcement) {
+                $comments = Comment::where('announcement_id', '=', $announcement->id)
+                    ->orderBy('created_at', 'asc')
+                    ->get()
+                    ->toArray();
+                $announcement->comments = $comments;
+            }
+
             return ApiResponse::success($announcements->toArray());
         } catch (Exception $e) {
             return ApiResponse::failed($e);
