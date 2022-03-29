@@ -27,11 +27,11 @@ class CourseController extends Controller
                 ->join('badaso_courses', 'badaso_courses.id', '=', 'badaso_course_user.course_id')
                 ->join('badaso_users', 'badaso_users.id', '=', 'badaso_courses.created_by')
                 ->select(
-                    'badaso_course_user.user_id', 
-                    'badaso_course_user.course_id', 
-                    'badaso_courses.name', 
+                    'badaso_course_user.user_id',
+                    'badaso_course_user.course_id',
+                    'badaso_courses.name',
                     'badaso_courses.subject',
-                    'badaso_courses.room', 
+                    'badaso_courses.room',
                     'badaso_courses.join_code',
                     'badaso_users.name as created_by'
                 )
