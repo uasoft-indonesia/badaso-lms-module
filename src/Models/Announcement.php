@@ -22,6 +22,10 @@ class Announcement extends Model
         'created_by',
     ];
 
+    protected $hidden = [
+      'updated_at',
+    ];
+
     public function course()
     {
         return $this->belongsTo(Course::class, 'course_id');
