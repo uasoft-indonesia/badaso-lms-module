@@ -23,7 +23,7 @@ class CreateTopicTable extends Migration
     {
         Schema::create($this->tableName, function (Blueprint $table) {
             $table->id();
-            $table->string('title', 265);
+            $table->string('title', 255);
             $table->foreignId('course_id');
             $table->foreignId('created_by');
             $table->timestamps();
