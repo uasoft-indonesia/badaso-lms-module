@@ -18,6 +18,34 @@ use Uasoft\Badaso\Module\LMSModule\Models\User;
 
 class CourseController extends Controller
 {
+    public function view()
+    {
+        try {
+            $user = auth()->user();
+
+            $courses = CourseUser::where('user_id', '=', $user->id)
+                ->join('badaso_courses', 'badaso_courses.id', '=', 'badaso_course_user.course_id')
+                ->join('badaso_users', 'badaso_users.id', '=', 'badaso_courses.created_by')
+                ->select(
+                    'badaso_course_user.user_id',
+                    'badaso_course_user.course_id',
+                    'badaso_courses.name',
+                    'badaso_courses.subject',
+                    'badaso_courses.room',
+                    'badaso_courses.join_code',
+                    'badaso_users.name as created_by'
+                )
+                ->get()
+                ->toArray();
+
+            return ApiResponse::success($courses);
+        } catch (Exception $e) {
+            if ($e instanceof ValidationException) {
+                return ApiResponse::failed($e);
+            }
+        }
+    }
+
     public function add(Request $request)
     {
         DB::beginTransaction();

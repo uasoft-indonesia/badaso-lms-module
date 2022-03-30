@@ -10,7 +10,7 @@ class ViewApiTest extends TestCase
 {
     public function testViewCourseWithoutLoginExpectResponse401()
     {
-        $url = route('badaso.courseuser.view');
+        $url = route('badaso.course.view');
         $response = $this->json('GET', $url);
         $response->assertStatus(401);
     }
@@ -20,7 +20,7 @@ class ViewApiTest extends TestCase
         $user = User::factory()->create();
         $user->rawPassword = 'password';
 
-        $url = route('badaso.courseuser.view');
+        $url = route('badaso.course.view');
         $response = AuthHelper::asUser($this, $user)->json('GET', $url);
         $response->assertStatus(200);
     }
