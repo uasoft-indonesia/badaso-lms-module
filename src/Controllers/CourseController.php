@@ -23,7 +23,7 @@ class CourseController extends Controller
         try {
             $user = auth()->user();
 
-            $courseUsers = CourseUser::where('user_id', '=', $user->id)
+            $courses = CourseUser::where('user_id', '=', $user->id)
                 ->join('badaso_courses', 'badaso_courses.id', '=', 'badaso_course_user.course_id')
                 ->join('badaso_users', 'badaso_users.id', '=', 'badaso_courses.created_by')
                 ->select(
@@ -38,7 +38,7 @@ class CourseController extends Controller
                 ->get()
                 ->toArray();
 
-            return ApiResponse::success($courseUsers);
+            return ApiResponse::success($courses);
         } catch (Exception $e) {
             if ($e instanceof ValidationException) {
                 return ApiResponse::failed($e);
