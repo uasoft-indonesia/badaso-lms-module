@@ -195,4 +195,65 @@ class CommentApiTest extends TestCase
 
         $response->assertStatus(400);
     }
+
+    public function testEditCommentGivenValidDataExpectUpdated()
+    {
+        $user = User::factory()->create();
+        $user->rawPassword = 'password';
+
+        $course = Course::factory()
+            ->hasAttached($user, ['role' => CourseUserRole::TEACHER])
+            ->create();
+
+        $announcement = Announcement::factory()
+            ->for($course)
+            ->create();
+
+        $comment = Comment::factory()
+            ->for($announcement)
+            ->create([
+                'created_by' => $user->id,
+                'content' => 'Uneditted content',
+            ]);
+        
+        $url = route('badaso.announcement.editcomment', ['id' => $comment->id]);
+        AuthHelper::asUser($this, $user)->json('PUT', $url, [
+            'content' => 'Editted content',
+        ]);
+
+        $newComment = Comment::find($comment->id);
+        $this->assertEquals($newComment->content, 'Editted content');
+    }
+
+    public function testEditCommentGivenValidDataExpectReturnUpdatedComment()
+    {
+        $user = User::factory()->create();
+        $user->rawPassword = 'password';
+
+        $course = Course::factory()
+            ->hasAttached($user, ['role' => CourseUserRole::TEACHER])
+            ->create();
+
+        $announcement = Announcement::factory()
+            ->for($course)
+            ->create();
+
+        $comment = Comment::factory()
+            ->for($announcement)
+            ->create([
+                'created_by' => $user->id,
+                'content' => 'Uneditted content',
+            ]);
+        
+        $url = route('badaso.announcement.editcomment', ['id' => $comment->id]);
+        $response = AuthHelper::asUser($this, $user)->json('PUT', $url, [
+            'content' => 'Editted content',
+        ]);
+
+        $response->assertStatus(200);
+        $response->assertJsonFragment([
+            'id' => $comment->id,
+            'content' => 'Editted content',
+        ]);
+    }
 }
