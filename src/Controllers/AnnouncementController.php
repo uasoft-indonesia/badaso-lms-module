@@ -161,6 +161,11 @@ class AnnouncementController extends Controller
                     'id' => 'Must enroll the course to edit the comment',
                 ]);
             }
+
+            $comment->content = $request->input('content');
+            $comment->save();
+
+            return ApiResponse::success($comment->toArray());
         } catch (Exception $e) {
             return ApiResponse::failed($e);
         }
