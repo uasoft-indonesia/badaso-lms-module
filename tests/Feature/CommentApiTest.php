@@ -149,7 +149,7 @@ class CommentApiTest extends TestCase
         $url = route('badaso.announcement.editcomment', ['id' => 1]);
         $response = $this->json('PUT', $url);
 
-        $response->assertStatus(400);
+        $response->assertStatus(401);
     }
 
     public function testEditCommentGivenCommentDoesNotExistExpectResponse400()
