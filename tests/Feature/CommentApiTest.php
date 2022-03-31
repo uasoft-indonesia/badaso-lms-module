@@ -144,12 +144,51 @@ class CommentApiTest extends TestCase
         ]]);
     }
 
+    public function testEditCommentWithoutLoginExpectResponse401()
+    {
+        $url = route('badaso.announcement.editcomment', ['id' => 1]);
+        $response = $this->json('PUT', $url);
+
+        $response->assertStatus(400);
+    }
+
     public function testEditCommentGivenCommentDoesNotExistExpectResponse400()
     {
         $user = User::factory()->create();
         $user->rawPassword = 'password';
 
         $url = route('badaso.announcement.editcomment', ['id' => 1]);
+        $response = AuthHelper::asUser($this, $user)->json('PUT', $url, [
+            'content' => 'Editted content',
+        ]);
+
+        $response->assertStatus(400);
+    }
+
+    public function testEditCommentGivenNoContentExpectResponse400()
+    {
+        $user = User::factory()->create();
+        $user->rawPassword = 'password';
+
+        $announcement = Announcement::factory()->create();
+        $comment = Comment::factory()
+            ->for($announcement)
+            ->create();
+
+        $url = route('badaso.announcement.editcomment', ['id' => $comment->id]);
+        $response = AuthHelper::asUser($this, $user)->json('PUT', $url);
+
+        $response->assertStatus(400);
+    }
+
+    public function testEditCommentGivenUserIsNotCreatorExpectResponse400()
+    {
+        $user = User::factory()->create();
+        $user->rawPassword = 'password';
+
+        $comment = Comment::factory()->create();
+
+        $url = route('badaso.announcement.editcomment', ['id' => $comment->id]);
         $response = AuthHelper::asUser($this, $user)->json('PUT', $url, [
             'content' => 'Editted content',
         ]);
