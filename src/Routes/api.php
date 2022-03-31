@@ -47,7 +47,7 @@ Route::group(['prefix' => $api_route_prefix, 'as' => 'badaso.', 'middleware' => 
             Route::post('/comment', HelpersRoute::getController('AnnouncementController@comment'))
                 ->middleware(BadasoAuthenticate::class)
                 ->name('comment');
-            Route::put('/editcomment', HelpersRoute::getController('AnnouncementController@editcomment'))
+            Route::put('/comment/{id}', HelpersRoute::getController('AnnouncementController@editcomment'))
             ->middleware(BadasoAuthenticate::class)
             ->name('editcomment');
         });
