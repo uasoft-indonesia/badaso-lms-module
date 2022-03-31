@@ -143,4 +143,17 @@ class CommentApiTest extends TestCase
             ],
         ]]);
     }
+
+    public function testEditCommentGivenCommentDoesNotExistExpectResponse400()
+    {
+        $user = User::factory()->create();
+        $user->rawPassword = 'password';
+
+        $url = route('badaso.announcement.editcomment', ['id' => 1]);
+        $response = AuthHelper::asUser($this, $user)->json('PUT', $url, [
+            'content' => 'Editted content',
+        ]);
+
+        $response->assertStatus(400);
+    }
 }
