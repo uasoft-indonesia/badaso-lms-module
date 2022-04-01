@@ -10,6 +10,7 @@ use Uasoft\Badaso\Helpers\ApiResponse;
 use Uasoft\Badaso\Module\LMSModule\Helpers\CourseUserHelper;
 use Uasoft\Badaso\Module\LMSModule\Models\Announcement;
 use Uasoft\Badaso\Module\LMSModule\Models\Comment;
+use Uasoft\Badaso\Module\LMSModule\Models\CourseUser;
 
 class CommentController extends Controller
 {
@@ -84,7 +85,6 @@ class CommentController extends Controller
         try {
             $user = auth()->user();
             $comment = Comment::where('id', $id)
-                ->where('created_by', $user->id)
                 ->first();
 
             if (! $comment) {
@@ -102,7 +102,19 @@ class CommentController extends Controller
                 ]);
             }
 
-            $comment->delete();
+            $courseuser = CourseUser::where('user_id', '=', $user->id)
+                ->where('course_id', '=', $announcement->course_id)
+                ->first();
+
+            if ($courseuser->role == 'teacher') {
+                $comment->delete();
+            } else {
+                if ($comment->created_by == $user->id) {
+                    $comment->delete();
+                } else {
+                    return ApiResponse::unauthorized();
+                }
+            }
 
             return ApiResponse::success();
         } catch (Exception $e) {
