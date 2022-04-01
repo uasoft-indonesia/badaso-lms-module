@@ -355,4 +355,34 @@ class AnnouncementApiTest extends TestCase
         ]);
     }
 
+    public function testDeleteAnnouncementGivenCorrectTeacherAndIdExpectResponseDeletedAnnouncement()
+    {
+        $teacher = User::factory()->create();
+        $teacher->rawPassword = 'password';
+
+        $student = User::factory()->create();
+        $student->rawPassword = 'password';
+
+        $course =  Course::factory()
+            ->hasAttached($teacher, ['role' => CourseUserRole::TEACHER])
+            ->hasAttached($student, ['role' => CourseUserRole::STUDENT])
+            ->create();
+
+        $announcement = Announcement::factory()
+            ->for($course)
+            ->create([
+                'created_by' => $student->id,
+                'content' => 'content',
+            ]);
+
+        $url = route('badaso.announcement.delete', ['id' => $announcement->id]);
+        $response = AuthHelper::asUser($this, $teacher)->json('DELETE', $url);
+
+        $response->assertStatus(200);
+        $response->assertJsonFragment([
+            'id' => $announcement->id,
+            'content' => 'old content'
+        ]);
+    }
+
 }
