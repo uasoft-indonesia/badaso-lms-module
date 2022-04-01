@@ -103,7 +103,7 @@ class CommentController extends Controller
             }
 
             $comment->delete();
-            
+
             return ApiResponse::success();
         } catch (Exception $e) {
             return ApiResponse::failed($e);
