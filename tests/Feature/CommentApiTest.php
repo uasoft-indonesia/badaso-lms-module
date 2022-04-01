@@ -256,4 +256,34 @@ class CommentApiTest extends TestCase
             'content' => 'Editted content',
         ]);
     }
+
+    public function testDeleteCommentWithoutLoginExpectResponse401()
+    {
+        $url = route('badaso.comment.delete', ['id' => 1]);
+        $response = $this->json('DELETE', $url);
+        $response->assertStatus(401);
+    }
+
+    public function testDeleteCommentGivenCommentDoesNotExistExpectResponse400()
+    {
+        $user = User::factory()->create();
+        $user->rawPassword = 'password';
+
+        $url = route('badaso.comment.delete', ['id' => 1]);
+        $response = AuthHelper::asUser($this, $user)->json('DELETE', $url);
+        $response->assertStatus(400);
+    }
+
+    public function testDeleteCommentGivenUserIsNotCreatorExpectResponse400()
+    {
+        $user = User::factory()->create();
+        $user->rawPassword = 'password';
+
+        $comment = Comment::factory()->create();
+
+        $url = route('badaso.comment.delete', ['id' => $comment->id]);
+        $response = AuthHelper::asUser($this, $user)->json('DELETE', $url);
+
+        $response->assertStatus(400);
+    }
 }
