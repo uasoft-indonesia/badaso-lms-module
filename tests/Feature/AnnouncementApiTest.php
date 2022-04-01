@@ -300,9 +300,17 @@ class AnnouncementApiTest extends TestCase
         $response->assertStatus(400);
     }
 
-    public function testDeleteAnnouncementGivenUnrelatedAuthorExpectResponse401()
+    public function testDeleteAnnouncementGivenUnrelatedAuthorOrTeacherExpectResponse400()
     {
+        $user = User::factory()->create();
+        $user->rawPassword = 'password';
 
+        $announcement = Announcement::factory()->create();
+
+        $url = route('badaso.announcement.delete', ['id' => $announcement->id]);
+        $response = AuthHelper::asUser($this, $user)->json('DELETE', $url);
+
+        $response->assertStatus(400);
     }
 
     public function testDeleteAnnouncementGivenUnenrolledAuthorExpectResponse401()
