@@ -54,7 +54,7 @@ class CommentController extends Controller
             $comment = Comment::where('id', $id)
                 ->where('created_by', $user->id)
                 ->first();
-            
+
             if (! $comment) {
                 throw ValidationException::withMessages([
                     'id' => 'Comment not found',
