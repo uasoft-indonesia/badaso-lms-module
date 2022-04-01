@@ -10,6 +10,7 @@ use Uasoft\Badaso\Helpers\ApiResponse;
 use Uasoft\Badaso\Module\LMSModule\Helpers\CourseUserHelper;
 use Uasoft\Badaso\Module\LMSModule\Models\Announcement;
 use Uasoft\Badaso\Module\LMSModule\Models\Comment;
+use Uasoft\Badaso\Module\LMSModule\Models\Course;
 
 class AnnouncementController extends Controller
 {
@@ -22,7 +23,7 @@ class AnnouncementController extends Controller
                 'content' => 'required|string|max:65535',
             ]);
 
-            if (! CourseUserHelper::isUserInCourse($user->id, $request->input('course_id'))) {
+            if (!CourseUserHelper::isUserInCourse($user->id, $request->input('course_id'))) {
                 throw ValidationException::withMessages([
                     'course_id' => 'Course not found',
                 ]);
@@ -48,7 +49,7 @@ class AnnouncementController extends Controller
             ]);
 
             $user = auth()->user();
-            if (! CourseUserHelper::isUserInCourse($user->id, $request->query('course_id'))) {
+            if (!CourseUserHelper::isUserInCourse($user->id, $request->query('course_id'))) {
                 throw ValidationException::withMessages([
                     'course_id' => 'Course not found',
                 ]);
@@ -86,13 +87,13 @@ class AnnouncementController extends Controller
                 ->where('created_by', $user->id)
                 ->first();
 
-            if (! $announcement) {
+            if (!$announcement) {
                 throw ValidationException::withMessages([
                     'id' => 'Announcement not found',
                 ]);
             }
 
-            if (! CourseUserHelper::isUserInCourse($user->id, $announcement->course_id)) {
+            if (!CourseUserHelper::isUserInCourse($user->id, $announcement->course_id)) {
                 throw ValidationException::withMessages([
                     'id' => 'Must enroll the course to edit the announcement',
                 ]);
@@ -111,10 +112,8 @@ class AnnouncementController extends Controller
     {
         try {
             $user = auth()->user();
-            $announcement = Announcement::join('badaso_courses as bc', 'bc.id', '=', 'badaso_announcements.course_id')
-                ->where('badaso_announcements.id', $id)
-                ->where('badaso_announcements.created_by', $user->id)
-                ->orWhere('bc.created_by', $user->id)
+
+            $announcement = Announcement::where('id', $id)
                 ->first();
 
             if (! $announcement) {
@@ -123,7 +122,23 @@ class AnnouncementController extends Controller
                 ]);
             }
 
-            if (! CourseUserHelper::isUserInCourse($user->id, $announcement->course_id)) {
+            $authorized_announcement = Announcement::where('id', $id)
+                ->where('created_by', $user->id)
+                ->first();
+
+            if (! $authorized_announcement) {
+                $course = Course::where('id', $announcement->course_id)
+                    ->where('created_by', $user->id)
+                    ->first();
+
+                if (! $course){
+                    throw ValidationException::withMessages([
+                        'id' => 'Announcement not found',
+                    ]);
+                }
+            }
+
+            if (!CourseUserHelper::isUserInCourse($user->id, $announcement->course_id)) {
                 throw ValidationException::withMessages([
                     'id' => 'Must enroll the course to edit the announcement',
                 ]);
@@ -132,7 +147,7 @@ class AnnouncementController extends Controller
             $announcement->delete();
 
             return ApiResponse::success($announcement->toArray());
-        } catch (Exception $e){
+        } catch (Exception $e) {
             return ApiResponse::failed($e);
         }
     }
@@ -149,7 +164,7 @@ class AnnouncementController extends Controller
             $announcement = Announcement::where('id', $request->input('announcement_id'))
                 ->first();
 
-            if (! $announcement) {
+            if (!$announcement) {
                 throw ValidationException::withMessages([
                     'announcement_id' => 'Announcement not found',
                 ]);
