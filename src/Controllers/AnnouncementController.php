@@ -107,6 +107,16 @@ class AnnouncementController extends Controller
         }
     }
 
+    public function delete($id)
+    {
+        try {
+            $user = auth()->user();
+            return '';
+        } catch (Exception $e){
+            return ApiResponse::failed($e);
+        }
+    }
+
     public function comment(Request $request)
     {
         try {
