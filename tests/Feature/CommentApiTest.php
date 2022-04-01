@@ -14,7 +14,7 @@ class CommentApiTest extends TestCase
 {
     public function testCreateCommentWithoutLoginExpectResponse401()
     {
-        $url = route('badaso.announcement.comment');
+        $url = route('badaso.comment.add');
         $response = $this->json('POST', $url);
         $response->assertStatus(401);
     }
@@ -24,7 +24,7 @@ class CommentApiTest extends TestCase
         $user = User::factory()->create();
         $user->rawPassword = 'password';
 
-        $url = $url = route('badaso.announcement.comment');
+        $url = route('badaso.comment.add');
         $response = AuthHelper::asUser($this, $user)->json('POST', $url, [
             'announcement_id' => 1,
             'content' => 'Test content',
@@ -38,7 +38,7 @@ class CommentApiTest extends TestCase
         $user = User::factory()->create();
         $user->rawPassword = 'password';
 
-        $url = $url = route('badaso.announcement.comment');
+        $url = route('badaso.comment.add');
         $response = AuthHelper::asUser($this, $user)->json('POST', $url, [
             'announcement_id' => 1,
         ]);
@@ -53,7 +53,7 @@ class CommentApiTest extends TestCase
 
         $announcement = Announcement::factory()->create();
 
-        $url = $url = route('badaso.announcement.comment');
+        $url = route('badaso.comment.add');
         AuthHelper::asUser($this, $user)->json('POST', $url, [
             'announcement_id' => $announcement->id,
             'content' => 'Test content',
@@ -77,7 +77,7 @@ class CommentApiTest extends TestCase
 
         $announcement = Announcement::factory()->create();
 
-        $url = $url = route('badaso.announcement.comment');
+        $url = route('badaso.comment.add');
         $response = AuthHelper::asUser($this, $user)->json('POST', $url, [
             'announcement_id' => $announcement->id,
             'content' => 'This is my comment',
@@ -142,5 +142,262 @@ class CommentApiTest extends TestCase
                 ],
             ],
         ]]);
+    }
+
+    public function testEditCommentWithoutLoginExpectResponse401()
+    {
+        $url = route('badaso.comment.edit', ['id' => 1]);
+        $response = $this->json('PUT', $url);
+
+        $response->assertStatus(401);
+    }
+
+    public function testEditCommentGivenCommentDoesNotExistExpectResponse400()
+    {
+        $user = User::factory()->create();
+        $user->rawPassword = 'password';
+
+        $url = route('badaso.comment.edit', ['id' => 1]);
+        $response = AuthHelper::asUser($this, $user)->json('PUT', $url, [
+            'content' => 'Editted content',
+        ]);
+
+        $response->assertStatus(400);
+    }
+
+    public function testEditCommentGivenNoContentExpectResponse400()
+    {
+        $user = User::factory()->create();
+        $user->rawPassword = 'password';
+
+        $announcement = Announcement::factory()->create();
+        $comment = Comment::factory()
+            ->for($announcement)
+            ->create();
+
+        $url = route('badaso.comment.edit', ['id' => $comment->id]);
+        $response = AuthHelper::asUser($this, $user)->json('PUT', $url);
+
+        $response->assertStatus(400);
+    }
+
+    public function testEditCommentGivenUserIsNotCreatorExpectResponse400()
+    {
+        $user = User::factory()->create();
+        $user->rawPassword = 'password';
+
+        $comment = Comment::factory()->create();
+
+        $url = route('badaso.comment.edit', ['id' => $comment->id]);
+        $response = AuthHelper::asUser($this, $user)->json('PUT', $url, [
+            'content' => 'Editted content',
+        ]);
+
+        $response->assertStatus(400);
+    }
+
+    public function testEditCommentGivenValidDataExpectUpdated()
+    {
+        $user = User::factory()->create();
+        $user->rawPassword = 'password';
+
+        $course = Course::factory()
+            ->hasAttached($user, ['role' => CourseUserRole::TEACHER])
+            ->create();
+
+        $announcement = Announcement::factory()
+            ->for($course)
+            ->create();
+
+        $comment = Comment::factory()
+            ->for($announcement)
+            ->create([
+                'created_by' => $user->id,
+                'content' => 'Uneditted content',
+            ]);
+
+        $url = route('badaso.comment.edit', ['id' => $comment->id]);
+        AuthHelper::asUser($this, $user)->json('PUT', $url, [
+            'content' => 'Editted content',
+        ]);
+
+        $newComment = Comment::find($comment->id);
+        $this->assertEquals($newComment->content, 'Editted content');
+    }
+
+    public function testEditCommentGivenValidDataExpectReturnUpdatedComment()
+    {
+        $user = User::factory()->create();
+        $user->rawPassword = 'password';
+
+        $course = Course::factory()
+            ->hasAttached($user, ['role' => CourseUserRole::TEACHER])
+            ->create();
+
+        $announcement = Announcement::factory()
+            ->for($course)
+            ->create();
+
+        $comment = Comment::factory()
+            ->for($announcement)
+            ->create([
+                'created_by' => $user->id,
+                'content' => 'Uneditted content',
+            ]);
+
+        $url = route('badaso.comment.edit', ['id' => $comment->id]);
+        $response = AuthHelper::asUser($this, $user)->json('PUT', $url, [
+            'content' => 'Editted content',
+        ]);
+
+        $response->assertStatus(200);
+        $response->assertJsonFragment([
+            'id' => $comment->id,
+            'content' => 'Editted content',
+        ]);
+    }
+
+    public function testDeleteCommentWithoutLoginExpectResponse401()
+    {
+        $url = route('badaso.comment.delete', ['id' => 1]);
+        $response = $this->json('DELETE', $url);
+        $response->assertStatus(401);
+    }
+
+    public function testDeleteCommentGivenCommentDoesNotExistExpectResponse400()
+    {
+        $user = User::factory()->create();
+        $user->rawPassword = 'password';
+
+        $url = route('badaso.comment.delete', ['id' => 1]);
+        $response = AuthHelper::asUser($this, $user)->json('DELETE', $url);
+        $response->assertStatus(400);
+    }
+
+    public function testDeleteCommentGivenUserIsNotCreatorExpectResponse400()
+    {
+        $user = User::factory()->create();
+        $user->rawPassword = 'password';
+
+        $comment = Comment::factory()->create();
+
+        $url = route('badaso.comment.delete', ['id' => $comment->id]);
+        $response = AuthHelper::asUser($this, $user)->json('DELETE', $url);
+
+        $response->assertStatus(400);
+    }
+
+    public function testDeleteCommentOfOtherPeopleGivenUserIsNotTeacherExpectResponse401()
+    {
+        $user = User::factory()->create();
+        $user->rawPassword = 'password';
+
+        $student = User::factory()->create();
+        $student->rawPassword = 'password';
+
+        $course = Course::factory()
+            ->hasAttached($user, ['role' => CourseUserRole::STUDENT])
+            ->create();
+
+        $announcement = Announcement::factory()
+            ->for($course)
+            ->create();
+
+        $comment = Comment::factory()
+            ->for($announcement)
+            ->create([
+                'created_by' => $student->id,
+                'content' => 'To NOT be deleted',
+            ]);
+
+        $url = route('badaso.comment.delete', ['id' => $comment->id]);
+        $response = AuthHelper::asUser($this, $user)->json('DELETE', $url);
+
+        $response->assertStatus(401);
+    }
+
+    public function testDeleteOwnCommentGivenValidDataExpectDeleted()
+    {
+        $user = User::factory()->create();
+        $user->rawPassword = 'password';
+
+        $course = Course::factory()
+            ->hasAttached($user, ['role' => CourseUserRole::STUDENT])
+            ->create();
+
+        $announcement = Announcement::factory()
+            ->for($course)
+            ->create();
+
+        $comment = Comment::factory()
+            ->for($announcement)
+            ->create([
+                'created_by' => $user->id,
+                'content' => 'To be deleted',
+            ]);
+
+        $this->assertEquals(1, Comment::count());
+
+        $url = route('badaso.comment.delete', ['id' => $comment->id]);
+        AuthHelper::asUser($this, $user)->json('DELETE', $url);
+
+        $this->assertEquals(0, Comment::count());
+    }
+
+    public function testDeleteCommentOfOtherPeopleGivenValidDataExpectDeleted()
+    {
+        $user = User::factory()->create();
+        $user->rawPassword = 'password';
+
+        $student = User::factory()->create();
+        $student->rawPassword = 'password';
+
+        $course = Course::factory()
+            ->hasAttached($user, ['role' => CourseUserRole::TEACHER])
+            ->create();
+
+        $announcement = Announcement::factory()
+            ->for($course)
+            ->create();
+
+        $comment = Comment::factory()
+            ->for($announcement)
+            ->create([
+                'created_by' => $student->id,
+                'content' => 'To be deleted',
+            ]);
+
+        $this->assertEquals(1, Comment::count());
+
+        $url = route('badaso.comment.delete', ['id' => $comment->id]);
+        AuthHelper::asUser($this, $user)->json('DELETE', $url);
+
+        $this->assertEquals(0, Comment::count());
+    }
+
+    public function testDeleteCommentGivenValidDataExpectResponse200()
+    {
+        $user = User::factory()->create();
+        $user->rawPassword = 'password';
+
+        $course = Course::factory()
+            ->hasAttached($user, ['role' => CourseUserRole::TEACHER])
+            ->create();
+
+        $announcement = Announcement::factory()
+            ->for($course)
+            ->create();
+
+        $comment = Comment::factory()
+            ->for($announcement)
+            ->create([
+                'created_by' => $user->id,
+                'content' => 'To be deleted',
+            ]);
+
+        $url = route('badaso.comment.delete', ['id' => $comment->id]);
+        $response = AuthHelper::asUser($this, $user)->json('DELETE', $url);
+
+        $response->assertStatus(200);
     }
 }

@@ -104,34 +104,4 @@ class AnnouncementController extends Controller
             return ApiResponse::failed($e);
         }
     }
-
-    public function comment(Request $request)
-    {
-        try {
-            $user = auth()->user();
-            $request->validate([
-                'announcement_id' => 'required|integer',
-                'content' => 'required|string|max:65535',
-            ]);
-
-            $announcement = Announcement::where('id', $request->input('announcement_id'))
-                ->first();
-
-            if (! $announcement) {
-                throw ValidationException::withMessages([
-                    'announcement_id' => 'Announcement not found',
-                ]);
-            }
-
-            $comment = Comment::create([
-                'announcement_id' => $request->input('announcement_id'),
-                'content' => $request->input('content'),
-                'created_by' => $user->id,
-            ]);
-
-            return ApiResponse::success($comment->toArray());
-        } catch (Exception $e) {
-            return ApiResponse::failed($e);
-        }
-    }
 }
