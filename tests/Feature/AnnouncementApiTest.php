@@ -315,7 +315,17 @@ class AnnouncementApiTest extends TestCase
 
     public function testDeleteAnnouncementGivenUnenrolledAuthorExpectResponse401()
     {
+        $user = User::factory()->create();
+        $user->rawPassword = 'password';
 
+        $announcement = Announcement::factory()->create([
+            'created_by' => $user->id,
+        ]);
+
+        $url = route('badaso.announcement.delete', ['id' => $announcement->id]);
+        $response = AuthHelper::asUser($this, $user)->json('DELETE', $url);
+
+        $response->assertStatus(400);
     }
 
     public function testDeleteAnnouncementGivenCorrectAuthorAndIdExpectResponse200()
