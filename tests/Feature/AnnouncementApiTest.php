@@ -291,7 +291,13 @@ class AnnouncementApiTest extends TestCase
 
     public function testDeleteAnnouncementGivenUnknownIdExpectResponse400()
     {
+        $user = User::factory()->create();
+        $user->rawPassword = 'password';
 
+        $url = route('badaso.announcement.delete', ['id' => 1]);
+        $response = AuthHelper::asUser($this, $user)->json('DELETE', $url);
+
+        $response->assertStatus(400);
     }
 
     public function testDeleteAnnouncementGivenUnrelatedAuthorExpectResponse401()
