@@ -366,7 +366,9 @@ class AnnouncementApiTest extends TestCase
         $course =  Course::factory()
             ->hasAttached($teacher, ['role' => CourseUserRole::TEACHER])
             ->hasAttached($student, ['role' => CourseUserRole::STUDENT])
-            ->create();
+            ->create([
+                'created_by' => $teacher->id,
+            ]);
 
         $announcement = Announcement::factory()
             ->for($course)
@@ -381,7 +383,7 @@ class AnnouncementApiTest extends TestCase
         $response->assertStatus(200);
         $response->assertJsonFragment([
             'id' => $announcement->id,
-            'content' => 'old content'
+            'content' => 'content'
         ]);
     }
 
