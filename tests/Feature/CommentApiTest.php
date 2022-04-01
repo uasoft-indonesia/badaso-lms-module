@@ -286,4 +286,58 @@ class CommentApiTest extends TestCase
 
         $response->assertStatus(400);
     }
+
+    public function testDeleteCommentGivenValidDataExpectDeleted()
+    {
+        $user = User::factory()->create();
+        $user->rawPassword = 'password';
+
+        $course = Course::factory()
+            ->hasAttached($user, ['role' => CourseUserRole::TEACHER])
+            ->create();
+
+        $announcement = Announcement::factory()
+            ->for($course)
+            ->create();
+
+        $comment = Comment::factory()
+            ->for($announcement)
+            ->create([
+                'created_by' => $user->id,
+                'content' => 'To be deleted',
+            ]);
+
+        $this->assertEquals(1, Comment::count());
+
+        $url = route('badaso.comment.delete', ['id' => $comment->id]);
+        AuthHelper::asUser($this, $user)->json('DELETE', $url);
+
+        $this->assertEquals(0, Comment::count());
+    }
+
+    public function testDeleteCommentGivenValidDataExpectResponse200()
+    {
+        $user = User::factory()->create();
+        $user->rawPassword = 'password';
+
+        $course = Course::factory()
+            ->hasAttached($user, ['role' => CourseUserRole::TEACHER])
+            ->create();
+
+        $announcement = Announcement::factory()
+            ->for($course)
+            ->create();
+
+        $comment = Comment::factory()
+            ->for($announcement)
+            ->create([
+                'created_by' => $user->id,
+                'content' => 'To be deleted',
+            ]);
+
+        $url = route('badaso.comment.delete', ['id' => $comment->id]);
+        $response = AuthHelper::asUser($this, $user)->json('DELETE', $url);
+
+        $response->assertStatus(200);
+    }
 }
