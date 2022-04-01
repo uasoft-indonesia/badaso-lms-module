@@ -287,10 +287,70 @@ class CommentApiTest extends TestCase
         $response->assertStatus(400);
     }
 
-    public function testDeleteCommentGivenValidDataExpectDeleted()
+    public function testDeleteCommentOfOtherPeopleGivenUserIsNotTeacherExpectResponse401()
     {
         $user = User::factory()->create();
         $user->rawPassword = 'password';
+
+        $student = User::factory()->create();
+        $student->rawPassword = 'password';
+
+        $course = Course::factory()
+            ->hasAttached($user, ['role' => CourseUserRole::STUDENT])
+            ->create();
+
+        $announcement = Announcement::factory()
+            ->for($course)
+            ->create();
+
+        $comment = Comment::factory()
+            ->for($announcement)
+            ->create([
+                'created_by' => $student->id,
+                'content' => 'To NOT be deleted',
+            ]);
+
+        $url = route('badaso.comment.delete', ['id' => $comment->id]);
+        $response = AuthHelper::asUser($this, $user)->json('DELETE', $url);
+
+        $response->assertStatus(401);
+    }
+
+    public function testDeleteOwnCommentGivenValidDataExpectDeleted()
+    {
+        $user = User::factory()->create();
+        $user->rawPassword = 'password';
+
+        $course = Course::factory()
+            ->hasAttached($user, ['role' => CourseUserRole::STUDENT])
+            ->create();
+
+        $announcement = Announcement::factory()
+            ->for($course)
+            ->create();
+
+        $comment = Comment::factory()
+            ->for($announcement)
+            ->create([
+                'created_by' => $user->id,
+                'content' => 'To be deleted',
+            ]);
+
+        $this->assertEquals(1, Comment::count());
+
+        $url = route('badaso.comment.delete', ['id' => $comment->id]);
+        AuthHelper::asUser($this, $user)->json('DELETE', $url);
+
+        $this->assertEquals(0, Comment::count());
+    }
+
+    public function testDeleteCommentOfOtherPeopleGivenValidDataExpectDeleted()
+    {
+        $user = User::factory()->create();
+        $user->rawPassword = 'password';
+
+        $student = User::factory()->create();
+        $student->rawPassword = 'password';
 
         $course = Course::factory()
             ->hasAttached($user, ['role' => CourseUserRole::TEACHER])
@@ -303,7 +363,7 @@ class CommentApiTest extends TestCase
         $comment = Comment::factory()
             ->for($announcement)
             ->create([
-                'created_by' => $user->id,
+                'created_by' => $student->id,
                 'content' => 'To be deleted',
             ]);
 
