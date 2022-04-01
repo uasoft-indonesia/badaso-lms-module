@@ -281,4 +281,30 @@ class AnnouncementApiTest extends TestCase
             'content' => 'new content',
         ]);
     }
+
+    public function testDeleteAnnouncementWithoutLoginExpectResponse401()
+    {
+
+    }
+
+    public function testDeleteAnnouncementGivenUnknownIdExpectResponse400()
+    {
+
+    }
+
+    public function testDeleteAnnouncementGivenUnrelatedAuthorExpectResponse401()
+    {
+
+    }
+
+    public function testDeleteAnnouncementGivenUnenrolledAuthorExpectResponse401()
+    {
+
+    }
+
+    public function testDeleteAnnouncementGivenCorrectAuthorAndIdExpectResponse200()
+    {
+
+    }
+
 }
