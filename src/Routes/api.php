@@ -53,7 +53,7 @@ Route::group(['prefix' => $api_route_prefix, 'as' => 'badaso.', 'middleware' => 
             Route::put('/{id}', HelpersRoute::getController('CommentController@edit'))
                 ->middleware(BadasoAuthenticate::class)
                 ->name('edit');
-            Route::put('/delete', HelpersRoute::getController('CommentController@delete'))
+            Route::delete('/{id}', HelpersRoute::getController('CommentController@delete'))
                 ->middleware(BadasoAuthenticate::class)
                 ->name('delete');
         });

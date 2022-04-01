@@ -78,4 +78,32 @@ class CommentController extends Controller
             return ApiResponse::failed($e);
         }
     }
+
+    public function delete($id)
+    {
+        try {
+            $user = auth()->user();
+            $comment = Comment::where('id', $id)
+                ->where('created_by', $user->id)
+                ->first();
+
+            if (! $comment) {
+                throw ValidationException::withMessages([
+                    'id' => 'Comment not found',
+                ]);
+            }
+
+            $announcement = Announcement::where('id', $comment->announcement_id)
+                ->first();
+
+            if (! CourseUserHelper::isUserInCourse($user->id, $announcement->course_id)) {
+                throw ValidationException::withMessages([
+                    'id' => 'Must enroll the course to edit the comment',
+                ]);
+            }
+
+        } catch (Exception $e) {
+            return ApiResponse::failed($e);
+        }
+    }
 }
