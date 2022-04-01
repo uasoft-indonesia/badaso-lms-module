@@ -215,7 +215,7 @@ class CommentApiTest extends TestCase
                 'created_by' => $user->id,
                 'content' => 'Uneditted content',
             ]);
-        
+
         $url = route('badaso.comment.edit', ['id' => $comment->id]);
         AuthHelper::asUser($this, $user)->json('PUT', $url, [
             'content' => 'Editted content',
@@ -244,7 +244,7 @@ class CommentApiTest extends TestCase
                 'created_by' => $user->id,
                 'content' => 'Uneditted content',
             ]);
-        
+
         $url = route('badaso.comment.edit', ['id' => $comment->id]);
         $response = AuthHelper::asUser($this, $user)->json('PUT', $url, [
             'content' => 'Editted content',
