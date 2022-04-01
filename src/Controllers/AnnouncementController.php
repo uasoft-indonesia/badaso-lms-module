@@ -127,7 +127,9 @@ class AnnouncementController extends Controller
                 ]);
             }
 
-            return '';
+            $announcement->delete();
+
+            return ApiResponse::success($announcement->toArray());
         } catch (Exception $e){
             return ApiResponse::failed($e);
         }
