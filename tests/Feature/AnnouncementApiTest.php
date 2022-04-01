@@ -2,6 +2,7 @@
 
 namespace Uasoft\Badaso\Module\LMSModule\Tests\Feature;
 
+use Illuminate\Support\Facades\Auth;
 use Tests\TestCase;
 use Uasoft\Badaso\Module\LMSModule\Enums\CourseUserRole;
 use Uasoft\Badaso\Module\LMSModule\Models\Announcement;
@@ -328,9 +329,30 @@ class AnnouncementApiTest extends TestCase
         $response->assertStatus(400);
     }
 
-    public function testDeleteAnnouncementGivenCorrectAuthorAndIdExpectResponse200()
+    public function testDeleteAnnouncementGivenCorrectAuthorAndIdExpectResponseDeletedAnnouncement()
     {
+        $user = User::factory()->create();
+        $user->rawPassword = 'password';
 
+        $course = Course::factory()
+            ->hasAttached($user, ['role' => CourseUserRole::TEACHER])
+            ->create();
+
+        $announcement = Announcement::factory()
+            ->for($course)
+            ->create([
+                'created_by' => $user->id,
+                'content' => 'old content',
+            ]);
+
+        $url = route('badaso.announcement.delete', ['id' => $announcement->id]);
+        $response = AuthHelper::asUser($this, $user)->json('DELETE', $url);
+
+        $response->assertStatus(200);
+        $response->assertJsonFragment([
+            'id' => $announcement->id,
+            'content' => 'old content'
+        ]);
     }
 
 }
