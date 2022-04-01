@@ -111,8 +111,10 @@ class AnnouncementController extends Controller
     {
         try {
             $user = auth()->user();
-            $announcement = Announcement::where('id', $id)
-                ->where('created_by', $user->id)
+            $announcement = Announcement::join('badaso_courses as bc', 'bc.id', '=', 'badaso_announcements.course_id')
+                ->where('badaso_announcements.id', $id)
+                ->where('badaso_announcements.created_by', $user->id)
+                ->orWhere('bc.created_by', $user->id)
                 ->first();
 
             if (! $announcement) {
