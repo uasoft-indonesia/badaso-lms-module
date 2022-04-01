@@ -284,7 +284,9 @@ class AnnouncementApiTest extends TestCase
 
     public function testDeleteAnnouncementWithoutLoginExpectResponse401()
     {
-
+        $url = route('badaso.announcement.delete', ['id' => 1]);
+        $response = $this->json('DELETE', $url);
+        $response->assertStatus(401);
     }
 
     public function testDeleteAnnouncementGivenUnknownIdExpectResponse400()
