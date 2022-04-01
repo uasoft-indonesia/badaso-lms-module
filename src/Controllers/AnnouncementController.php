@@ -111,6 +111,16 @@ class AnnouncementController extends Controller
     {
         try {
             $user = auth()->user();
+            $announcement = Announcement::where('id', $id)
+                ->where('created_by', $user->id)
+                ->first();
+
+            if (! $announcement) {
+                throw ValidationException::withMessages([
+                    'id' => 'Announcement not found',
+                ]);
+            }
+
             return '';
         } catch (Exception $e){
             return ApiResponse::failed($e);
