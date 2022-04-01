@@ -121,6 +121,12 @@ class AnnouncementController extends Controller
                 ]);
             }
 
+            if (! CourseUserHelper::isUserInCourse($user->id, $announcement->course_id)) {
+                throw ValidationException::withMessages([
+                    'id' => 'Must enroll the course to edit the announcement',
+                ]);
+            }
+
             return '';
         } catch (Exception $e){
             return ApiResponse::failed($e);
