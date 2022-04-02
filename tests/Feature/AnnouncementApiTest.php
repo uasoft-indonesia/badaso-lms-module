@@ -385,5 +385,4 @@ class AnnouncementApiTest extends TestCase
             'content' => 'content',
         ]);
     }
-
 }
