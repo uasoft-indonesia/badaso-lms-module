@@ -344,16 +344,18 @@ class AnnouncementApiTest extends TestCase
                 'content' => 'old content',
             ]);
 
+        $counterBefore = Announcement::count();
         $url = route('badaso.announcement.delete', ['id' => $announcement->id]);
         $response = AuthHelper::asUser($this, $user)->json('DELETE', $url);
         $checkAnnouncement = AuthHelper::asUser($this, $user)->json('DELETE', $url);
+        $counterAfter = Announcement::count();
 
         $response->assertStatus(200);
         $response->assertJsonFragment([
             'id' => $announcement->id,
             'content' => 'old content',
         ]);
-        $checkAnnouncement->assertStatus(400);
+        self::assertEquals($counterBefore - 1, $counterAfter);
     }
 
     public function testDeleteAnnouncementGivenCorrectTeacherAndIdExpectResponseDeletedAnnouncement()
@@ -378,15 +380,16 @@ class AnnouncementApiTest extends TestCase
                 'content' => 'content',
             ]);
 
+        $counterBefore = Announcement::count();
         $url = route('badaso.announcement.delete', ['id' => $announcement->id]);
         $response = AuthHelper::asUser($this, $teacher)->json('DELETE', $url);
-        $checkAnnouncement = AuthHelper::asUser($this, $teacher)->json('DELETE', $url);
+        $counterAfter = Announcement::count();
 
         $response->assertStatus(200);
         $response->assertJsonFragment([
             'id' => $announcement->id,
             'content' => 'content',
         ]);
-        $checkAnnouncement->assertStatus(400);
+        self::assertEquals($counterBefore - 1, $counterAfter);
     }
 }
