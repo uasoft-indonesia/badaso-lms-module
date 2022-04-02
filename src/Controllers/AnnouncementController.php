@@ -22,7 +22,7 @@ class AnnouncementController extends Controller
                 'content' => 'required|string|max:65535',
             ]);
 
-            if (! CourseUserHelper::isUserInCourse($user->id, $request->input('course_id'))) {
+            if (!CourseUserHelper::isUserInCourse($user->id, $request->input('course_id'))) {
                 throw ValidationException::withMessages([
                     'course_id' => 'Course not found',
                 ]);
@@ -48,7 +48,7 @@ class AnnouncementController extends Controller
             ]);
 
             $user = auth()->user();
-            if (! CourseUserHelper::isUserInCourse($user->id, $request->query('course_id'))) {
+            if (!CourseUserHelper::isUserInCourse($user->id, $request->query('course_id'))) {
                 throw ValidationException::withMessages([
                     'course_id' => 'Course not found',
                 ]);
@@ -86,13 +86,13 @@ class AnnouncementController extends Controller
                 ->where('created_by', $user->id)
                 ->first();
 
-            if (! $announcement) {
+            if (!$announcement) {
                 throw ValidationException::withMessages([
                     'id' => 'Announcement not found',
                 ]);
             }
 
-            if (! CourseUserHelper::isUserInCourse($user->id, $announcement->course_id)) {
+            if (!CourseUserHelper::isUserInCourse($user->id, $announcement->course_id)) {
                 throw ValidationException::withMessages([
                     'id' => 'Must enroll the course to edit the announcement',
                 ]);
@@ -112,22 +112,21 @@ class AnnouncementController extends Controller
         try {
             $user = auth()->user();
 
-            $announcement = Announcement::join('badaso_courses', 'badaso_courses.id', '=', 'badaso_announcements.course_id')
-                ->where('badaso_announcements.id', $id)
-                ->where(function ($query) {
-                    $query->where('badaso_announcements.created_by', auth()->user()->id)
-                        ->orWhere('badaso_courses.created_by', auth()->user()->id);
-                })
-                ->select('badaso_announcements.*')
-                ->first();
-
+            $announcement = Announcement::find($id);
             if (! $announcement) {
                 throw ValidationException::withMessages([
                     'id' => 'Announcement not found',
                 ]);
             }
 
-            if (! CourseUserHelper::isUserInCourse($user->id, $announcement->course_id)) {
+            $course = $announcement->course;
+            if (!($announcement->created_by == $user->id || $course->created_by == $user->id)) {
+                throw ValidationException::withMessages([
+                    'id' => 'Announcement not found',
+                ]);
+            }
+
+            if (!CourseUserHelper::isUserInCourse($user->id, $announcement->course_id)) {
                 throw ValidationException::withMessages([
                     'id' => 'Must enroll the course to edit the announcement',
                 ]);
