@@ -347,7 +347,6 @@ class AnnouncementApiTest extends TestCase
         $counterBefore = Announcement::count();
         $url = route('badaso.announcement.delete', ['id' => $announcement->id]);
         $response = AuthHelper::asUser($this, $user)->json('DELETE', $url);
-        $checkAnnouncement = AuthHelper::asUser($this, $user)->json('DELETE', $url);
         $counterAfter = Announcement::count();
 
         $response->assertStatus(200);
