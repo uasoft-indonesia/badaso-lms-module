@@ -10,7 +10,6 @@ use Uasoft\Badaso\Helpers\ApiResponse;
 use Uasoft\Badaso\Module\LMSModule\Helpers\CourseUserHelper;
 use Uasoft\Badaso\Module\LMSModule\Models\Announcement;
 use Uasoft\Badaso\Module\LMSModule\Models\Comment;
-use Uasoft\Badaso\Module\LMSModule\Models\Course;
 
 class AnnouncementController extends Controller
 {
@@ -115,7 +114,7 @@ class AnnouncementController extends Controller
 
             $announcement = Announcement::join('badaso_courses', 'badaso_courses.id', '=', 'badaso_announcements.course_id')
                 ->where('badaso_announcements.id', $id)
-                ->where(function($query) {
+                ->where(function ($query) {
                     $query->where('badaso_announcements.created_by', auth()->user()->id)
                         ->orWhere('badaso_courses.created_by', auth()->user()->id);
                 })
