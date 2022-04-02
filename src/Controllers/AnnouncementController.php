@@ -113,29 +113,19 @@ class AnnouncementController extends Controller
         try {
             $user = auth()->user();
 
-            $announcement = Announcement::where('id', $id)
+            $announcement = Announcement::join('badaso_courses', 'badaso_courses.id', '=', 'badaso_announcements.course_id')
+                ->where('badaso_announcements.id', $id)
+                ->where(function($query) {
+                    $query->where('badaso_announcements.created_by', auth()->user()->id)
+                        ->orWhere('badaso_courses.created_by', auth()->user()->id);
+                })
+                ->select('badaso_announcements.*')
                 ->first();
 
             if (! $announcement) {
                 throw ValidationException::withMessages([
                     'id' => 'Announcement not found',
                 ]);
-            }
-
-            $authorized_announcement = Announcement::where('id', $id)
-                ->where('created_by', $user->id)
-                ->first();
-
-            if (! $authorized_announcement) {
-                $course = Course::where('id', $announcement->course_id)
-                    ->where('created_by', $user->id)
-                    ->first();
-
-                if (! $course) {
-                    throw ValidationException::withMessages([
-                        'id' => 'Announcement not found',
-                    ]);
-                }
             }
 
             if (! CourseUserHelper::isUserInCourse($user->id, $announcement->course_id)) {
