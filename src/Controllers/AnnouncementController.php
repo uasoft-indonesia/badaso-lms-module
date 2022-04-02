@@ -58,7 +58,7 @@ class AnnouncementController extends Controller
                 ->join('badaso_users', 'badaso_users.id', '=', 'badaso_announcements.created_by')
                 ->orderBy('badaso_announcements.created_at', 'desc')
                 ->select(
-                    'badaso_announcements.*', 
+                    'badaso_announcements.*',
                     'badaso_announcements.created_at as datetime',
                     'badaso_users.name as author'
                 )
@@ -69,7 +69,7 @@ class AnnouncementController extends Controller
                     ->join('badaso_users', 'badaso_users.id', '=', 'badaso_comments.created_by')
                     ->orderBy('created_at', 'asc')
                     ->select(
-                        'badaso_comments.*', 
+                        'badaso_comments.*',
                         'badaso_comments.created_at as datetime',
                         'badaso_users.name as author'
                     )
