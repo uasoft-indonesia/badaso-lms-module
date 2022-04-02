@@ -2,7 +2,6 @@
 
 namespace Uasoft\Badaso\Module\LMSModule\Tests\Feature;
 
-use Illuminate\Support\Facades\Auth;
 use Tests\TestCase;
 use Uasoft\Badaso\Module\LMSModule\Enums\CourseUserRole;
 use Uasoft\Badaso\Module\LMSModule\Models\Announcement;
@@ -351,7 +350,7 @@ class AnnouncementApiTest extends TestCase
         $response->assertStatus(200);
         $response->assertJsonFragment([
             'id' => $announcement->id,
-            'content' => 'old content'
+            'content' => 'old content',
         ]);
     }
 
@@ -363,7 +362,7 @@ class AnnouncementApiTest extends TestCase
         $student = User::factory()->create();
         $student->rawPassword = 'password';
 
-        $course =  Course::factory()
+        $course = Course::factory()
             ->hasAttached($teacher, ['role' => CourseUserRole::TEACHER])
             ->hasAttached($student, ['role' => CourseUserRole::STUDENT])
             ->create([
@@ -383,7 +382,7 @@ class AnnouncementApiTest extends TestCase
         $response->assertStatus(200);
         $response->assertJsonFragment([
             'id' => $announcement->id,
-            'content' => 'content'
+            'content' => 'content',
         ]);
     }
 
