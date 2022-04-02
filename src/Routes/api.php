@@ -48,8 +48,18 @@ Route::group(['prefix' => $api_route_prefix, 'as' => 'badaso.', 'middleware' => 
                 ->middleware(BadasoAuthenticate::class)
                 ->name('delete');
             Route::post('/comment', HelpersRoute::getController('AnnouncementController@comment'))
+        });
+
+        Route::group(['prefix' => 'comment', 'as' => 'comment.'], function () {
+            Route::post('/', HelpersRoute::getController('CommentController@add'))
                 ->middleware(BadasoAuthenticate::class)
-                ->name('comment');
+                ->name('add');
+            Route::put('/{id}', HelpersRoute::getController('CommentController@edit'))
+                ->middleware(BadasoAuthenticate::class)
+                ->name('edit');
+            Route::delete('/{id}', HelpersRoute::getController('CommentController@delete'))
+                ->middleware(BadasoAuthenticate::class)
+                ->name('delete');
         });
 
         Route::group(['prefix' => 'topic', 'as' => 'topic.'], function () {
