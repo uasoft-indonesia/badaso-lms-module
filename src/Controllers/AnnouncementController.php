@@ -138,7 +138,7 @@ class AnnouncementController extends Controller
                 }
             }
 
-            if (!CourseUserHelper::isUserInCourse($user->id, $announcement->course_id)) {
+            if (! CourseUserHelper::isUserInCourse($user->id, $announcement->course_id)) {
                 throw ValidationException::withMessages([
                     'id' => 'Must enroll the course to edit the announcement',
                 ]);
@@ -164,7 +164,7 @@ class AnnouncementController extends Controller
             $announcement = Announcement::where('id', $request->input('announcement_id'))
                 ->first();
 
-            if (!$announcement) {
+            if (! $announcement) {
                 throw ValidationException::withMessages([
                     'announcement_id' => 'Announcement not found',
                 ]);
