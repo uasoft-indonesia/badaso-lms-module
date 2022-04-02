@@ -55,7 +55,9 @@ class AnnouncementController extends Controller
             }
 
             $announcements = Announcement::where('course_id', $request->query('course_id'))
-                ->orderBy('created_at', 'desc')
+                ->join('badaso_users', 'badaso_users.id', '=', 'badaso_announcements.created_by')
+                ->orderBy('badaso_announcements.created_at', 'desc')
+                ->select('badaso_announcements.*', 'badaso_users.name as author')
                 ->get();
 
             foreach ($announcements as $announcement) {
@@ -98,6 +100,39 @@ class AnnouncementController extends Controller
 
             $announcement->content = $request->input('content');
             $announcement->save();
+
+            return ApiResponse::success($announcement->toArray());
+        } catch (Exception $e) {
+            return ApiResponse::failed($e);
+        }
+    }
+
+    public function delete($id)
+    {
+        try {
+            $user = auth()->user();
+
+            $announcement = Announcement::find($id);
+            if (! $announcement) {
+                throw ValidationException::withMessages([
+                    'id' => 'Announcement not found',
+                ]);
+            }
+
+            $course = $announcement->course;
+            if (! ($announcement->created_by == $user->id || $course->created_by == $user->id)) {
+                throw ValidationException::withMessages([
+                    'id' => 'Announcement not found',
+                ]);
+            }
+
+            if (! CourseUserHelper::isUserInCourse($user->id, $announcement->course_id)) {
+                throw ValidationException::withMessages([
+                    'id' => 'Must enroll the course to edit the announcement',
+                ]);
+            }
+
+            $announcement->delete();
 
             return ApiResponse::success($announcement->toArray());
         } catch (Exception $e) {

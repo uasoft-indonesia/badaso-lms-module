@@ -281,4 +281,114 @@ class AnnouncementApiTest extends TestCase
             'content' => 'new content',
         ]);
     }
+
+    public function testDeleteAnnouncementWithoutLoginExpectResponse401()
+    {
+        $url = route('badaso.announcement.delete', ['id' => 1]);
+        $response = $this->json('DELETE', $url);
+        $response->assertStatus(401);
+    }
+
+    public function testDeleteAnnouncementGivenUnknownIdExpectResponse400()
+    {
+        $user = User::factory()->create();
+        $user->rawPassword = 'password';
+
+        $url = route('badaso.announcement.delete', ['id' => 1]);
+        $response = AuthHelper::asUser($this, $user)->json('DELETE', $url);
+
+        $response->assertStatus(400);
+    }
+
+    public function testDeleteAnnouncementGivenUnrelatedAuthorOrTeacherExpectResponse400()
+    {
+        $user = User::factory()->create();
+        $user->rawPassword = 'password';
+
+        $announcement = Announcement::factory()->create();
+
+        $url = route('badaso.announcement.delete', ['id' => $announcement->id]);
+        $response = AuthHelper::asUser($this, $user)->json('DELETE', $url);
+
+        $response->assertStatus(400);
+    }
+
+    public function testDeleteAnnouncementGivenUnenrolledAuthorExpectResponse401()
+    {
+        $user = User::factory()->create();
+        $user->rawPassword = 'password';
+
+        $announcement = Announcement::factory()->create([
+            'created_by' => $user->id,
+        ]);
+
+        $url = route('badaso.announcement.delete', ['id' => $announcement->id]);
+        $response = AuthHelper::asUser($this, $user)->json('DELETE', $url);
+
+        $response->assertStatus(400);
+    }
+
+    public function testDeleteAnnouncementGivenCorrectAuthorAndIdExpectResponseDeletedAnnouncement()
+    {
+        $user = User::factory()->create();
+        $user->rawPassword = 'password';
+
+        $course = Course::factory()
+            ->hasAttached($user, ['role' => CourseUserRole::TEACHER])
+            ->create();
+
+        $announcement = Announcement::factory()
+            ->for($course)
+            ->create([
+                'created_by' => $user->id,
+                'content' => 'old content',
+            ]);
+
+        $counterBefore = Announcement::count();
+        $url = route('badaso.announcement.delete', ['id' => $announcement->id]);
+        $response = AuthHelper::asUser($this, $user)->json('DELETE', $url);
+        $counterAfter = Announcement::count();
+
+        $response->assertStatus(200);
+        $response->assertJsonFragment([
+            'id' => $announcement->id,
+            'content' => 'old content',
+        ]);
+        self::assertEquals($counterBefore - 1, $counterAfter);
+    }
+
+    public function testDeleteAnnouncementGivenCorrectTeacherAndIdExpectResponseDeletedAnnouncement()
+    {
+        $teacher = User::factory()->create();
+        $teacher->rawPassword = 'password';
+
+        $student = User::factory()->create();
+        $student->rawPassword = 'password';
+
+        $course = Course::factory()
+            ->hasAttached($teacher, ['role' => CourseUserRole::TEACHER])
+            ->hasAttached($student, ['role' => CourseUserRole::STUDENT])
+            ->create([
+                'created_by' => $teacher->id,
+            ]);
+
+        $announcement = Announcement::factory()
+            ->for($course)
+            ->create([
+                'created_by' => $student->id,
+                'content' => 'content',
+            ]);
+
+        $counterBefore = Announcement::count();
+        $url = route('badaso.announcement.delete', ['id' => $announcement->id]);
+        $response = AuthHelper::asUser($this, $teacher)->json('DELETE', $url);
+        $counterAfter = Announcement::count();
+
+        $response->assertStatus(200);
+        $response->assertJsonFragment([
+            'id' => $announcement->id,
+            'content' => 'content',
+        ]);
+        self::assertEquals($counterBefore - 1, $counterAfter);
+    }
 }
