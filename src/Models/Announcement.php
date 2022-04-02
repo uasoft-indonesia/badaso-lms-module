@@ -23,7 +23,7 @@ class Announcement extends Model
     ];
 
     protected $hidden = [
-      'updated_at',
+        'updated_at',
     ];
 
     public function course()
