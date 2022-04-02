@@ -120,7 +120,7 @@ class AnnouncementController extends Controller
             }
 
             $course = $announcement->course;
-            if (!($announcement->created_by == $user->id || $course->created_by == $user->id)) {
+            if (! ($announcement->created_by == $user->id || $course->created_by == $user->id)) {
                 throw ValidationException::withMessages([
                     'id' => 'Announcement not found',
                 ]);
