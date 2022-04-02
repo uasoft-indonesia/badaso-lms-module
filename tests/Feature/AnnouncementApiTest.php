@@ -378,11 +378,13 @@ class AnnouncementApiTest extends TestCase
 
         $url = route('badaso.announcement.delete', ['id' => $announcement->id]);
         $response = AuthHelper::asUser($this, $teacher)->json('DELETE', $url);
+        $checkAnnouncement = AuthHelper::asUser($this, $teacher)->json('DELETE', $url);
 
         $response->assertStatus(200);
         $response->assertJsonFragment([
             'id' => $announcement->id,
             'content' => 'content',
         ]);
+        $checkAnnouncement->assertStatus(400);
     }
 }
