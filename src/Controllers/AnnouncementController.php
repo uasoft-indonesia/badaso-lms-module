@@ -57,12 +57,22 @@ class AnnouncementController extends Controller
             $announcements = Announcement::where('course_id', $request->query('course_id'))
                 ->join('badaso_users', 'badaso_users.id', '=', 'badaso_announcements.created_by')
                 ->orderBy('badaso_announcements.created_at', 'desc')
-                ->select('badaso_announcements.*', 'badaso_users.name as author')
+                ->select(
+                    'badaso_announcements.*',
+                    'badaso_announcements.created_at as datetime',
+                    'badaso_users.name as author'
+                )
                 ->get();
 
             foreach ($announcements as $announcement) {
                 $comments = Comment::where('announcement_id', '=', $announcement->id)
+                    ->join('badaso_users', 'badaso_users.id', '=', 'badaso_comments.created_by')
                     ->orderBy('created_at', 'asc')
+                    ->select(
+                        'badaso_comments.*',
+                        'badaso_comments.created_at as datetime',
+                        'badaso_users.name as author'
+                    )
                     ->get()
                     ->toArray();
                 $announcement->comments = $comments;
