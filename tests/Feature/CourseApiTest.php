@@ -141,4 +141,37 @@ class CourseApiTest extends TestCase
         $this->assertEquals(0, Course::count());
         $this->assertEquals(0, CourseUser::count());
     }
+
+    public function testCourseDetailWithoutLoginExpectResponseStatus401()
+    {
+        $url = route('badaso.course.detail', ['id' => '200']);
+        $response = $this->json('GET', $url);
+        $response->assertStatus(401);
+    }
+
+    public function testCourseDetailAsAuthorizedUserWithUnknownIdExpectResponseStatus500()
+    {
+        $user = User::factory()->create();
+        $user->rawPassword = 'password';
+
+        $url = route('badaso.course.detail', ['id' => 200]);
+
+        $response = AuthHelper::asUser($this, $user)->json('GET', $url);
+        $response->assertStatus(500);
+    }
+
+    public function testCourseDetailAsAuthorizedUserWithValidIdAsInputExpectResponseStatus200()
+    {
+        $user = User::factory()->create();
+        $user->rawPassword = 'password';
+
+        $course = Course::factory()
+            ->hasAttached($user, ['role' => CourseUserRole::TEACHER])
+            ->create();
+
+        $url = route('badaso.course.detail', ['id' => 1]);
+
+        $response = AuthHelper::asUser($this, $user)->json('GET', $url);
+        $response->assertStatus(200);
+    }
 }

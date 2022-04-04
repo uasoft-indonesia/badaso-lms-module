@@ -160,4 +160,15 @@ class CourseController extends Controller
             }
         }
     }
+
+    public function detail(Request $request, $id)
+    {
+        try {
+            $course = Course::findOrFail($id);
+
+            return ApiResponse::success($course);
+        } catch (Exception $e) {
+            return ApiResponse::failed($e);
+        }
+    }
 }
