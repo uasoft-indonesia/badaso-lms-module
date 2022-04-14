@@ -48,4 +48,21 @@ class LessonMaterialApiTest extends TestCase
 
         $response->assertStatus(400);
     }
+
+    public function testCreateLessonMaterialAsTeacherWithNoTitleExpectResponse400()
+    {
+        $user = User::factory()->create();
+        $user->rawPassword = 'password';
+
+        $course = Course::factory()
+            ->hasAttached($user, ['role' => CourseUserRole::TEACHER])
+            ->create();
+
+        $url = route('badaso.lesson_material.add');
+        $response = AuthHelper::asUser($this, $user)->json('POST', $url, [
+            'course_id' => $course->id,
+        ]);
+
+        $response->assertStatus(400);
+    }
 }
