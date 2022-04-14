@@ -9,6 +9,7 @@ use Uasoft\Badaso\Controllers\Controller;
 use Uasoft\Badaso\Helpers\ApiResponse;
 use Uasoft\Badaso\Module\LMSModule\Enums\CourseUserRole;
 use Uasoft\Badaso\Module\LMSModule\Helpers\CourseUserHelper;
+use Uasoft\Badaso\Module\LMSModule\Models\LessonMaterial;
 
 class LessonMaterialController extends Controller
 {
@@ -30,6 +31,16 @@ class LessonMaterialController extends Controller
                     'course_id' => 'Course not found',
                 ]);
             }
+
+            $lessonMaterial = LessonMaterial::create([
+                'course_id' => $request->input('course_id'),
+                'topic_id' => $request->input('topic_id'),
+                'title' => $request->input('title'),
+                'content' => $request->input('content'),
+                'file_url' => $request->input('file_url'),
+                'link_url' => $request->input('link_url'),
+                'created_by' => $user->id,
+            ]);
         } catch (Exception $e) {
             return ApiResponse::failed($e);
         }
