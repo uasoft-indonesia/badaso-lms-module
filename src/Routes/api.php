@@ -80,7 +80,7 @@ Route::group(['prefix' => $api_route_prefix, 'as' => 'badaso.', 'middleware' => 
                 ->name('delete');
         });
 
-        Route::group(['prefix' => 'lesson_material', 'as' => 'lesson_material.'], function () {
+        Route::group(['prefix' => 'lesson-material', 'as' => 'lesson_material.'], function () {
             Route::post('/', HelpersRoute::getController('LessonMaterialController@add'))
                 ->middleware(BadasoAuthenticate::class)
                 ->name('add');
