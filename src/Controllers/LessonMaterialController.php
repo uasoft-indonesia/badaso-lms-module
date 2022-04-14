@@ -41,6 +41,8 @@ class LessonMaterialController extends Controller
                 'link_url' => $request->input('link_url'),
                 'created_by' => $user->id,
             ]);
+
+            return ApiResponse::success($lessonMaterial->toArray());
         } catch (Exception $e) {
             return ApiResponse::failed($e);
         }
