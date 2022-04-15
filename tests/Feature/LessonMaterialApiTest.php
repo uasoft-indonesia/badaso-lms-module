@@ -168,4 +168,11 @@ class LessonMaterialApiTest extends TestCase
         $this->assertEquals($lessonMaterialData['createdBy']['name'], $lessonMaterial->createdBy->name);
         $this->assertEquals($lessonMaterialData['topic']['title'], $lessonMaterial->topic->title);
     }
+
+    public function testEditLessonMaterialWithoutLoginExpectResponse401()
+    {
+        $url = route('badaso.lesson_material.edit', ['id' => 1]);
+        $response = $this->json('PUT', $url);
+        $response->assertStatus(401);
+    }
 }
