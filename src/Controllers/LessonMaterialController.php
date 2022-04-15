@@ -95,6 +95,16 @@ class LessonMaterialController extends Controller
                     'id' => 'Lesson material not found',
                 ]);
             }
+
+            if (! CourseUserHelper::isUserInCourse(
+                $user->id,
+                $lessonMaterial->course_id,
+                CourseUserRole::TEACHER,
+            )) {
+                throw ValidationException::withMessages([
+                    'id' => 'Must enroll the course to edit the lesson material',
+                ]);
+            }
         } catch (Exception $e) {
             return ApiResponse::failed($e);
         }
