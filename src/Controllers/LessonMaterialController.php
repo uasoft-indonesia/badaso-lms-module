@@ -105,6 +105,14 @@ class LessonMaterialController extends Controller
                     'id' => 'Must enroll the course to edit the lesson material',
                 ]);
             }
+
+            $lessonMaterial->fill($request->only([
+                'title',
+                'content',
+                'file_url',
+                'link_url',
+            ]))->save();
+
         } catch (Exception $e) {
             return ApiResponse::failed($e);
         }
