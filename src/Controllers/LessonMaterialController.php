@@ -118,4 +118,21 @@ class LessonMaterialController extends Controller
             return ApiResponse::failed($e);
         }
     }
+
+    public function delete($id)
+    {
+        try {
+            $user = auth()->user();
+
+            $lessonMaterial = LessonMaterial::find($id);
+            if ($lessonMaterial?->created_by != $user->id) {
+                throw ValidationException::withMessages([
+                    'id' => 'Lesson material not found',
+                ]);
+            }
+
+        } catch (Exception $e) {
+            return ApiResponse::failed($e);
+        }
+    }
 }
