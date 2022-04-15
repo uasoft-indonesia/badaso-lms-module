@@ -123,4 +123,17 @@ class LessonMaterialApiTest extends TestCase
         $response = $this->json('GET', $url);
         $response->assertStatus(401);
     }
+
+    public function testReadLessonMaterialsGivenUnenrolledCourseExpectResponse400()
+    {
+        $user = User::factory()->create();
+        $user->rawPassword = 'password';
+
+        $lessonMaterial = LessonMaterial::factory()->create();
+
+        $url = route('badaso.lesson_material.read', ['id' => $lessonMaterial->id]);
+        $response = AuthHelper::asUser($this, $user)->json('GET', $url);
+
+        $response->assertStatus(400);
+    }
 }
