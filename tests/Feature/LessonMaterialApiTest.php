@@ -354,4 +354,25 @@ class LessonMaterialApiTest extends TestCase
             ]
         );
     }
+
+    public function testDeleteLessonMaterialGivenValidDataExpectResponse200()
+    {
+        $user = User::factory()->create();
+        $user->rawPassword = 'password';
+
+        $course = Course::factory()
+            ->hasAttached($user, ['role' => CourseUserRole::TEACHER])
+            ->create();
+
+        $lessonMaterial = LessonMaterial::factory()
+            ->for($course)
+            ->create([
+                'created_by' => $user->id,
+            ]);
+
+        $url = route('badaso.lesson_material.delete', ['id' => $lessonMaterial->id]);
+        $response = AuthHelper::asUser($this, $user)->json('DELETE', $url);
+
+        $response->assertStatus(200);
+    }
 }
