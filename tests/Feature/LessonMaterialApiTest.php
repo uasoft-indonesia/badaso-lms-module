@@ -313,4 +313,19 @@ class LessonMaterialApiTest extends TestCase
 
         $response->assertStatus(400);
     }
+
+    public function testDeleteLessonMaterialGivenCreatorHasUnenrolledTheCourseExpectResponse400()
+    {
+        $user = User::factory()->create();
+        $user->rawPassword = 'password';
+
+        $lessonMaterial = LessonMaterial::factory()->create([
+            'created_by' => $user->id,
+        ]);
+
+        $url = route('badaso.lesson_material.delete', ['id' => $lessonMaterial->id]);
+        $response = AuthHelper::asUser($this, $user)->json('DELETE', $url);
+
+        $response->assertStatus(400);
+    }
 }
