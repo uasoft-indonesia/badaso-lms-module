@@ -294,4 +294,23 @@ class LessonMaterialApiTest extends TestCase
         $response = $this->json('DELETE', $url);
         $response->assertStatus(401);
     }
+
+    public function testDeleteLessonMaterialGivenUserIsNotCreatorExpectResponse400()
+    {
+        $user = User::factory()->create();
+        $user->rawPassword = 'password';
+
+        $course = Course::factory()
+            ->hasAttached($user, ['role' => CourseUserRole::TEACHER])
+            ->create();
+
+        $lessonMaterial = LessonMaterial::factory()
+            ->for($course)
+            ->create();
+
+        $url = route('badaso.lesson_material.delete', ['id' => $lessonMaterial->id]);
+        $response = AuthHelper::asUser($this, $user)->json('DELETE', $url);
+
+        $response->assertStatus(400);
+    }
 }
