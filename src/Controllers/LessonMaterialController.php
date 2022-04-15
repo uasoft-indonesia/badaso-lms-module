@@ -141,6 +141,7 @@ class LessonMaterialController extends Controller
                 ]);
             }
 
+            $lessonMaterial->delete();
         } catch (Exception $e) {
             return ApiResponse::failed($e);
         }
