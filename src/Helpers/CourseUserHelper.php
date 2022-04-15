@@ -2,7 +2,6 @@
 
 namespace Uasoft\Badaso\Module\LMSModule\Helpers;
 
-use Illuminate\Support\Facades\DB;
 use Uasoft\Badaso\Module\LMSModule\Models\CourseUser;
 
 class CourseUserHelper
