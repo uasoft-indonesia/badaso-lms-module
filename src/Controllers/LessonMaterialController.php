@@ -76,4 +76,27 @@ class LessonMaterialController extends Controller
             return ApiResponse::failed($e);
         }
     }
+
+    public function edit(Request $request, $id)
+    {
+        try {
+            $request->validate([
+                'title' => 'string|max:255',
+                'content' => 'string|max:65535',
+                'file_url' => 'string|max:65535',
+                'link_url' => 'string|max:65535',
+            ]);
+
+            $user = auth()->user();
+
+            $lessonMaterial = LessonMaterial::find($id);
+            if ($lessonMaterial?->created_by != $user->id) {
+                throw ValidationException::withMessages([
+                    'id' => 'Lesson material not found',
+                ]);
+            }
+        } catch (Exception $e) {
+            return ApiResponse::failed($e);
+        }
+    }
 }
