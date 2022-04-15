@@ -209,4 +209,44 @@ class LessonMaterialApiTest extends TestCase
 
         $response->assertStatus(400);
     }
+
+    public function testEditLessonMaterialGivenValidDataExpectUpdated()
+    {
+        $user = User::factory()->create();
+        $user->rawPassword = 'password';
+
+        $course = Course::factory()
+            ->hasAttached($user, ['role' => CourseUserRole::TEACHER])
+            ->create();
+
+        $topic = Topic::factory()
+            ->for($course)
+            ->create();
+
+        $lessonMaterial = LessonMaterial::factory()
+            ->for($course)
+            ->for($topic)
+            ->create([
+                'created_by' => $user->id,
+            ]);
+
+        $url = route('badaso.lesson_material.edit', ['id' => $lessonMaterial->id]);
+        AuthHelper::asUser($this, $user)->json('PUT', $url, [
+            'title' => 'new title',
+            'content' => 'new content',
+            'file_url' => 'http://new-file-url.com',
+            'link_url' => 'http://new-link-url.com',
+        ]);
+
+        $this->assertDatabaseHas(
+            app(LessonMaterial::class)->getTable(),
+            [
+                'id' => $lessonMaterial->id,
+                'title' => 'new title',
+                'content' => 'new content',
+                'file_url' => 'http://new-file-url.com',
+                'link_url' => 'http://new-link-url.com',
+            ]
+        );
+    }
 }
