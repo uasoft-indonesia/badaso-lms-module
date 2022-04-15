@@ -12,6 +12,7 @@ Route::group(['prefix' => $api_route_prefix, 'as' => 'badaso.', 'middleware' => 
         Route::group(['prefix' => 'auth', 'as' => 'auth.'], function () {
             Route::post('/login', HelpersRoute::getController('AuthController@login'))
                 ->name('login');
+
             Route::post('/register', HelpersRoute::getController('AuthController@register'))
                 ->name('register');
         });
@@ -42,12 +43,15 @@ Route::group(['prefix' => $api_route_prefix, 'as' => 'badaso.', 'middleware' => 
             Route::post('/', HelpersRoute::getController('AnnouncementController@add'))
                 ->middleware(BadasoAuthenticate::class)
                 ->name('add');
+
             Route::get('/', HelpersRoute::getController('AnnouncementController@browse'))
                 ->middleware(BadasoAuthenticate::class)
                 ->name('browse');
+
             Route::put('/{id}', HelpersRoute::getController('AnnouncementController@edit'))
                 ->middleware(BadasoAuthenticate::class)
                 ->name('edit');
+
             Route::delete('/{id}', HelpersRoute::getController('AnnouncementController@delete'))
                 ->middleware(BadasoAuthenticate::class)
                 ->name('delete');
@@ -57,9 +61,11 @@ Route::group(['prefix' => $api_route_prefix, 'as' => 'badaso.', 'middleware' => 
             Route::post('/', HelpersRoute::getController('CommentController@add'))
                 ->middleware(BadasoAuthenticate::class)
                 ->name('add');
+
             Route::put('/{id}', HelpersRoute::getController('CommentController@edit'))
                 ->middleware(BadasoAuthenticate::class)
                 ->name('edit');
+
             Route::delete('/{id}', HelpersRoute::getController('CommentController@delete'))
                 ->middleware(BadasoAuthenticate::class)
                 ->name('delete');
@@ -69,12 +75,15 @@ Route::group(['prefix' => $api_route_prefix, 'as' => 'badaso.', 'middleware' => 
             Route::post('/', HelpersRoute::getController('TopicController@add'))
                 ->middleware(BadasoAuthenticate::class)
                 ->name('add');
+
             Route::get('/', HelpersRoute::getController('TopicController@browse'))
                 ->middleware(BadasoAuthenticate::class)
                 ->name('browse');
+
             Route::put('/{id}', HelpersRoute::getController('TopicController@edit'))
                 ->middleware(BadasoAuthenticate::class)
                 ->name('edit');
+
             Route::delete('/{id}', HelpersRoute::getController('TopicController@delete'))
                 ->middleware(BadasoAuthenticate::class)
                 ->name('delete');
@@ -84,6 +93,10 @@ Route::group(['prefix' => $api_route_prefix, 'as' => 'badaso.', 'middleware' => 
             Route::post('/', HelpersRoute::getController('LessonMaterialController@add'))
                 ->middleware(BadasoAuthenticate::class)
                 ->name('add');
+
+            Route::get('/{id}', HelpersRoute::getController('LessonMaterialController@read'))
+                ->middleware(BadasoAuthenticate::class)
+                ->name('read');
         });
     });
 });
