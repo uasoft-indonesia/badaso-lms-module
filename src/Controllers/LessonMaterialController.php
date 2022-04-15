@@ -113,6 +113,7 @@ class LessonMaterialController extends Controller
                 'link_url',
             ]))->save();
 
+            return ApiResponse::success($lessonMaterial->toArray());
         } catch (Exception $e) {
             return ApiResponse::failed($e);
         }
