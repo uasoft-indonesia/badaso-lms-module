@@ -66,6 +66,12 @@ class LessonMaterialController extends Controller
                     'id' => 'Lesson material not found',
                 ]);
             }
+
+            return ApiResponse::success(
+                $lessonMaterial
+                    ->makeHidden(['topic_id'])
+                    ->toArray()
+            );
         } catch (Exception $e) {
             return ApiResponse::failed($e);
         }
