@@ -287,4 +287,11 @@ class LessonMaterialApiTest extends TestCase
         $this->assertEquals($lessonMaterialData['fileUrl'], 'http://new-file-url.com');
         $this->assertEquals($lessonMaterialData['linkUrl'], 'http://new-link-url.com');
     }
+
+    public function testDeleteLessonMaterialWithoutLoginExpectResponse401()
+    {
+        $url = route('badaso.lesson_material.delete', ['id' => 1]);
+        $response = $this->json('DELETE', $url);
+        $response->assertStatus(401);
+    }
 }
