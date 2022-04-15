@@ -131,6 +131,16 @@ class LessonMaterialController extends Controller
                 ]);
             }
 
+            if (! CourseUserHelper::isUserInCourse(
+                $user->id,
+                $lessonMaterial->course_id,
+                CourseUserRole::TEACHER,
+            )) {
+                throw ValidationException::withMessages([
+                    'id' => 'Must enroll the course to delete the lesson material',
+                ]);
+            }
+
         } catch (Exception $e) {
             return ApiResponse::failed($e);
         }
