@@ -286,6 +286,5 @@ class LessonMaterialApiTest extends TestCase
         $this->assertEquals($lessonMaterialData['content'], 'new content');
         $this->assertEquals($lessonMaterialData['fileUrl'], 'http://new-file-url.com');
         $this->assertEquals($lessonMaterialData['linkUrl'], 'http://new-link-url.com');
-
     }
 }
