@@ -37,6 +37,12 @@ class Topic extends Model
         return $this->belongsTo(User::class, 'created_by');
     }
 
+    public function lessonMaterials()
+    {
+        return $this->hasMany(LessonMaterial::class, 'topic_id')
+            ->orderBy('created_at', 'desc');
+    }
+
     protected static function newFactory()
     {
         return TopicFactory::new();
