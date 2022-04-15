@@ -5,6 +5,7 @@ namespace Uasoft\Badaso\Module\LMS\Tests\Feature;
 use Tests\TestCase;
 use Uasoft\Badaso\Module\LMSModule\Enums\CourseUserRole;
 use Uasoft\Badaso\Module\LMSModule\Models\Course;
+use Uasoft\Badaso\Module\LMSModule\Models\LessonMaterial;
 use Uasoft\Badaso\Module\LMSModule\Models\Topic;
 use Uasoft\Badaso\Module\LMSModule\Models\User;
 use Uasoft\Badaso\Module\LMSModule\Tests\Helpers\AuthHelper;
@@ -75,7 +76,7 @@ class TopicApiTest extends TestCase
         );
     }
 
-    public function testCreateTopicInEnrolledCourseWithValidDataExpectReturnCreatedAnnouncement()
+    public function testCreateTopicInEnrolledCourseWithValidDataExpectReturnCreatedTopic()
     {
         $user = User::factory()->create();
         $user->rawPassword = 'password';
@@ -154,6 +155,47 @@ class TopicApiTest extends TestCase
             'id' => $topic->id,
             'title' => $topic->title,
         ]);
+    }
+
+    public function testBrowseTopicGivenValidUserExpectRespondsWithLessonMaterials()
+    {
+        $user = User::factory()->create();
+        $user->rawPassword = 'password';
+
+        $course = Course::factory()
+            ->hasAttached($user, ['role' => CourseUserRole::STUDENT])
+            ->create();
+
+        $topic1 = Topic::factory()
+            ->for($course)
+            ->create();
+        $topic2 = Topic::factory()
+            ->for($course)
+            ->create();
+
+        LessonMaterial::factory()
+            ->for($topic1)
+            ->count(2)
+            ->create();
+        LessonMaterial::factory()
+            ->for($topic2)
+            ->count(3)
+            ->create();
+
+        $url = route('badaso.topic.browse', ['course_id' => $course->id]);
+        $response = AuthHelper::asUser($this, $user)->json('GET', $url);
+
+        $topicsData = $response->json('data');
+        $topic2Data = $topicsData[1];
+        $lessonMaterialsData = $topic2Data['lessonMaterials'];
+        $lessonMaterialData = $lessonMaterialsData[0];
+
+        $response->assertStatus(200);
+        $this->assertCount(3, $lessonMaterialsData);
+        $this->assertArrayHasKey('id', $lessonMaterialData);
+        $this->assertArrayHasKey('title', $lessonMaterialData);
+        $this->assertArrayHasKey('createdAt', $lessonMaterialData);
+        $this->assertArrayHasKey('topicId', $lessonMaterialData);
     }
 
     public function testEditTopicWithoutLogin()
