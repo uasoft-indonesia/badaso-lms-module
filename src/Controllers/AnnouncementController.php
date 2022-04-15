@@ -55,7 +55,7 @@ class AnnouncementController extends Controller
 
             $announcements = Announcement::with([
                 'createdBy:id,name',
-                'comments.createdBy:id,name'
+                'comments.createdBy:id,name',
             ])->where('course_id', $request->query('course_id'))
                 ->orderBy('created_at', 'desc')
                 ->get();
