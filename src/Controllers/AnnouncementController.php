@@ -9,7 +9,6 @@ use Uasoft\Badaso\Controllers\Controller;
 use Uasoft\Badaso\Helpers\ApiResponse;
 use Uasoft\Badaso\Module\LMSModule\Helpers\CourseUserHelper;
 use Uasoft\Badaso\Module\LMSModule\Models\Announcement;
-use Uasoft\Badaso\Module\LMSModule\Models\Comment;
 
 class AnnouncementController extends Controller
 {
