@@ -101,6 +101,10 @@ Route::group(['prefix' => $api_route_prefix, 'as' => 'badaso.', 'middleware' => 
             Route::put('/{id}', HelpersRoute::getController('LessonMaterialController@edit'))
                 ->middleware(BadasoAuthenticate::class)
                 ->name('edit');
+
+            Route::delete('/{id}', HelpersRoute::getController('LessonMaterialController@delete'))
+                ->middleware(BadasoAuthenticate::class)
+                ->name('delete');
         });
     });
 });
