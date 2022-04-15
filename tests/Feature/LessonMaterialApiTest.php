@@ -249,4 +249,43 @@ class LessonMaterialApiTest extends TestCase
             ]
         );
     }
+
+    public function testEditLessonMaterialGivenValidDataExpectReturnUpdatedLessonMaterial()
+    {
+        $user = User::factory()->create();
+        $user->rawPassword = 'password';
+
+        $course = Course::factory()
+            ->hasAttached($user, ['role' => CourseUserRole::TEACHER])
+            ->create();
+
+        $topic = Topic::factory()
+            ->for($course)
+            ->create();
+
+        $lessonMaterial = LessonMaterial::factory()
+            ->for($course)
+            ->for($topic)
+            ->create([
+                'created_by' => $user->id,
+            ]);
+
+        $url = route('badaso.lesson_material.edit', ['id' => $lessonMaterial->id]);
+        $response = AuthHelper::asUser($this, $user)->json('PUT', $url, [
+            'title' => 'new title',
+            'content' => 'new content',
+            'file_url' => 'http://new-file-url.com',
+            'link_url' => 'http://new-link-url.com',
+        ]);
+
+        $lessonMaterialData = $response->json('data');
+
+        $response->assertStatus(200);
+        $this->assertArrayHasKey('id', $lessonMaterialData);
+        $this->assertEquals($lessonMaterialData['title'], 'new title');
+        $this->assertEquals($lessonMaterialData['content'], 'new content');
+        $this->assertEquals($lessonMaterialData['fileUrl'], 'http://new-file-url.com');
+        $this->assertEquals($lessonMaterialData['linkUrl'], 'http://new-link-url.com');
+
+    }
 }
