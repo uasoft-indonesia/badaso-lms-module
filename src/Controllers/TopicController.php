@@ -53,7 +53,8 @@ class TopicController extends Controller
                 ]);
             }
 
-            $topic = Topic::where('course_id', $request->query('course_id'))
+            $topic = Topic::with('lessonMaterials:id,title,created_at,topic_id')
+                ->where('course_id', $request->query('course_id'))
                 ->orderBy('created_at', 'desc')
                 ->get();
 

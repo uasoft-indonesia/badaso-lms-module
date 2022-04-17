@@ -8,6 +8,10 @@ class CourseUserHelper
 {
     public static function isUserInCourse($userId, $courseId, $role = null)
     {
+        if (! $userId || ! $courseId) {
+            return false;
+        }
+
         $courseUser = CourseUser::where('user_id', $userId)
             ->where('course_id', $courseId)
             ->first();

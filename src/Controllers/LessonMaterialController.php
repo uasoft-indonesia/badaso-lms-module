@@ -47,4 +47,33 @@ class LessonMaterialController extends Controller
             return ApiResponse::failed($e);
         }
     }
+
+    public function read($id)
+    {
+        try {
+            $user = auth()->user();
+
+            $lessonMaterial = LessonMaterial::with([
+                'createdBy:id,name',
+                'topic:id,title',
+            ])->find($id);
+
+            if (! CourseUserHelper::isUserInCourse(
+                $user->id,
+                $lessonMaterial?->course_id,
+            )) {
+                throw ValidationException::withMessages([
+                    'id' => 'Lesson material not found',
+                ]);
+            }
+
+            return ApiResponse::success(
+                $lessonMaterial
+                    ->makeHidden(['topic_id'])
+                    ->toArray()
+            );
+        } catch (Exception $e) {
+            return ApiResponse::failed($e);
+        }
+    }
 }

@@ -9,7 +9,6 @@ use Uasoft\Badaso\Controllers\Controller;
 use Uasoft\Badaso\Helpers\ApiResponse;
 use Uasoft\Badaso\Module\LMSModule\Helpers\CourseUserHelper;
 use Uasoft\Badaso\Module\LMSModule\Models\Announcement;
-use Uasoft\Badaso\Module\LMSModule\Models\Comment;
 
 class AnnouncementController extends Controller
 {
@@ -54,29 +53,12 @@ class AnnouncementController extends Controller
                 ]);
             }
 
-            $announcements = Announcement::where('course_id', $request->query('course_id'))
-                ->join('badaso_users', 'badaso_users.id', '=', 'badaso_announcements.created_by')
-                ->orderBy('badaso_announcements.created_at', 'desc')
-                ->select(
-                    'badaso_announcements.*',
-                    'badaso_announcements.created_at as datetime',
-                    'badaso_users.name as author'
-                )
+            $announcements = Announcement::with([
+                'createdBy:id,name',
+                'comments.createdBy:id,name',
+            ])->where('course_id', $request->query('course_id'))
+                ->orderBy('created_at', 'desc')
                 ->get();
-
-            foreach ($announcements as $announcement) {
-                $comments = Comment::where('announcement_id', '=', $announcement->id)
-                    ->join('badaso_users', 'badaso_users.id', '=', 'badaso_comments.created_by')
-                    ->orderBy('created_at', 'asc')
-                    ->select(
-                        'badaso_comments.*',
-                        'badaso_comments.created_at as datetime',
-                        'badaso_users.name as author'
-                    )
-                    ->get()
-                    ->toArray();
-                $announcement->comments = $comments;
-            }
 
             return ApiResponse::success($announcements->toArray());
         } catch (Exception $e) {
