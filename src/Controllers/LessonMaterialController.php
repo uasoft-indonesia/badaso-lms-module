@@ -118,4 +118,34 @@ class LessonMaterialController extends Controller
             return ApiResponse::failed($e);
         }
     }
+
+    public function delete($id)
+    {
+        try {
+            $user = auth()->user();
+
+            $lessonMaterial = LessonMaterial::find($id);
+            if ($lessonMaterial?->created_by != $user->id) {
+                throw ValidationException::withMessages([
+                    'id' => 'Lesson material not found',
+                ]);
+            }
+
+            if (! CourseUserHelper::isUserInCourse(
+                $user->id,
+                $lessonMaterial->course_id,
+                CourseUserRole::TEACHER,
+            )) {
+                throw ValidationException::withMessages([
+                    'id' => 'Must enroll the course to delete the lesson material',
+                ]);
+            }
+
+            $lessonMaterial->delete();
+
+            return ApiResponse::success();
+        } catch (Exception $e) {
+            return ApiResponse::failed($e);
+        }
+    }
 }

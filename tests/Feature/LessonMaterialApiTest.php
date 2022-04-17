@@ -287,4 +287,92 @@ class LessonMaterialApiTest extends TestCase
         $this->assertEquals($lessonMaterialData['fileUrl'], 'http://new-file-url.com');
         $this->assertEquals($lessonMaterialData['linkUrl'], 'http://new-link-url.com');
     }
+
+    public function testDeleteLessonMaterialWithoutLoginExpectResponse401()
+    {
+        $url = route('badaso.lesson_material.delete', ['id' => 1]);
+        $response = $this->json('DELETE', $url);
+        $response->assertStatus(401);
+    }
+
+    public function testDeleteLessonMaterialGivenUserIsNotCreatorExpectResponse400()
+    {
+        $user = User::factory()->create();
+        $user->rawPassword = 'password';
+
+        $course = Course::factory()
+            ->hasAttached($user, ['role' => CourseUserRole::TEACHER])
+            ->create();
+
+        $lessonMaterial = LessonMaterial::factory()
+            ->for($course)
+            ->create();
+
+        $url = route('badaso.lesson_material.delete', ['id' => $lessonMaterial->id]);
+        $response = AuthHelper::asUser($this, $user)->json('DELETE', $url);
+
+        $response->assertStatus(400);
+    }
+
+    public function testDeleteLessonMaterialGivenCreatorHasUnenrolledTheCourseExpectResponse400()
+    {
+        $user = User::factory()->create();
+        $user->rawPassword = 'password';
+
+        $lessonMaterial = LessonMaterial::factory()->create([
+            'created_by' => $user->id,
+        ]);
+
+        $url = route('badaso.lesson_material.delete', ['id' => $lessonMaterial->id]);
+        $response = AuthHelper::asUser($this, $user)->json('DELETE', $url);
+
+        $response->assertStatus(400);
+    }
+
+    public function testDeleteLessonMaterialGivenValidDataExpectDeleted()
+    {
+        $user = User::factory()->create();
+        $user->rawPassword = 'password';
+
+        $course = Course::factory()
+            ->hasAttached($user, ['role' => CourseUserRole::TEACHER])
+            ->create();
+
+        $lessonMaterial = LessonMaterial::factory()
+            ->for($course)
+            ->create([
+                'created_by' => $user->id,
+            ]);
+
+        $url = route('badaso.lesson_material.delete', ['id' => $lessonMaterial->id]);
+        AuthHelper::asUser($this, $user)->json('DELETE', $url);
+
+        $this->assertDatabaseMissing(
+            app(LessonMaterial::class)->getTable(),
+            [
+                'id' => $lessonMaterial->id,
+            ]
+        );
+    }
+
+    public function testDeleteLessonMaterialGivenValidDataExpectResponse200()
+    {
+        $user = User::factory()->create();
+        $user->rawPassword = 'password';
+
+        $course = Course::factory()
+            ->hasAttached($user, ['role' => CourseUserRole::TEACHER])
+            ->create();
+
+        $lessonMaterial = LessonMaterial::factory()
+            ->for($course)
+            ->create([
+                'created_by' => $user->id,
+            ]);
+
+        $url = route('badaso.lesson_material.delete', ['id' => $lessonMaterial->id]);
+        $response = AuthHelper::asUser($this, $user)->json('DELETE', $url);
+
+        $response->assertStatus(200);
+    }
 }
