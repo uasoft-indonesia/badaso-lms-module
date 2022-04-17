@@ -76,4 +76,46 @@ class LessonMaterialController extends Controller
             return ApiResponse::failed($e);
         }
     }
+
+    public function edit(Request $request, $id)
+    {
+        try {
+            $request->validate([
+                'title' => 'string|max:255',
+                'content' => 'string|max:65535',
+                'file_url' => 'string|max:65535',
+                'link_url' => 'string|max:65535',
+            ]);
+
+            $user = auth()->user();
+
+            $lessonMaterial = LessonMaterial::find($id);
+            if ($lessonMaterial?->created_by != $user->id) {
+                throw ValidationException::withMessages([
+                    'id' => 'Lesson material not found',
+                ]);
+            }
+
+            if (! CourseUserHelper::isUserInCourse(
+                $user->id,
+                $lessonMaterial->course_id,
+                CourseUserRole::TEACHER,
+            )) {
+                throw ValidationException::withMessages([
+                    'id' => 'Must enroll the course to edit the lesson material',
+                ]);
+            }
+
+            $lessonMaterial->fill($request->only([
+                'title',
+                'content',
+                'file_url',
+                'link_url',
+            ]))->save();
+
+            return ApiResponse::success($lessonMaterial->toArray());
+        } catch (Exception $e) {
+            return ApiResponse::failed($e);
+        }
+    }
 }

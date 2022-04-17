@@ -168,4 +168,123 @@ class LessonMaterialApiTest extends TestCase
         $this->assertEquals($lessonMaterialData['createdBy']['name'], $lessonMaterial->createdBy->name);
         $this->assertEquals($lessonMaterialData['topic']['title'], $lessonMaterial->topic->title);
     }
+
+    public function testEditLessonMaterialWithoutLoginExpectResponse401()
+    {
+        $url = route('badaso.lesson_material.edit', ['id' => 1]);
+        $response = $this->json('PUT', $url);
+        $response->assertStatus(401);
+    }
+
+    public function testEditLessonMaterialGivenUserIsNotCreatorExpectResponse400()
+    {
+        $user = User::factory()->create();
+        $user->rawPassword = 'password';
+
+        $course = Course::factory()
+            ->hasAttached($user, ['role' => CourseUserRole::TEACHER])
+            ->create();
+
+        $lessonMaterial = LessonMaterial::factory()
+            ->for($course)
+            ->create();
+
+        $url = route('badaso.lesson_material.edit', ['id' => $lessonMaterial->id]);
+        $response = AuthHelper::asUser($this, $user)->json('PUT', $url);
+
+        $response->assertStatus(400);
+    }
+
+    public function testEditLessonMaterialGivenCreatorHasUnenrolledTheCourseExpectResponse400()
+    {
+        $user = User::factory()->create();
+        $user->rawPassword = 'password';
+
+        $lessonMaterial = LessonMaterial::factory()->create([
+            'created_by' => $user->id,
+        ]);
+
+        $url = route('badaso.lesson_material.edit', ['id' => $lessonMaterial->id]);
+        $response = AuthHelper::asUser($this, $user)->json('PUT', $url);
+
+        $response->assertStatus(400);
+    }
+
+    public function testEditLessonMaterialGivenValidDataExpectUpdated()
+    {
+        $user = User::factory()->create();
+        $user->rawPassword = 'password';
+
+        $course = Course::factory()
+            ->hasAttached($user, ['role' => CourseUserRole::TEACHER])
+            ->create();
+
+        $topic = Topic::factory()
+            ->for($course)
+            ->create();
+
+        $lessonMaterial = LessonMaterial::factory()
+            ->for($course)
+            ->for($topic)
+            ->create([
+                'created_by' => $user->id,
+            ]);
+
+        $url = route('badaso.lesson_material.edit', ['id' => $lessonMaterial->id]);
+        AuthHelper::asUser($this, $user)->json('PUT', $url, [
+            'title' => 'new title',
+            'content' => 'new content',
+            'file_url' => 'http://new-file-url.com',
+            'link_url' => 'http://new-link-url.com',
+        ]);
+
+        $this->assertDatabaseHas(
+            app(LessonMaterial::class)->getTable(),
+            [
+                'id' => $lessonMaterial->id,
+                'title' => 'new title',
+                'content' => 'new content',
+                'file_url' => 'http://new-file-url.com',
+                'link_url' => 'http://new-link-url.com',
+            ]
+        );
+    }
+
+    public function testEditLessonMaterialGivenValidDataExpectReturnUpdatedLessonMaterial()
+    {
+        $user = User::factory()->create();
+        $user->rawPassword = 'password';
+
+        $course = Course::factory()
+            ->hasAttached($user, ['role' => CourseUserRole::TEACHER])
+            ->create();
+
+        $topic = Topic::factory()
+            ->for($course)
+            ->create();
+
+        $lessonMaterial = LessonMaterial::factory()
+            ->for($course)
+            ->for($topic)
+            ->create([
+                'created_by' => $user->id,
+            ]);
+
+        $url = route('badaso.lesson_material.edit', ['id' => $lessonMaterial->id]);
+        $response = AuthHelper::asUser($this, $user)->json('PUT', $url, [
+            'title' => 'new title',
+            'content' => 'new content',
+            'file_url' => 'http://new-file-url.com',
+            'link_url' => 'http://new-link-url.com',
+        ]);
+
+        $lessonMaterialData = $response->json('data');
+
+        $response->assertStatus(200);
+        $this->assertArrayHasKey('id', $lessonMaterialData);
+        $this->assertEquals($lessonMaterialData['title'], 'new title');
+        $this->assertEquals($lessonMaterialData['content'], 'new content');
+        $this->assertEquals($lessonMaterialData['fileUrl'], 'http://new-file-url.com');
+        $this->assertEquals($lessonMaterialData['linkUrl'], 'http://new-link-url.com');
+    }
 }
