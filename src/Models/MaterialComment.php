@@ -13,7 +13,7 @@ class MaterialComment extends Model
     public function __construct(array $attributes = [])
     {
         parent::__construct($attributes);
-        $this->setTable(config('badaso.database.prefix').'comments');
+        $this->setTable(config('badaso.database.prefix').'material_comments');
     }
 
     protected $fillable = [
