@@ -2,7 +2,7 @@
 
 namespace Uasoft\Badaso\Module\LMSModule\Tests\Feature;
 
-use Illuminate\Http\Testing\File;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 use Uasoft\Badaso\Module\LMSModule\Models\User;
@@ -34,12 +34,50 @@ class FileUplaodApiTest extends TestCase
         $user->rawPassword = 'password';
         Storage::fake('public');
 
-        $file = File::image('logo.pdf', 400, 100);
+        $file = UploadedFile::fake()->create('file.pdf');
 
         $url = route('badaso.file.upload');
         $response = AuthHelper::asUser($this, $user)->json('POST', $url, [
             'file' => $file
         ]);
+
+        $response->assertStatus(200);
+    }
+
+    public function testDeleteFileWithoutLogin()
+    {
+        $url = route('badaso.file.delete', [
+            'fileName' => 'new.pdf'
+        ]);
+        $response = $this->json('DELETE', $url);
+        $response->assertStatus(401);
+    }
+
+    public function testDeleteFileWithoutFileNameGiven()
+    {
+        $user = User::factory()->create();
+        $user->rawPassword = 'password';
+
+        $url = route('badaso.file.delete', [
+            'fileName' => 'new.pdf'
+        ]);
+        $response = AuthHelper::asUser($this, $user)->json('DELETE', $url);
+
+        $response->assertStatus(500);
+    }
+
+    public function testDeleteFileSuccesfully()
+    {   
+        $user = User::factory()->create();
+        $user->rawPassword = 'password';
+        
+        Storage::fake('public');
+        UploadedFile::fake()->create('file.pdf')->storeAs('files', 'file.pdf');
+
+        $url = route('badaso.file.delete', [
+            'fileName' => 'file.pdf'
+        ]); 
+        $response = AuthHelper::asUser($this, $user)->json('DELETE', $url);
 
         $response->assertStatus(200);
     }

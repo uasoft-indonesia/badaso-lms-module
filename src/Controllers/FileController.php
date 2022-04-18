@@ -14,7 +14,7 @@ class FileController extends Controller
     {
         try {
             $request->validate([
-                'file'  =>  'required|file|image|mimes:jpeg,png,gif,jpg,pdf|max:2048'
+                'file'  =>  'required|file|mimes:jpeg,png,jpg,pdf|max:2048'
             ]);
     
             $file = $request->input('file');
