@@ -76,7 +76,7 @@ class FileUplaodApiTest extends TestCase
 
         $url = route('badaso.file.delete', [
             'fileName' => 'file.pdf',
-        ]); 
+        ]);
         $response = AuthHelper::asUser($this, $user)->json('DELETE', $url);
 
         $response->assertStatus(200);
