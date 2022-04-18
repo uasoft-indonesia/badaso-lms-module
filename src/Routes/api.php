@@ -107,6 +107,12 @@ Route::group(['prefix' => $api_route_prefix, 'as' => 'badaso.', 'middleware' => 
                 ->name('delete');
         });
 
+        Route::group(['prefix' => 'material-comment', 'as' => 'material_comment.'], function () {
+            Route::post('/', HelpersRoute::getController('MaterialCommentController@add'))
+                ->middleware(BadasoAuthenticate::class)
+                ->name('add');
+        });
+
         Route::group(['prefix' => 'file', 'as' => 'file.'], function () {
             Route::post('/upload', HelpersRoute::getController('FileController@upload'))
                 ->middleware(BadasoAuthenticate::class)

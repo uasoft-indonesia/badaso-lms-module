@@ -56,6 +56,7 @@ class LessonMaterialController extends Controller
             $lessonMaterial = LessonMaterial::with([
                 'createdBy:id,name',
                 'topic:id,title',
+                'comments.createdBy:id,name',
             ])->find($id);
 
             if (! CourseUserHelper::isUserInCourse(
