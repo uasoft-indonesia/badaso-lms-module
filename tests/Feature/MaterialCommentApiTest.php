@@ -13,7 +13,6 @@ use Uasoft\Badaso\Module\LMSModule\Tests\Helpers\AuthHelper;
 
 class MaterialCommentApiTest extends TestCase
 {
-
     public function testCreateMaterialCommentWithoutLoginExpectResponse401()
     {
         $url = route('badaso.material_comment.add');
