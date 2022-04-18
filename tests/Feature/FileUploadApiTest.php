@@ -29,7 +29,7 @@ class FileUplaodApiTest extends TestCase
     }
 
     public function testUploadFileSuccesfully()
-    {   
+    {
         $user = User::factory()->create();
         $user->rawPassword = 'password';
         Storage::fake('public');
@@ -38,7 +38,7 @@ class FileUplaodApiTest extends TestCase
 
         $url = route('badaso.file.upload');
         $response = AuthHelper::asUser($this, $user)->json('POST', $url, [
-            'file' => $file
+            'file' => $file,
         ]);
 
         $response->assertStatus(200);
@@ -47,7 +47,7 @@ class FileUplaodApiTest extends TestCase
     public function testDeleteFileWithoutLogin()
     {
         $url = route('badaso.file.delete', [
-            'fileName' => 'new.pdf'
+            'fileName' => 'new.pdf',
         ]);
         $response = $this->json('DELETE', $url);
         $response->assertStatus(401);
@@ -59,7 +59,7 @@ class FileUplaodApiTest extends TestCase
         $user->rawPassword = 'password';
 
         $url = route('badaso.file.delete', [
-            'fileName' => 'new.pdf'
+            'fileName' => 'new.pdf',
         ]);
         $response = AuthHelper::asUser($this, $user)->json('DELETE', $url);
 
@@ -67,15 +67,15 @@ class FileUplaodApiTest extends TestCase
     }
 
     public function testDeleteFileSuccesfully()
-    {   
+    {
         $user = User::factory()->create();
         $user->rawPassword = 'password';
-        
+
         Storage::fake('public');
         UploadedFile::fake()->create('file.pdf')->storeAs('files', 'file.pdf');
 
         $url = route('badaso.file.delete', [
-            'fileName' => 'file.pdf'
+            'fileName' => 'file.pdf',
         ]); 
         $response = AuthHelper::asUser($this, $user)->json('DELETE', $url);
 
