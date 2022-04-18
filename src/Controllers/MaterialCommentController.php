@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
 use Uasoft\Badaso\Controllers\Controller;
 use Uasoft\Badaso\Helpers\ApiResponse;
+use Uasoft\Badaso\Module\LMSModule\Helpers\CourseUserHelper;
 use Uasoft\Badaso\Module\LMSModule\Models\LessonMaterial;
 use Uasoft\Badaso\Module\LMSModule\Models\MaterialComment;
 
@@ -21,12 +22,21 @@ class MaterialCommentController extends Controller
                 'content' => 'required|string|max:65535',
             ]);
 
-            $announcement = LessonMaterial::where('id', $request->input('material_id'))
+            $lessonMaterial = LessonMaterial::where('id', $request->input('material_id'))
                 ->first();
 
-            if (! $announcement) {
+            if (! $lessonMaterial) {
                 throw ValidationException::withMessages([
                     'material_id' => 'Lesson Material not found',
+                ]);
+            }
+
+            if (! CourseUserHelper::isUserInCourse(
+                $user->id,
+                $lessonMaterial?->course_id,
+            )) {
+                throw ValidationException::withMessages([
+                    'id' => 'Must enroll the course to edit the announcement',
                 ]);
             }
 
