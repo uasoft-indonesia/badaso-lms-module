@@ -8,6 +8,7 @@ use Illuminate\Validation\ValidationException;
 use Uasoft\Badaso\Controllers\Controller;
 use Uasoft\Badaso\Helpers\ApiResponse;
 use Uasoft\Badaso\Module\LMSModule\Helpers\CourseUserHelper;
+use Uasoft\Badaso\Module\LMSModule\Models\CourseUser;
 use Uasoft\Badaso\Module\LMSModule\Models\LessonMaterial;
 use Uasoft\Badaso\Module\LMSModule\Models\MaterialComment;
 
@@ -45,6 +46,42 @@ class MaterialCommentController extends Controller
                 'content' => $request->input('content'),
                 'created_by' => $user->id,
             ]);
+
+            return ApiResponse::success($materialComment->toArray());
+        } catch (Exception $e) {
+            return ApiResponse::failed($e);
+        }
+    }
+
+    public function edit(Request $request, $id)
+    {
+        try {
+            $user = auth()->user();
+            $request->validate([
+                'content' => 'required|string|max:65535',
+            ]);
+
+            $materialComment = MaterialComment::where('id', $id)
+                ->where('created_by', $user->id)
+                ->first();
+
+            $lessonMaterial = LessonMaterial::where('id', $materialComment->material_id)
+                ->first();
+
+            if (! $lessonMaterial) {
+                throw ValidationException::withMessages([
+                    'material_id' => 'Lesson Material not found',
+                ]);
+            }
+
+            if (! CourseUserHelper::isUserInCourse($user->id, $lessonMaterial?->course_id)) {
+                throw ValidationException::withMessages([
+                    'id' => 'Must enroll the course to edit the comment',
+                ]);
+            }
+
+            $materialComment->content = $request->input('content');
+            $materialComment->save();
 
             return ApiResponse::success($materialComment->toArray());
         } catch (Exception $e) {
