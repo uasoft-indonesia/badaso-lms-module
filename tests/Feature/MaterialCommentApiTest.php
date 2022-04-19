@@ -224,7 +224,7 @@ class MaterialCommentApiTest extends TestCase
             ->for($lessonMaterial)
             ->create([
                 'created_by' => $user->id,
-                'content' => 'old content'
+                'content' => 'old content',
             ]);
 
         $url = route('badaso.material_comment.edit', ['id' => $materialComment->id]);
