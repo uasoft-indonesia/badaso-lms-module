@@ -61,27 +61,19 @@ class MaterialCommentController extends Controller
                 'content' => 'required|string|max:65535',
             ]);
 
-            $materialComment = MaterialComment::where('id', $id)
-                ->where('created_by', $user->id)
-                ->first();
+            $materialComment = MaterialComment::with([
+                'lessonMaterial:id,course_id',
+            ])->find($id);
 
-            $lessonMaterial = LessonMaterial::where('id', $materialComment->material_id)
-                ->first();
-
-            if (! $lessonMaterial) {
-                throw ValidationException::withMessages([
-                    'material_id' => 'Lesson Material not found',
-                ]);
-            }
-
-            if (! CourseUserHelper::isUserInCourse($user->id, $lessonMaterial?->course_id)) {
+            if (! CourseUserHelper::isUserInCourse($user->id, $materialComment->lessonMaterial->course_id)) {
                 throw ValidationException::withMessages([
                     'id' => 'Must enroll the course to edit the comment',
                 ]);
             }
 
-            $materialComment->content = $request->input('content');
-            $materialComment->save();
+            $materialComment->fill($request->only([
+                'content',
+            ]))->save();
 
             return ApiResponse::success($materialComment->toArray());
         } catch (Exception $e) {
@@ -93,32 +85,19 @@ class MaterialCommentController extends Controller
     {
         try {
             $user = auth()->user();
-            $materialComment = MaterialComment::where('id', $id)
-                ->first();
 
-            if (! $materialComment) {
-                throw ValidationException::withMessages([
-                    'id' => 'Comment not found',
-                ]);
-            }
+            $materialComment = MaterialComment::with([
+                'lessonMaterial:id,course_id',
+            ])->find($id);
 
-            $lessonMaterial = LessonMaterial::where('id', $materialComment->material_id)
-                ->first();
-
-            if (! $lessonMaterial) {
-                throw ValidationException::withMessages([
-                    'material_id' => 'Lesson Material not found',
-                ]);
-            }
-
-            if (! CourseUserHelper::isUserInCourse($user->id, $lessonMaterial?->course_id)) {
+            if (! CourseUserHelper::isUserInCourse($user->id, $materialComment->lessonMaterial->course_id)) {
                 throw ValidationException::withMessages([
                     'id' => 'Must enroll the course to edit the comment',
                 ]);
             }
 
             $courseuser = CourseUser::where('user_id', '=', $user->id)
-                ->where('course_id', '=', $lessonMaterial->course_id)
+                ->where('course_id', '=', $materialComment->lessonMaterial->course_id)
                 ->first();
 
             if ($courseuser->role == 'teacher') {
