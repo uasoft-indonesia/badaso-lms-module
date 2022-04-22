@@ -198,6 +198,39 @@ class TopicApiTest extends TestCase
         $this->assertArrayHasKey('topicId', $lessonMaterialData);
     }
 
+    public function testBrowseTopicGivenValidUserExpectRespondsWithLessonMaterialsThatHaveNoTopic()
+    {
+        $user = User::factory()->create();
+        $user->rawPassword = 'password';
+
+        $course = Course::factory()
+            ->hasAttached($user, ['role' => CourseUserRole::STUDENT])
+            ->create();
+
+        LessonMaterial::factory()
+            ->for($course)
+            ->create();
+
+        $url = route('badaso.topic.browse', ['course_id' => $course->id]);
+        $response = AuthHelper::asUser($this, $user)->json('GET', $url);
+
+        $topicsData = $response->json('data');
+        $nullTopic = $topicsData[0];
+        $lessonMaterialsData = $nullTopic['lessonMaterials'];
+        $lessonMaterialData = $lessonMaterialsData[0];
+
+        $response->assertStatus(200);
+
+        $this->assertNull($nullTopic['id']);
+        $this->assertNull($nullTopic['title']);
+
+        $this->assertCount(1, $lessonMaterialsData);
+        $this->assertArrayHasKey('id', $lessonMaterialData);
+        $this->assertArrayHasKey('title', $lessonMaterialData);
+        $this->assertArrayHasKey('createdAt', $lessonMaterialData);
+        $this->assertArrayHasKey('topicId', $lessonMaterialData);
+    }
+
     public function testEditTopicWithoutLogin()
     {
         $url = route('badaso.topic.edit', ['id' => 1]);
