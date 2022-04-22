@@ -4,10 +4,12 @@ namespace Uasoft\Badaso\Module\LMSModule\Controllers;
 
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 use Uasoft\Badaso\Controllers\Controller;
 use Uasoft\Badaso\Helpers\ApiResponse;
 use Uasoft\Badaso\Module\LMSModule\Helpers\CourseUserHelper;
+use Uasoft\Badaso\Module\LMSModule\Models\LessonMaterial;
 use Uasoft\Badaso\Module\LMSModule\Models\Topic;
 
 class TopicController extends Controller
@@ -53,12 +55,31 @@ class TopicController extends Controller
                 ]);
             }
 
+            $courseId = $request->query('course_id');
+
             $topic = Topic::with('lessonMaterials:id,title,created_at,topic_id')
-                ->where('course_id', $request->query('course_id'))
+                ->where('course_id', $courseId)
+                ->orderBy('created_at', 'desc')
+                ->get();
+            $topicArray = $topic->toArray();
+
+            $lessonMaterialsWithNoTopic = LessonMaterial::whereNull('topic_id')
+                ->where('course_id', $courseId)
+                ->select('id', 'title', 'created_at', 'topic_id')
                 ->orderBy('created_at', 'desc')
                 ->get();
 
-            return ApiResponse::success($topic->toArray());
+            if ($lessonMaterialsWithNoTopic->count() > 0) {
+                $nullTopic = [
+                    'id' => null,
+                    'title' => null,
+                    'courseId' => $courseId,
+                    'lessonMaterials' => $lessonMaterialsWithNoTopic->toArray(),
+                ];
+                array_unshift($topicArray, $nullTopic);
+            }
+
+            return ApiResponse::success($topicArray);
         } catch (Exception $e) {
             return ApiResponse::failed($e);
         }
