@@ -39,7 +39,7 @@ class CreateLessonMaterialsTable extends Migration
                 ->onUpdate('cascade');
             $table->foreign('topic_id')
                 ->references('id')
-                ->on(DatabaseHelper::getBadasoTableName('users'))
+                ->on(DatabaseHelper::getBadasoTableName('topics'))
                 ->onDelete('set null')
                 ->onUpdate('cascade');
         });
