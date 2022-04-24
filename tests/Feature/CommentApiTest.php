@@ -51,7 +51,11 @@ class CommentApiTest extends TestCase
         $user = User::factory()->create();
         $user->rawPassword = 'password';
 
-        $announcement = Announcement::factory()->create();
+        $course = Course::factory()
+            ->hasAttached($user, ['role' => CourseUserRole::TEACHER])
+            ->create();
+
+        $announcement = Announcement::factory()->for($course)->create();
 
         $url = route('badaso.comment.add');
         AuthHelper::asUser($this, $user)->json('POST', $url, [
@@ -75,7 +79,11 @@ class CommentApiTest extends TestCase
         $user = User::factory()->create();
         $user->rawPassword = 'password';
 
-        $announcement = Announcement::factory()->create();
+        $course = Course::factory()
+            ->hasAttached($user, ['role' => CourseUserRole::TEACHER])
+            ->create();
+
+        $announcement = Announcement::factory()->for($course)->create();
 
         $url = route('badaso.comment.add');
         $response = AuthHelper::asUser($this, $user)->json('POST', $url, [

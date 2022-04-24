@@ -32,6 +32,12 @@ class CommentController extends Controller
                 ]);
             }
 
+            if (! CourseUserHelper::isUserInCourse($user->id, $announcement->course_id)) {
+                throw ValidationException::withMessages([
+                    'id' => 'Must enroll the course to edit the comment',
+                ]);
+            }
+
             $comment = Comment::create([
                 'announcement_id' => $request->input('announcement_id'),
                 'content' => $request->input('content'),
@@ -65,6 +71,12 @@ class CommentController extends Controller
             $announcement = Announcement::where('id', $comment->announcement_id)
                 ->first();
 
+            if (! $announcement) {
+                throw ValidationException::withMessages([
+                    'announcement_id' => 'Announcement not found',
+                ]);
+            }
+
             if (! CourseUserHelper::isUserInCourse($user->id, $announcement->course_id)) {
                 throw ValidationException::withMessages([
                     'id' => 'Must enroll the course to edit the comment',
@@ -95,6 +107,12 @@ class CommentController extends Controller
 
             $announcement = Announcement::where('id', $comment->announcement_id)
                 ->first();
+
+            if (! $announcement) {
+                throw ValidationException::withMessages([
+                    'announcement_id' => 'Announcement not found',
+                ]);
+            }
 
             if (! CourseUserHelper::isUserInCourse($user->id, $announcement->course_id)) {
                 throw ValidationException::withMessages([
