@@ -20,6 +20,9 @@ class LessonMaterialController extends Controller
             $request->validate([
                 'course_id' => 'required|integer',
                 'title' => 'required|string|max:255',
+                'content' => 'nullable|string|max:65535',
+                'file_url' => 'nullable|string|max:65535',
+                'link_url' => 'nullable|string|max:65535',
             ]);
 
             if (! CourseUserHelper::isUserInCourse(
@@ -83,9 +86,9 @@ class LessonMaterialController extends Controller
         try {
             $request->validate([
                 'title' => 'string|max:255',
-                'content' => 'string|max:65535',
-                'file_url' => 'string|max:65535',
-                'link_url' => 'string|max:65535',
+                'content' => 'nullable|string|max:65535',
+                'file_url' => 'nullable|string|max:65535',
+                'link_url' => 'nullable|string|max:65535',
             ]);
 
             $user = auth()->user();
