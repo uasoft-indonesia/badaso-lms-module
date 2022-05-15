@@ -20,6 +20,7 @@ class AssignmentController extends Controller
 
             $request->validate([
                 'course_id' => 'required|integer',
+                'topic_id' => 'nullable|integer|exists:Uasoft\Badaso\Module\LMSModule\Models\Topic,id',
                 'title' => 'required|string|max:255',
                 'due_date' => 'required|date_format:Y-m-d H:i:sP',
                 'description' => 'nullable|string|max:65535',
@@ -80,6 +81,22 @@ class AssignmentController extends Controller
                     ->makeHidden(['topic_id'])
                     ->toArray()
             );
+        } catch (Exception $e) {
+            return ApiResponse::failed($e);
+        }
+    }
+
+    public function edit(Request $request, $id)
+    {
+        try {
+            $user = auth()->user();
+
+            $assignment = Assignment::find($id);
+            if ($assignment?->created_by != $user->id) {
+                throw ValidationException::withMessages([
+                    'id' => 'assignment can only be edited by its creator',
+                ]);
+            }
         } catch (Exception $e) {
             return ApiResponse::failed($e);
         }

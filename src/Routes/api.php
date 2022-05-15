@@ -140,7 +140,7 @@ Route::group(['prefix' => $api_route_prefix, 'as' => 'badaso.', 'middleware' => 
                 ->middleware(BadasoAuthenticate::class)
                 ->name('read');
 
-            Route::put('/{id}', HelpersRoute::getController('MaterialCommentController@edit'))
+            Route::put('/{id}', HelpersRoute::getController('AssignmentController@edit'))
                 ->middleware(BadasoAuthenticate::class)
                 ->name('edit');
         });
