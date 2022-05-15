@@ -152,6 +152,12 @@ class AssignmentController extends Controller
                     'id' => 'assignment not found',
                 ]);
             }
+
+            if ($assignment->created_by != $user->id) {
+                throw ValidationException::withMessages([
+                    'id' => 'assignment can only be deleted by its creator',
+                ]);
+            }
         } catch (Exception $e) {
             return ApiResponse::failed($e);
         }
