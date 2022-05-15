@@ -159,7 +159,7 @@ class AssignmentController extends Controller
                 ]);
             }
 
-            if (!CourseUserHelper::isUserInCourse(
+            if (! CourseUserHelper::isUserInCourse(
                 $user->id,
                 $assignment->course_id,
                 CourseUserRole::TEACHER,
