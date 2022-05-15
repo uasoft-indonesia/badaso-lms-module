@@ -314,4 +314,50 @@ class AssignmentApiTest extends TestCase
             ]
         );
     }
+
+    public function testEditAssignmentGivenValidDataExpectReturnUpdatedData()
+    {
+        $user = User::factory()->create();
+        $user->rawPassword = 'password';
+
+        $course = Course::factory()
+            ->hasAttached($user, ['role' => CourseUserRole::TEACHER])
+            ->create();
+
+        $topic = Topic::factory()
+            ->for($course)
+            ->create();
+
+        $assignment = Assignment::factory()
+            ->for($course)
+            ->for($topic)
+            ->create([
+                'created_by' => $user->id,
+            ]);
+
+        $url = route('badaso.assignment.edit', ['id' => $assignment->id]);
+        $response = AuthHelper::asUser($this, $user)->json('PUT', $url, [
+            'title' => 'new title',
+            'topic_id' => null,
+            'due_date' => '2022-05-24 23:55:00+07:00',
+            'description' => 'new description',
+            'point' => 100,
+            'file_url' => 'http://new-file-url.com',
+            'link_url' => 'http://new-link-url.com',
+        ]);
+
+        $assignmentData = $response->json('data');
+
+        $response->assertStatus(200);
+        $this->assertArrayHasKey('id', $assignmentData);
+        $this->assertEquals($assignmentData['topicId'], null);
+        $this->assertEquals($assignmentData['title'], 'new title');
+        $this->assertEquals($assignmentData['point'], 100);
+        $this->assertEquals($assignmentData['fileUrl'], 'http://new-file-url.com');
+        $this->assertEquals($assignmentData['linkUrl'], 'http://new-link-url.com');
+        $this->assertEquals(
+            new \DateTime($assignmentData['dueDate']),
+            new \DateTime('2022-05-24 23:55:00+07:00'),
+        );
+    }
 }
