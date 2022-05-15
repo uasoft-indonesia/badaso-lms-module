@@ -367,4 +367,15 @@ class AssignmentApiTest extends TestCase
         $response = $this->json('DELETE', $url);
         $response->assertStatus(401);
     }
+
+    public function testDeleteAssignmentGivenUnknownAssignmentExpectResponse400()
+    {
+        $user = User::factory()->create();
+        $user->rawPassword = 'password';
+
+        $url = route('badaso.assignment.delete', ['id' => 17]);
+        $response = AuthHelper::asUser($this, $user)->json('DELETE', $url);
+
+        $response->assertStatus(400);
+    }
 }
