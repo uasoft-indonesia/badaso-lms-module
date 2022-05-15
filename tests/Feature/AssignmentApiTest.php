@@ -50,4 +50,22 @@ class AssignmentApiTest extends TestCase
 
         $response->assertStatus(400);
     }
+
+    public function testCreateAssignmentAsTeacherWithNoTitleExpectResponse400()
+    {
+        $user = User::factory()->create();
+        $user->rawPassword = 'password';
+
+        $course = Course::factory()
+            ->hasAttached($user, ['role' => CourseUserRole::TEACHER])
+            ->create();
+
+        $url = route('badaso.assignment.add');
+        $response = AuthHelper::asUser($this, $user)->json('POST', $url, [
+            'course_id' => $course->id,
+            'due_date' => '2022-05-24T23:55:00+07:00',
+        ]);
+
+        $response->assertStatus(400);
+    }
 }
