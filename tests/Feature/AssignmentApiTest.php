@@ -6,6 +6,7 @@ use Tests\TestCase;
 use Uasoft\Badaso\Module\LMSModule\Enums\CourseUserRole;
 use Uasoft\Badaso\Module\LMSModule\Models\Assignment;
 use Uasoft\Badaso\Module\LMSModule\Models\Course;
+use Uasoft\Badaso\Module\LMSModule\Models\Topic;
 use Uasoft\Badaso\Module\LMSModule\Models\User;
 use Uasoft\Badaso\Module\LMSModule\Tests\Helpers\AuthHelper;
 
@@ -163,5 +164,68 @@ class AssignmentApiTest extends TestCase
         $response = AuthHelper::asUser($this, $user)->json('GET', $url);
 
         $response->assertStatus(400);
+    }
+
+    public function testReadAssignmentGivenValidDataExpectRespondsWithAssignment()
+    {
+        $user = User::factory()->create();
+        $user->rawPassword = 'password';
+
+        $course = Course::factory()
+            ->hasAttached($user, ['role' => CourseUserRole::STUDENT])
+            ->create();
+
+        $topic = Topic::factory()
+            ->for($course)
+            ->create();
+
+        $assignment = Assignment::factory()
+            ->for($course)
+            ->for($topic)
+            ->create();
+
+        $url = route('badaso.assignment.read', ['id' => $assignment->id]);
+        $response = AuthHelper::asUser($this, $user)->json('GET', $url);
+
+        $assignmentData = $response->json('data');
+
+        $response->assertStatus(200);
+        $this->assertArrayHasKey('id', $assignmentData);
+        $this->assertEquals($assignmentData['courseId'], $course->id);
+        $this->assertEquals($assignmentData['title'], $assignment->title);
+        $this->assertEquals($assignmentData['createdBy']['name'], $assignment->createdBy->name);
+        $this->assertEquals($assignmentData['topic']['title'], $assignment->topic->title);
+    }
+
+    public function testReadAssignmentGivenValidDataExpectRespondsWithCorrectDueDate()
+    {
+        $user = User::factory()->create();
+        $user->rawPassword = 'password';
+
+        $course = Course::factory()
+            ->hasAttached($user, ['role' => CourseUserRole::STUDENT])
+            ->create();
+
+        $topic = Topic::factory()
+            ->for($course)
+            ->create();
+
+        $assignment = Assignment::factory()
+            ->for($course)
+            ->for($topic)
+            ->create([
+                'due_date' => '2022-05-24 23:55:00+07:00',
+            ]);
+
+        $url = route('badaso.assignment.read', ['id' => $assignment->id]);
+        $response = AuthHelper::asUser($this, $user)->json('GET', $url);
+
+        $assignmentData = $response->json('data');
+
+        $response->assertStatus(200);
+        $this->assertEquals(
+            new \DateTime($assignmentData['dueDate']),
+            new \DateTime('2022-05-24 23:55:00+07:00'),
+        );
     }
 }
