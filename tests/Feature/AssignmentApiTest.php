@@ -151,4 +151,17 @@ class AssignmentApiTest extends TestCase
         $response = $this->json('GET', $url);
         $response->assertStatus(401);
     }
+
+    public function testReadAssignmentGivenUnenrolledCourseExpectResponse400()
+    {
+        $user = User::factory()->create();
+        $user->rawPassword = 'password';
+
+        $assignment = Assignment::factory()->create();
+
+        $url = route('badaso.assignment.read', ['id' => $assignment->id]);
+        $response = AuthHelper::asUser($this, $user)->json('GET', $url);
+
+        $response->assertStatus(400);
+    }
 }
