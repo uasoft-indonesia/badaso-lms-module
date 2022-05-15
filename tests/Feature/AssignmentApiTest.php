@@ -228,4 +228,11 @@ class AssignmentApiTest extends TestCase
             new \DateTime('2022-05-24 23:55:00+07:00'),
         );
     }
+
+    public function testEditAssignmentWithoutLoginExpectResponse401()
+    {
+        $url = route('badaso.assignment.edit', ['id' => 1]);
+        $response = $this->json('PUT', $url);
+        $response->assertStatus(401);
+    }
 }
