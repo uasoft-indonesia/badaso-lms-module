@@ -28,7 +28,7 @@ class AssignmentController extends Controller
                 'link_url' => 'nullable|string|max:65535',
             ]);
 
-            if (!CourseUserHelper::isUserInCourse(
+            if (! CourseUserHelper::isUserInCourse(
                 $user->id,
                 $request->input('course_id'),
                 CourseUserRole::TEACHER,
