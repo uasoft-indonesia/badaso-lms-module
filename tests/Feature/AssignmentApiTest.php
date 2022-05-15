@@ -397,4 +397,19 @@ class AssignmentApiTest extends TestCase
 
         $response->assertStatus(400);
     }
+
+    public function testDeleteAssignmentGivenCreatorHasUnenrolledTheCourseExpectResponse400()
+    {
+        $user = User::factory()->create();
+        $user->rawPassword = 'password';
+
+        $assignment = Assignment::factory()->create([
+            'created_by' => $user->id,
+        ]);
+
+        $url = route('badaso.assignment.delete', ['id' => $assignment->id]);
+        $response = AuthHelper::asUser($this, $user)->json('DELETE', $url);
+
+        $response->assertStatus(400);
+    }
 }
