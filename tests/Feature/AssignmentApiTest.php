@@ -116,7 +116,7 @@ class AssignmentApiTest extends TestCase
         );
     }
 
-    public function testCreateAssignmentAsTeacherWithValidDataExpectReturnCreatedLessonMaterial()
+    public function testCreateAssignmentAsTeacherWithValidDataExpectReturnCreatedAssignment()
     {
         $user = User::factory()->create();
         $user->rawPassword = 'password';
@@ -143,5 +143,12 @@ class AssignmentApiTest extends TestCase
             new \DateTime($assignmentData['dueDate']),
             new \DateTime('2022-05-24 23:55:00+07:00'),
         );
+    }
+
+    public function testReadAssignmentWithoutLoginExpectResponse401()
+    {
+        $url = route('badaso.assignment.read', ['id' => 1]);
+        $response = $this->json('GET', $url);
+        $response->assertStatus(401);
     }
 }
