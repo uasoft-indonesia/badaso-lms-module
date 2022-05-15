@@ -20,6 +20,7 @@ class AssignmentController extends Controller
             $request->validate([
                 'course_id' => 'required|integer',
                 'title' => 'required|string|max:255',
+                'due_date' => 'required|date_format:Y-m-d H:i:sP',
             ]);
 
             if (!CourseUserHelper::isUserInCourse(
