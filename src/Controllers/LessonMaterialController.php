@@ -19,6 +19,7 @@ class LessonMaterialController extends Controller
             $user = auth()->user();
             $request->validate([
                 'course_id' => 'required|integer',
+                'topic_id' => 'nullable|integer|exists:Uasoft\Badaso\Module\LMSModule\Models\Topic,id',
                 'title' => 'required|string|max:255',
                 'content' => 'nullable|string|max:65535',
                 'file_url' => 'nullable|string|max:65535',
@@ -85,6 +86,7 @@ class LessonMaterialController extends Controller
     {
         try {
             $request->validate([
+                'topic_id' => 'nullable|integer|exists:Uasoft\Badaso\Module\LMSModule\Models\Topic,id',
                 'title' => 'string|max:255',
                 'content' => 'nullable|string|max:65535',
                 'file_url' => 'nullable|string|max:65535',
