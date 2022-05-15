@@ -254,4 +254,19 @@ class AssignmentApiTest extends TestCase
 
         $response->assertStatus(400);
     }
+
+    public function testEditAssignmentGivenCreatorHasUnenrolledTheCourseExpectResponse400()
+    {
+        $user = User::factory()->create();
+        $user->rawPassword = 'password';
+
+        $assignment = Assignment::factory()->create([
+            'created_by' => $user->id,
+        ]);
+
+        $url = route('badaso.assignment.edit', ['id' => $assignment->id]);
+        $response = AuthHelper::asUser($this, $user)->json('PUT', $url);
+
+        $response->assertStatus(400);
+    }
 }
