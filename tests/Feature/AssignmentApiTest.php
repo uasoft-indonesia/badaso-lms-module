@@ -438,4 +438,25 @@ class AssignmentApiTest extends TestCase
             ]
         );
     }
+
+    public function testDeleteAssignmentGivenValidDataExpectResponse200()
+    {
+        $user = User::factory()->create();
+        $user->rawPassword = 'password';
+
+        $course = Course::factory()
+            ->hasAttached($user, ['role' => CourseUserRole::TEACHER])
+            ->create();
+
+        $assignment = Assignment::factory()
+            ->for($course)
+            ->create([
+                'created_by' => $user->id,
+            ]);
+
+        $url = route('badaso.assignment.delete', ['id' => $assignment->id]);
+        $response = AuthHelper::asUser($this, $user)->json('DELETE', $url);
+
+        $response->assertStatus(200);
+    }
 }
