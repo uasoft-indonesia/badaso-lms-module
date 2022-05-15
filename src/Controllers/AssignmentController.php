@@ -168,6 +168,8 @@ class AssignmentController extends Controller
                     'id' => 'Must enroll the course to delete the assignment',
                 ]);
             }
+
+            $assignment->delete();
         } catch (Exception $e) {
             return ApiResponse::failed($e);
         }
