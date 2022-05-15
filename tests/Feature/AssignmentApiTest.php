@@ -269,4 +269,49 @@ class AssignmentApiTest extends TestCase
 
         $response->assertStatus(400);
     }
+
+    public function testEditAssignmentGivenValidDataExpectUpdated()
+    {
+        $user = User::factory()->create();
+        $user->rawPassword = 'password';
+
+        $course = Course::factory()
+            ->hasAttached($user, ['role' => CourseUserRole::TEACHER])
+            ->create();
+
+        $topic = Topic::factory()
+            ->for($course)
+            ->create();
+
+        $assignment = Assignment::factory()
+            ->for($course)
+            ->for($topic)
+            ->create([
+                'created_by' => $user->id,
+            ]);
+
+        $url = route('badaso.assignment.edit', ['id' => $assignment->id]);
+        AuthHelper::asUser($this, $user)->json('PUT', $url, [
+            'title' => 'new title',
+            'topic_id' => null,
+            'due_date' => '2022-05-24 23:55:00+07:00',
+            'description' => 'new description',
+            'point' => 100,
+            'file_url' => 'http://new-file-url.com',
+            'link_url' => 'http://new-link-url.com',
+        ]);
+
+        $this->assertDatabaseHas(
+            app(Assignment::class)->getTable(),
+            [
+                'id' => $assignment->id,
+                'topic_id' => null,
+                'due_date' => '2022-05-24 23:55:00+07:00',
+                'description' => 'new description',
+                'point' => 100,
+                'file_url' => 'http://new-file-url.com',
+                'link_url' => 'http://new-link-url.com',
+            ]
+        );
+    }
 }
