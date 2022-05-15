@@ -49,6 +49,8 @@ class AssignmentController extends Controller
                 'link_url' => $request->input('link_url'),
                 'created_by' => $user->id,
             ]);
+
+            return ApiResponse::success($assignment->toArray());
         } catch (Exception $e) {
             return ApiResponse::failed($e);
         }
