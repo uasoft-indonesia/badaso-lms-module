@@ -158,6 +158,16 @@ class AssignmentController extends Controller
                     'id' => 'assignment can only be deleted by its creator',
                 ]);
             }
+
+            if (!CourseUserHelper::isUserInCourse(
+                $user->id,
+                $assignment->course_id,
+                CourseUserRole::TEACHER,
+            )) {
+                throw ValidationException::withMessages([
+                    'id' => 'Must enroll the course to delete the assignment',
+                ]);
+            }
         } catch (Exception $e) {
             return ApiResponse::failed($e);
         }
