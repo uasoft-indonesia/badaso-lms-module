@@ -55,4 +55,24 @@ class AssignmentController extends Controller
             return ApiResponse::failed($e);
         }
     }
+
+    public function read($id)
+    {
+        try {
+            $user = auth()->user();
+
+            $assignment = Assignment::find($id);
+
+            if (!CourseUserHelper::isUserInCourse(
+                $user->id,
+                $assignment?->course_id,
+            )) {
+                throw ValidationException::withMessages([
+                    'id' => 'must enroll course to see assignment',
+                ]);
+            }
+        } catch (Exception $e) {
+            return ApiResponse::failed($e);
+        }
+    }
 }
