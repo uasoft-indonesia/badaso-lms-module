@@ -100,7 +100,6 @@ class AssignmentController extends Controller
                 'link_url' => 'nullable|string|max:65535',
             ]);
 
-
             $assignment = Assignment::find($id);
 
             if (! $assignment) {
