@@ -5,13 +5,13 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 use Uasoft\Badaso\Module\LMSModule\Helpers\DatabaseHelper;
 
-class CreateLessonMaterialsTable extends Migration
+class CreateAssignmentsTable extends Migration
 {
     private $tableName;
 
     public function __construct()
     {
-        $this->tableName = DatabaseHelper::getBadasoTableName('lesson_materials');
+        $this->tableName = DatabaseHelper::getBadasoTableName('assignments');
     }
 
     /**
@@ -26,9 +26,11 @@ class CreateLessonMaterialsTable extends Migration
             $table->foreignId('course_id');
             $table->foreignId('topic_id')->nullable();
             $table->string('title', 255)->nullable();
-            $table->text('content')->nullable();
+            $table->text('description')->nullable();
+            $table->integer('point')->nullable();
             $table->text('file_url')->nullable();
             $table->text('link_url')->nullable();
+            $table->timestampTz('due_date')->nullable();
             $table->foreignId('created_by');
             $table->timestamps();
 
