@@ -139,4 +139,21 @@ class AssignmentController extends Controller
             return ApiResponse::failed($e);
         }
     }
+
+    public function delete($id)
+    {
+        try {
+            $user = auth()->user();
+
+            $assignment = Assignment::find($id);
+
+            if (! $assignment) {
+                throw ValidationException::withMessages([
+                    'id' => 'assignment not found',
+                ]);
+            }
+        } catch (Exception $e) {
+            return ApiResponse::failed($e);
+        }
+    }
 }
