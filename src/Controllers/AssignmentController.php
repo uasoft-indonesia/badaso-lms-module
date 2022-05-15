@@ -170,6 +170,8 @@ class AssignmentController extends Controller
             }
 
             $assignment->delete();
+
+            return ApiResponse::success();
         } catch (Exception $e) {
             return ApiResponse::failed($e);
         }
