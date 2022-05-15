@@ -378,4 +378,23 @@ class AssignmentApiTest extends TestCase
 
         $response->assertStatus(400);
     }
+
+    public function testDeleteAssignmentGivenUserIsNotCreatorExpectResponse400()
+    {
+        $user = User::factory()->create();
+        $user->rawPassword = 'password';
+
+        $course = Course::factory()
+            ->hasAttached($user, ['role' => CourseUserRole::TEACHER])
+            ->create();
+
+        $assignment = Assignment::factory()
+            ->for($course)
+            ->create();
+
+        $url = route('badaso.assignment.delete', ['id' => $assignment->id]);
+        $response = AuthHelper::asUser($this, $user)->json('DELETE', $url);
+
+        $response->assertStatus(400);
+    }
 }
