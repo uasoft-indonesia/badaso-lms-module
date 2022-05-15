@@ -4,6 +4,7 @@ namespace Uasoft\Badaso\Module\LMSModule\Tests\Feature;
 
 use Tests\TestCase;
 use Uasoft\Badaso\Module\LMSModule\Enums\CourseUserRole;
+use Uasoft\Badaso\Module\LMSModule\Models\Assignment;
 use Uasoft\Badaso\Module\LMSModule\Models\Course;
 use Uasoft\Badaso\Module\LMSModule\Models\User;
 use Uasoft\Badaso\Module\LMSModule\Tests\Helpers\AuthHelper;
@@ -85,5 +86,33 @@ class AssignmentApiTest extends TestCase
         ]);
 
         $response->assertStatus(400);
+    }
+
+    public function testCreateAssignmentAsTeacherWithValidDataExpectInsertedToDatabase()
+    {
+        $user = User::factory()->create();
+        $user->rawPassword = 'password';
+
+        $course = Course::factory()
+            ->hasAttached($user, ['role' => CourseUserRole::TEACHER])
+            ->create();
+
+        $url = route('badaso.assignment.add');
+        AuthHelper::asUser($this, $user)->json('POST', $url, [
+            'course_id' => $course->id,
+            'title' => 'test title',
+            'due_date' => '2022-05-24 23:55:00+07:00',
+        ]);
+
+        $this->assertEquals(1, Assignment::count());
+        $this->assertDatabaseHas(
+            app(Assignment::class)->getTable(),
+            [
+                'course_id' => $course->id,
+                'title' => 'test title',
+                'due_date' => '2022-05-24 23:55:00+07:00',
+                'created_by' => $user->id,
+            ]
+        );
     }
 }
