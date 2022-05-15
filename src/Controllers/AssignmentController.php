@@ -134,6 +134,8 @@ class AssignmentController extends Controller
                 'file_url',
                 'link_url',
             ]))->save();
+
+            return ApiResponse::success($assignment->toArray());
         } catch (Exception $e) {
             return ApiResponse::failed($e);
         }
