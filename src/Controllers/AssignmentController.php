@@ -61,16 +61,25 @@ class AssignmentController extends Controller
         try {
             $user = auth()->user();
 
-            $assignment = Assignment::find($id);
+            $assignment = Assignment::with([
+                'createdBy:id,name',
+                'topic:id,title',
+            ])->find($id);
 
             if (!CourseUserHelper::isUserInCourse(
                 $user->id,
                 $assignment?->course_id,
             )) {
                 throw ValidationException::withMessages([
-                    'id' => 'must enroll course to see assignment',
+                    'id' => 'assignment not found',
                 ]);
             }
+
+            return ApiResponse::success(
+                $assignment
+                    ->makeHidden(['topic_id'])
+                    ->toArray()
+            );
         } catch (Exception $e) {
             return ApiResponse::failed($e);
         }
