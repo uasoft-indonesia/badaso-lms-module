@@ -115,4 +115,33 @@ class AssignmentApiTest extends TestCase
             ]
         );
     }
+
+    public function testCreateAssignmentAsTeacherWithValidDataExpectReturnCreatedLessonMaterial()
+    {
+        $user = User::factory()->create();
+        $user->rawPassword = 'password';
+
+        $course = Course::factory()
+            ->hasAttached($user, ['role' => CourseUserRole::TEACHER])
+            ->create();
+
+        $url = route('badaso.assignment.add');
+        $response = AuthHelper::asUser($this, $user)->json('POST', $url, [
+            'course_id' => $course->id,
+            'title' => 'test title',
+            'due_date' => '2022-05-24 23:55:00+07:00',
+        ]);
+
+        $assignmentData = $response->json('data');
+
+        $response->assertStatus(200);
+        $this->assertArrayHasKey('id', $assignmentData);
+        $this->assertEquals($assignmentData['courseId'], $course->id);
+        $this->assertEquals($assignmentData['title'], 'test title');
+        $this->assertEquals($assignmentData['createdBy'], $user->id);
+        $this->assertEquals(
+            new \DateTime($assignmentData['dueDate']),
+            new \DateTime('2022-05-24 23:55:00+07:00'),
+        );
+    }
 }
