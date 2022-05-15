@@ -97,6 +97,16 @@ class AssignmentController extends Controller
                     'id' => 'assignment can only be edited by its creator',
                 ]);
             }
+
+            if (! CourseUserHelper::isUserInCourse(
+                $user->id,
+                $assignment->course_id,
+                CourseUserRole::TEACHER,
+            )) {
+                throw ValidationException::withMessages([
+                    'id' => 'Must enroll the course to edit the assignment',
+                ]);
+            }
         } catch (Exception $e) {
             return ApiResponse::failed($e);
         }
