@@ -17,6 +17,11 @@ class AssignmentController extends Controller
         try {
             $user = auth()->user();
 
+            $request->validate([
+                'course_id' => 'required|integer',
+                'title' => 'required|string|max:255',
+            ]);
+
             if (!CourseUserHelper::isUserInCourse(
                 $user->id,
                 $request->input('course_id'),
