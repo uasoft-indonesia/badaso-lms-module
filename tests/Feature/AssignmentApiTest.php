@@ -360,4 +360,11 @@ class AssignmentApiTest extends TestCase
             new \DateTime('2022-05-24 23:55:00+07:00'),
         );
     }
+
+    public function testDeleteAssignmentWithoutLoginExpectResponse401()
+    {
+        $url = route('badaso.assignment.delete', ['id' => 1]);
+        $response = $this->json('DELETE', $url);
+        $response->assertStatus(401);
+    }
 }
