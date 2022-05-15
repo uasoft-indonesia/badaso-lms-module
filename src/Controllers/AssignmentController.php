@@ -66,7 +66,7 @@ class AssignmentController extends Controller
                 'topic:id,title',
             ])->find($id);
 
-            if (!CourseUserHelper::isUserInCourse(
+            if (! CourseUserHelper::isUserInCourse(
                 $user->id,
                 $assignment?->course_id,
             )) {
