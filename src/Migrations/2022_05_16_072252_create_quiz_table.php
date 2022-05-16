@@ -13,7 +13,7 @@ class CreateQuizTable extends Migration
     {
         $this->tableName = DatabaseHelper::getBadasoTableName('quizzes');
     }
-    
+
     /**
      * Run the migrations.
      *
