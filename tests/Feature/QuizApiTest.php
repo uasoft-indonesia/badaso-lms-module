@@ -83,6 +83,7 @@ class QuizApiTest extends TestCase
         AuthHelper::asUser($this, $user)->json('POST', $url, [
             'course_id' => $course->id,
             'name' => 'test name',
+            'link_url' => 'google.com',
         ]);
 
         $this->assertEquals(1, Quiz::count());
@@ -91,6 +92,7 @@ class QuizApiTest extends TestCase
             [
                 'course_id' => $course->id,
                 'name' => 'test name',
+                'link_url' => 'google.com',
                 'created_by' => $user->id,
             ]
         );
@@ -109,6 +111,7 @@ class QuizApiTest extends TestCase
         $response = AuthHelper::asUser($this, $user)->json('POST', $url, [
             'course_id' => $course->id,
             'name' => 'test name',
+            'link_url' => 'google.com',
         ]);
 
         $quizData = $response->json('data');
@@ -117,6 +120,7 @@ class QuizApiTest extends TestCase
         $this->assertArrayHasKey('id', $quizData);
         $this->assertEquals($quizData['courseId'], $course->id);
         $this->assertEquals($quizData['name'], 'test name');
+        $this->assertEquals($quizData['linkUrl'], 'google.com');
         $this->assertEquals($quizData['createdBy'], $user->id);
     }
 
@@ -132,15 +136,25 @@ class QuizApiTest extends TestCase
         $user = User::factory()->create();
         $user->rawPassword = 'password';
 
-        $lessonMaterial = Quiz::factory()->create();
+        $teacher = User::factory()->create();
+        $user->rawPassword = 'password';
 
-        $url = route('badaso.quiz.read', ['id' => $lessonMaterial->id]);
+        $course = Course::factory()
+            ->hasAttached($teacher, ['role' => CourseUserRole::TEACHER])
+            ->create();
+
+        $quiz = Quiz::factory()
+            ->create([
+                'course_id' => $course->id,
+            ]);
+
+        $url = route('badaso.quiz.read', ['id' => $quiz->id]);
         $response = AuthHelper::asUser($this, $user)->json('GET', $url);
 
         $response->assertStatus(400);
     }
 
-    public function testReadQuizGivenValidDataExpectRespondsWithLessonMaterial()
+    public function testReadQuizGivenValidDataExpectRespondsWithQuiz()
     {
         $user = User::factory()->create();
         $user->rawPassword = 'password';
@@ -149,25 +163,20 @@ class QuizApiTest extends TestCase
             ->hasAttached($user, ['role' => CourseUserRole::STUDENT])
             ->create();
 
-        $topic = Topic::factory()
-            ->for($course)
-            ->create();
-
         $quiz = Quiz::factory()
-            ->for($course)
-            ->for($topic)
-            ->create();
+            ->create([
+                'course_id' => $course->id,
+            ]);
 
         $url = route('badaso.quiz.read', ['id' => $quiz->id]);
         $response = AuthHelper::asUser($this, $user)->json('GET', $url);
 
-        $quizData = $response->json('data');
-
         $response->assertStatus(200);
-        $this->assertArrayHasKey('id', $quizData);
-        $this->assertEquals($quizData['courseId'], $course->id);
-        $this->assertEquals($quizData['title'], $quiz->title);
-        $this->assertEquals($quizData['createdBy']['name'], $quiz->createdBy->name);
-        $this->assertEquals($quizData['topic']['title'], $quiz->topic->title);
+        $response->assertJson(['data' =>[
+            'id' => $quiz->id,
+            'courseId' => $course->id,
+            'name' => $quiz->name,
+            'linkUrl' => $quiz->link_url,
+        ]]);
     }
 }
