@@ -43,6 +43,12 @@ class Topic extends Model
             ->orderBy('created_at', 'desc');
     }
 
+    public function assignments()
+    {
+        return $this->hasMany(Assignment::class, 'topic_id')
+            ->orderBy('created_at', 'desc');
+    }
+
     protected static function newFactory()
     {
         return TopicFactory::new();

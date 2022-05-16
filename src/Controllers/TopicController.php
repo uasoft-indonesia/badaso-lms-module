@@ -8,6 +8,7 @@ use Illuminate\Validation\ValidationException;
 use Uasoft\Badaso\Controllers\Controller;
 use Uasoft\Badaso\Helpers\ApiResponse;
 use Uasoft\Badaso\Module\LMSModule\Helpers\CourseUserHelper;
+use Uasoft\Badaso\Module\LMSModule\Models\Assignment;
 use Uasoft\Badaso\Module\LMSModule\Models\LessonMaterial;
 use Uasoft\Badaso\Module\LMSModule\Models\Topic;
 
@@ -56,8 +57,10 @@ class TopicController extends Controller
 
             $courseId = $request->query('course_id');
 
-            $topic = Topic::with('lessonMaterials:id,title,created_at,topic_id')
-                ->where('course_id', $courseId)
+            $topic = Topic::with([
+                'lessonMaterials:id,title,created_at,topic_id',
+                'assignments:id,title,created_at,topic_id',
+            ])->where('course_id', $courseId)
                 ->orderBy('created_at', 'desc')
                 ->get();
             $topicArray = $topic->toArray();
@@ -68,12 +71,19 @@ class TopicController extends Controller
                 ->orderBy('created_at', 'desc')
                 ->get();
 
-            if ($lessonMaterialsWithNoTopic->count() > 0) {
+            $assignmentsWithNoTopic = Assignment::whereNull('topic_id')
+                ->where('course_id', $courseId)
+                ->select('id', 'title', 'created_at', 'topic_id')
+                ->orderBy('created_at', 'desc')
+                ->get();
+
+            if ($lessonMaterialsWithNoTopic->count() > 0 || $assignmentsWithNoTopic->count() > 0) {
                 $nullTopic = [
                     'id' => null,
                     'title' => null,
                     'courseId' => $courseId,
                     'lessonMaterials' => $lessonMaterialsWithNoTopic->toArray(),
+                    'assignments' => $assignmentsWithNoTopic->toArray(),
                 ];
                 array_unshift($topicArray, $nullTopic);
             }
