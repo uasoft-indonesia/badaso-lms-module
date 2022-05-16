@@ -9,7 +9,7 @@ use Uasoft\Badaso\Module\LMSModule\Models\User;
 
 class QuizFactory extends Factory
 {
-    protected $model = Course::class;
+    protected $model = Quiz::class;
 
     /**
      * Define the model's default state.
@@ -19,11 +19,9 @@ class QuizFactory extends Factory
     public function definition()
     {
         return [
+            'course_id' => Course::factory(),
             'name' => $this->faker->name(),
-            'description' => $this->faker->text(),
-            'start_time' => $this->faker->dateTime(),
-            'start_time' => $this->faker->dateTime(),
-            'duration' => $this->faker->randomDigit(),
+            'link_url' => $this->faker->text(),
             'created_by' => User::factory(),
         ];
     }

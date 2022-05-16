@@ -29,6 +29,8 @@ class CreateQuizTable extends Migration
             $table->dateTime('start_time')->nullable();
             $table->dateTime('end_time')->nullable();
             $table->integer('duration')->nullable();
+            $table->integer('point')->nullable();
+            $table->text('link_url')->nullable();
             $table->foreignId('created_by');
             $table->timestamps();
 

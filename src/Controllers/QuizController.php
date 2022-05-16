@@ -25,6 +25,8 @@ class QuizController extends Controller
                 'start_time' => 'nullable|date_format:Y-m-d H:i:sP',
                 'end_time' => 'nullable|date_format:Y-m-d H:i:sP',
                 'duration' => 'nullable|integer',
+                'point' => 'nullable|integer',
+                'link_url' => 'required|string|max:65535',
             ]);
 
             if (! CourseUserHelper::isUserInCourse(
@@ -33,7 +35,7 @@ class QuizController extends Controller
                 CourseUserRole::TEACHER,
             )) {
                 throw ValidationException::withMessages([
-                    'course_id' => 'Course not found',
+                    'course_id' => 'Quiz not found',
                 ]);
             }
 
@@ -45,10 +47,41 @@ class QuizController extends Controller
                 'start_time' => $request->input('start_time'),
                 'end_time' => $request->input('end_time'),
                 'duration' => $request->input('duration'),
+                'point' => $request->input('point'),
+                'link_url' => $request->input('link_url'),
                 'created_by' => $user->id,
             ]);
 
             return ApiResponse::success($quiz->toArray());
+        } catch (Exception $e) {
+            return ApiResponse::failed($e);
+        }
+    }
+
+    public function read($id)
+    {
+        try {
+            $user = auth()->user();
+
+            $quiz = Quiz::with([
+                'createdBy:id,name',
+                'topic:id,title',
+            ])->find($id);
+
+            if (! CourseUserHelper::isUserInCourse(
+                $user->id,
+                $quiz?->course_id,
+            )) {
+                throw ValidationException::withMessages([
+                    'id' => 'Quiz not found',
+                ]);
+            }
+
+            return ApiResponse::success(
+                $quiz
+                    ->makeHidden(['topic_id'])
+                    ->toArray()
+            );
         } catch (Exception $e) {
             return ApiResponse::failed($e);
         }

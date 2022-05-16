@@ -24,6 +24,8 @@ class Quiz extends Model
         'start_time',
         'end_time',
         'duration',
+        'point',
+        'link_url',
         'created_by',
     ];
 
@@ -31,6 +33,16 @@ class Quiz extends Model
         'created_at',
         'updated_at',
     ];
+
+    public function course()
+    {
+        return $this->belongsTo(Course::class, 'course_id');
+    }
+
+    public function topic()
+    {
+        return $this->belongsTo(Topic::class, 'topic_id');
+    }
 
     public function createdBy()
     {

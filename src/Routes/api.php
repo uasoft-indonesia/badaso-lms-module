@@ -135,6 +135,9 @@ Route::group(['prefix' => $api_route_prefix, 'as' => 'badaso.', 'middleware' => 
             Route::post('/', HelpersRoute::getController('QuizController@add'))
                 ->middleware(BadasoAuthenticate::class)
                 ->name('add');
+            Route::get('/{id}', HelpersRoute::getController('QuizController@read'))
+                ->middleware(BadasoAuthenticate::class)
+                ->name('read');
         });
     });
 });
