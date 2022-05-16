@@ -20,6 +20,7 @@ class AssignmentController extends Controller
 
             $request->validate([
                 'course_id' => 'required|integer',
+                'topic_id' => 'nullable|integer|exists:Uasoft\Badaso\Module\LMSModule\Models\Topic,id',
                 'title' => 'required|string|max:255',
                 'due_date' => 'required|date_format:Y-m-d H:i:sP',
                 'description' => 'nullable|string|max:65535',
@@ -80,6 +81,60 @@ class AssignmentController extends Controller
                     ->makeHidden(['topic_id'])
                     ->toArray()
             );
+        } catch (Exception $e) {
+            return ApiResponse::failed($e);
+        }
+    }
+
+    public function edit(Request $request, $id)
+    {
+        try {
+            $user = auth()->user();
+            $request->validate([
+                'topic_id' => 'nullable|integer|exists:Uasoft\Badaso\Module\LMSModule\Models\Topic,id',
+                'title' => 'string|max:255',
+                'due_date' => 'date_format:Y-m-d H:i:sP',
+                'description' => 'nullable|string|max:65535',
+                'point' => 'nullable|integer',
+                'file_url' => 'nullable|string|max:65535',
+                'link_url' => 'nullable|string|max:65535',
+            ]);
+
+            $assignment = Assignment::find($id);
+
+            if (! $assignment) {
+                throw ValidationException::withMessages([
+                    'id' => 'assignment not found',
+                ]);
+            }
+
+            if ($assignment->created_by != $user->id) {
+                throw ValidationException::withMessages([
+                    'id' => 'assignment can only be edited by its creator',
+                ]);
+            }
+
+            if (! CourseUserHelper::isUserInCourse(
+                $user->id,
+                $assignment->course_id,
+                CourseUserRole::TEACHER,
+            )) {
+                throw ValidationException::withMessages([
+                    'id' => 'Must enroll the course to edit the assignment',
+                ]);
+            }
+
+            $assignment->fill($request->only([
+                'topic_id',
+                'title',
+                'due_date',
+                'description',
+                'point',
+                'file_url',
+                'link_url',
+            ]))->save();
+
+            return ApiResponse::success($assignment->toArray());
         } catch (Exception $e) {
             return ApiResponse::failed($e);
         }

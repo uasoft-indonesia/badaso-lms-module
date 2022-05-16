@@ -21,6 +21,7 @@ class Assignment extends Model
         'topic_id',
         'title',
         'description',
+        'point',
         'file_url',
         'link_url',
         'due_date',
