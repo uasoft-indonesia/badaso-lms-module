@@ -139,4 +139,41 @@ class AssignmentController extends Controller
             return ApiResponse::failed($e);
         }
     }
+
+    public function delete($id)
+    {
+        try {
+            $user = auth()->user();
+
+            $assignment = Assignment::find($id);
+
+            if (! $assignment) {
+                throw ValidationException::withMessages([
+                    'id' => 'assignment not found',
+                ]);
+            }
+
+            if ($assignment->created_by != $user->id) {
+                throw ValidationException::withMessages([
+                    'id' => 'assignment can only be deleted by its creator',
+                ]);
+            }
+
+            if (! CourseUserHelper::isUserInCourse(
+                $user->id,
+                $assignment->course_id,
+                CourseUserRole::TEACHER,
+            )) {
+                throw ValidationException::withMessages([
+                    'id' => 'Must enroll the course to delete the assignment',
+                ]);
+            }
+
+            $assignment->delete();
+
+            return ApiResponse::success();
+        } catch (Exception $e) {
+            return ApiResponse::failed($e);
+        }
+    }
 }

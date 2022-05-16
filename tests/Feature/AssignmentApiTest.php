@@ -360,4 +360,103 @@ class AssignmentApiTest extends TestCase
             new \DateTime('2022-05-24 23:55:00+07:00'),
         );
     }
+
+    public function testDeleteAssignmentWithoutLoginExpectResponse401()
+    {
+        $url = route('badaso.assignment.delete', ['id' => 1]);
+        $response = $this->json('DELETE', $url);
+        $response->assertStatus(401);
+    }
+
+    public function testDeleteAssignmentGivenUnknownAssignmentExpectResponse400()
+    {
+        $user = User::factory()->create();
+        $user->rawPassword = 'password';
+
+        $url = route('badaso.assignment.delete', ['id' => 17]);
+        $response = AuthHelper::asUser($this, $user)->json('DELETE', $url);
+
+        $response->assertStatus(400);
+    }
+
+    public function testDeleteAssignmentGivenUserIsNotCreatorExpectResponse400()
+    {
+        $user = User::factory()->create();
+        $user->rawPassword = 'password';
+
+        $course = Course::factory()
+            ->hasAttached($user, ['role' => CourseUserRole::TEACHER])
+            ->create();
+
+        $assignment = Assignment::factory()
+            ->for($course)
+            ->create();
+
+        $url = route('badaso.assignment.delete', ['id' => $assignment->id]);
+        $response = AuthHelper::asUser($this, $user)->json('DELETE', $url);
+
+        $response->assertStatus(400);
+    }
+
+    public function testDeleteAssignmentGivenCreatorHasUnenrolledTheCourseExpectResponse400()
+    {
+        $user = User::factory()->create();
+        $user->rawPassword = 'password';
+
+        $assignment = Assignment::factory()->create([
+            'created_by' => $user->id,
+        ]);
+
+        $url = route('badaso.assignment.delete', ['id' => $assignment->id]);
+        $response = AuthHelper::asUser($this, $user)->json('DELETE', $url);
+
+        $response->assertStatus(400);
+    }
+
+    public function testDeleteAssignmentGivenValidDataExpectDeleted()
+    {
+        $user = User::factory()->create();
+        $user->rawPassword = 'password';
+
+        $course = Course::factory()
+            ->hasAttached($user, ['role' => CourseUserRole::TEACHER])
+            ->create();
+
+        $assignment = Assignment::factory()
+            ->for($course)
+            ->create([
+                'created_by' => $user->id,
+            ]);
+
+        $url = route('badaso.assignment.delete', ['id' => $assignment->id]);
+        AuthHelper::asUser($this, $user)->json('DELETE', $url);
+
+        $this->assertDatabaseMissing(
+            app(Assignment::class)->getTable(),
+            [
+                'id' => $assignment->id,
+            ]
+        );
+    }
+
+    public function testDeleteAssignmentGivenValidDataExpectResponse200()
+    {
+        $user = User::factory()->create();
+        $user->rawPassword = 'password';
+
+        $course = Course::factory()
+            ->hasAttached($user, ['role' => CourseUserRole::TEACHER])
+            ->create();
+
+        $assignment = Assignment::factory()
+            ->for($course)
+            ->create([
+                'created_by' => $user->id,
+            ]);
+
+        $url = route('badaso.assignment.delete', ['id' => $assignment->id]);
+        $response = AuthHelper::asUser($this, $user)->json('DELETE', $url);
+
+        $response->assertStatus(200);
+    }
 }
