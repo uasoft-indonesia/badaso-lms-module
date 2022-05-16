@@ -130,5 +130,11 @@ Route::group(['prefix' => $api_route_prefix, 'as' => 'badaso.', 'middleware' => 
                 ->middleware(BadasoAuthenticate::class)
                 ->name('delete');
         });
+
+        Route::group(['prefix' => 'assignment', 'as' => 'assignment.'], function () {
+            Route::post('/', HelpersRoute::getController('AssignmentController@add'))
+                ->middleware(BadasoAuthenticate::class)
+                ->name('add');
+        });
     });
 });
