@@ -7,7 +7,6 @@ use Uasoft\Badaso\Module\LMSModule\Helpers\DatabaseHelper;
 
 class CreateSubmissionTable extends Migration
 {
-
     private $tableName;
 
     public function __construct()
