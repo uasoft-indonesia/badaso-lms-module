@@ -8,6 +8,7 @@ use Illuminate\Validation\ValidationException;
 use Uasoft\Badaso\Controllers\Controller;
 use Uasoft\Badaso\Helpers\ApiResponse;
 use Uasoft\Badaso\Module\LMSModule\Helpers\CourseUserHelper;
+use Uasoft\Badaso\Module\LMSModule\Models\Assignment;
 use Uasoft\Badaso\Module\LMSModule\Models\LessonMaterial;
 use Uasoft\Badaso\Module\LMSModule\Models\Quiz;
 use Uasoft\Badaso\Module\LMSModule\Models\Topic;
@@ -60,6 +61,7 @@ class TopicController extends Controller
             $topic = Topic::with(
                 'lessonMaterials:id,title,created_at,topic_id',
                 'quizzes:id,name,created_at,topic_id',
+                'assignments:id,title,created_at,topic_id',
             )
                 ->where('course_id', $courseId)
                 ->orderBy('created_at', 'desc')
@@ -77,6 +79,12 @@ class TopicController extends Controller
                 ->select('id', 'name', 'created_at', 'topic_id')
                 ->orderBy('created_at', 'desc')
                 ->get();
+
+            $assignmentsWithNoTopic = Assignment::whereNull('topic_id')
+                ->where('course_id', $courseId)
+                ->select('id', 'title', 'created_at', 'topic_id')
+                ->orderBy('created_at', 'desc')
+                ->get();
             
             $nullTopic = [
                 'id' => null,
@@ -84,6 +92,7 @@ class TopicController extends Controller
                 'courseId' => (int) $courseId,
                 'lessonMaterials' => $lessonMaterialsWithNoTopic?->toArray(),
                 'quizzes' => $quizzesWithNoTopic?->toArray(),
+                'assignments' => $assignmentsWithNoTopic?->toArray(),
             ];
             array_unshift($topicArray, $nullTopic);
 

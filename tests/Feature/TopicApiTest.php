@@ -4,6 +4,7 @@ namespace Uasoft\Badaso\Module\LMS\Tests\Feature;
 
 use Tests\TestCase;
 use Uasoft\Badaso\Module\LMSModule\Enums\CourseUserRole;
+use Uasoft\Badaso\Module\LMSModule\Models\Assignment;
 use Uasoft\Badaso\Module\LMSModule\Models\Course;
 use Uasoft\Badaso\Module\LMSModule\Models\LessonMaterial;
 use Uasoft\Badaso\Module\LMSModule\Models\Topic;
@@ -350,6 +351,80 @@ class TopicApiTest extends TestCase
         $this->assertArrayHasKey('title', $lessonMaterialData);
         $this->assertArrayHasKey('createdAt', $lessonMaterialData);
         $this->assertArrayHasKey('topicId', $lessonMaterialData);
+    }
+
+    public function testBrowseTopicGivenValidUserExpectRespondsWithAssignments()
+    {
+        $user = User::factory()->create();
+        $user->rawPassword = 'password';
+
+        $course = Course::factory()
+            ->hasAttached($user, ['role' => CourseUserRole::STUDENT])
+            ->create();
+
+        $topic1 = Topic::factory()
+            ->for($course)
+            ->create();
+        $topic2 = Topic::factory()
+            ->for($course)
+            ->create();
+
+        Assignment::factory()
+            ->for($topic1)
+            ->count(2)
+            ->create();
+        Assignment::factory()
+            ->for($topic2)
+            ->count(3)
+            ->create();
+
+        $url = route('badaso.topic.browse', ['course_id' => $course->id]);
+        $response = AuthHelper::asUser($this, $user)->json('GET', $url);
+
+        $topicsData = $response->json('data');
+        $topic2Data = $topicsData[1];
+        $assignmentsData = $topic2Data['assignments'];
+        $assignmentData = $assignmentsData[0];
+
+        $response->assertStatus(200);
+        $this->assertCount(3, $assignmentsData);
+        $this->assertArrayHasKey('id', $assignmentData);
+        $this->assertArrayHasKey('title', $assignmentData);
+        $this->assertArrayHasKey('createdAt', $assignmentData);
+        $this->assertArrayHasKey('topicId', $assignmentData);
+    }
+
+    public function testBrowseTopicGivenValidUserExpectRespondsWithAssignmentsThatHaveNoTopic()
+    {
+        $user = User::factory()->create();
+        $user->rawPassword = 'password';
+
+        $course = Course::factory()
+            ->hasAttached($user, ['role' => CourseUserRole::STUDENT])
+            ->create();
+
+        Assignment::factory()
+            ->for($course)
+            ->create();
+
+        $url = route('badaso.topic.browse', ['course_id' => $course->id]);
+        $response = AuthHelper::asUser($this, $user)->json('GET', $url);
+
+        $topicsData = $response->json('data');
+        $nullTopic = $topicsData[0];
+        $assignmentsData = $nullTopic['assignments'];
+        $assignmentData = $assignmentsData[0];
+
+        $response->assertStatus(200);
+
+        $this->assertNull($nullTopic['id']);
+        $this->assertNull($nullTopic['title']);
+
+        $this->assertCount(1, $assignmentsData);
+        $this->assertArrayHasKey('id', $assignmentData);
+        $this->assertArrayHasKey('title', $assignmentData);
+        $this->assertArrayHasKey('createdAt', $assignmentData);
+        $this->assertArrayHasKey('topicId', $assignmentData);
     }
 
     public function testEditTopicWithoutLogin()

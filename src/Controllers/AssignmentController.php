@@ -9,19 +9,22 @@ use Uasoft\Badaso\Controllers\Controller;
 use Uasoft\Badaso\Helpers\ApiResponse;
 use Uasoft\Badaso\Module\LMSModule\Enums\CourseUserRole;
 use Uasoft\Badaso\Module\LMSModule\Helpers\CourseUserHelper;
-use Uasoft\Badaso\Module\LMSModule\Models\LessonMaterial;
+use Uasoft\Badaso\Module\LMSModule\Models\Assignment;
 
-class LessonMaterialController extends Controller
+class AssignmentController extends Controller
 {
     public function add(Request $request)
     {
         try {
             $user = auth()->user();
+
             $request->validate([
                 'course_id' => 'required|integer',
                 'topic_id' => 'nullable|integer|exists:Uasoft\Badaso\Module\LMSModule\Models\Topic,id',
                 'title' => 'required|string|max:255',
-                'content' => 'nullable|string|max:65535',
+                'due_date' => 'required|date_format:Y-m-d H:i:sP',
+                'description' => 'nullable|string|max:65535',
+                'point' => 'nullable|integer',
                 'file_url' => 'nullable|string|max:65535',
                 'link_url' => 'nullable|string|max:65535',
             ]);
@@ -36,17 +39,19 @@ class LessonMaterialController extends Controller
                 ]);
             }
 
-            $lessonMaterial = LessonMaterial::create([
+            $assignment = Assignment::create([
                 'course_id' => $request->input('course_id'),
                 'topic_id' => $request->input('topic_id'),
                 'title' => $request->input('title'),
-                'content' => $request->input('content'),
+                'description' => $request->input('description'),
+                'due_date' => $request->input('due_date'),
+                'point' => $request->input('point'),
                 'file_url' => $request->input('file_url'),
                 'link_url' => $request->input('link_url'),
                 'created_by' => $user->id,
             ]);
 
-            return ApiResponse::success($lessonMaterial->toArray());
+            return ApiResponse::success($assignment->toArray());
         } catch (Exception $e) {
             return ApiResponse::failed($e);
         }
@@ -57,23 +62,22 @@ class LessonMaterialController extends Controller
         try {
             $user = auth()->user();
 
-            $lessonMaterial = LessonMaterial::with([
+            $assignment = Assignment::with([
                 'createdBy:id,name',
                 'topic:id,title',
-                'comments.createdBy:id,name',
             ])->find($id);
 
             if (! CourseUserHelper::isUserInCourse(
                 $user->id,
-                $lessonMaterial?->course_id,
+                $assignment?->course_id,
             )) {
                 throw ValidationException::withMessages([
-                    'id' => 'Lesson material not found',
+                    'id' => 'assignment not found',
                 ]);
             }
 
             return ApiResponse::success(
-                $lessonMaterial
+                $assignment
                     ->makeHidden(['topic_id'])
                     ->toArray()
             );
@@ -85,41 +89,52 @@ class LessonMaterialController extends Controller
     public function edit(Request $request, $id)
     {
         try {
+            $user = auth()->user();
             $request->validate([
                 'topic_id' => 'nullable|integer|exists:Uasoft\Badaso\Module\LMSModule\Models\Topic,id',
                 'title' => 'string|max:255',
-                'content' => 'nullable|string|max:65535',
+                'due_date' => 'date_format:Y-m-d H:i:sP',
+                'description' => 'nullable|string|max:65535',
+                'point' => 'nullable|integer',
                 'file_url' => 'nullable|string|max:65535',
                 'link_url' => 'nullable|string|max:65535',
             ]);
 
-            $user = auth()->user();
+            $assignment = Assignment::find($id);
 
-            $lessonMaterial = LessonMaterial::find($id);
-            if ($lessonMaterial?->created_by != $user->id) {
+            if (! $assignment) {
                 throw ValidationException::withMessages([
-                    'id' => 'Lesson material not found',
+                    'id' => 'assignment not found',
+                ]);
+            }
+
+            if ($assignment->created_by != $user->id) {
+                throw ValidationException::withMessages([
+                    'id' => 'assignment can only be edited by its creator',
                 ]);
             }
 
             if (! CourseUserHelper::isUserInCourse(
                 $user->id,
-                $lessonMaterial->course_id,
+                $assignment->course_id,
                 CourseUserRole::TEACHER,
             )) {
                 throw ValidationException::withMessages([
-                    'id' => 'Must enroll the course to edit the lesson material',
+                    'id' => 'Must enroll the course to edit the assignment',
                 ]);
             }
 
-            $lessonMaterial->fill($request->only([
+            $assignment->fill($request->only([
+                'topic_id',
                 'title',
-                'content',
+                'due_date',
+                'description',
+                'point',
                 'file_url',
                 'link_url',
             ]))->save();
 
-            return ApiResponse::success($lessonMaterial->toArray());
+            return ApiResponse::success($assignment->toArray());
         } catch (Exception $e) {
             return ApiResponse::failed($e);
         }
@@ -130,24 +145,31 @@ class LessonMaterialController extends Controller
         try {
             $user = auth()->user();
 
-            $lessonMaterial = LessonMaterial::find($id);
-            if ($lessonMaterial?->created_by != $user->id) {
+            $assignment = Assignment::find($id);
+
+            if (! $assignment) {
                 throw ValidationException::withMessages([
-                    'id' => 'Lesson material not found',
+                    'id' => 'assignment not found',
+                ]);
+            }
+
+            if ($assignment->created_by != $user->id) {
+                throw ValidationException::withMessages([
+                    'id' => 'assignment can only be deleted by its creator',
                 ]);
             }
 
             if (! CourseUserHelper::isUserInCourse(
                 $user->id,
-                $lessonMaterial->course_id,
+                $assignment->course_id,
                 CourseUserRole::TEACHER,
             )) {
                 throw ValidationException::withMessages([
-                    'id' => 'Must enroll the course to delete the lesson material',
+                    'id' => 'Must enroll the course to delete the assignment',
                 ]);
             }
 
-            $lessonMaterial->delete();
+            $assignment->delete();
 
             return ApiResponse::success();
         } catch (Exception $e) {
