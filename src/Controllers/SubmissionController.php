@@ -72,7 +72,7 @@ class SubmissionController extends Controller
                 'link_url' => $request->input('link_url'),
             ]);
 
-            return ApiRespOnse::success($submission->toArray());
+            return ApiResponse::success($submission->toArray());
         } catch (Exception $e) {
             return ApiResponse::failed($e);
         }
@@ -111,7 +111,7 @@ class SubmissionController extends Controller
             $response['link_url'] = $submission->link_url;
         }
 
-        return ApiRespOnse::success($response);
+        return ApiResponse::success($response);
     }
 
     public function edit(Request $request, $id)
@@ -161,7 +161,7 @@ class SubmissionController extends Controller
                 'link_url',
             ]))->save();
 
-            return ApiRespOnse::success($submission->toArray());
+            return ApiResponse::success($submission->toArray());
         } catch (Exception $e) {
             return ApiResponse::failed($e);
         }
