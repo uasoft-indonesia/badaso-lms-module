@@ -9,6 +9,7 @@ use Uasoft\Badaso\Controllers\Controller;
 use Uasoft\Badaso\Helpers\ApiResponse;
 use Uasoft\Badaso\Module\LMSModule\Helpers\CourseUserHelper;
 use Uasoft\Badaso\Module\LMSModule\Models\LessonMaterial;
+use Uasoft\Badaso\Module\LMSModule\Models\Quiz;
 use Uasoft\Badaso\Module\LMSModule\Models\Topic;
 
 class TopicController extends Controller
@@ -56,7 +57,10 @@ class TopicController extends Controller
 
             $courseId = $request->query('course_id');
 
-            $topic = Topic::with('lessonMaterials:id,title,created_at,topic_id')
+            $topic = Topic::with(
+                'lessonMaterials:id,title,created_at,topic_id',
+                'quizzes:id,name,created_at,topic_id',
+            )
                 ->where('course_id', $courseId)
                 ->orderBy('created_at', 'desc')
                 ->get();
@@ -68,15 +72,20 @@ class TopicController extends Controller
                 ->orderBy('created_at', 'desc')
                 ->get();
 
-            if ($lessonMaterialsWithNoTopic->count() > 0) {
-                $nullTopic = [
-                    'id' => null,
-                    'title' => null,
-                    'courseId' => $courseId,
-                    'lessonMaterials' => $lessonMaterialsWithNoTopic->toArray(),
-                ];
-                array_unshift($topicArray, $nullTopic);
-            }
+            $quizzesWithNoTopic = Quiz::whereNull('topic_id')
+                ->where('course_id', $courseId)
+                ->select('id', 'name', 'created_at', 'topic_id')
+                ->orderBy('created_at', 'desc')
+                ->get();
+            
+            $nullTopic = [
+                'id' => null,
+                'title' => null,
+                'courseId' => (int) $courseId,
+                'lessonMaterials' => $lessonMaterialsWithNoTopic?->toArray(),
+                'quizzes' => $quizzesWithNoTopic?->toArray(),
+            ];
+            array_unshift($topicArray, $nullTopic);
 
             return ApiResponse::success($topicArray);
         } catch (Exception $e) {
