@@ -116,10 +116,15 @@ class SubmissionApiTest extends TestCase
                 'due_date' => '2122-05-10 23:55:00+07:00',
             ]);
 
-        AuthHelper::asUser($this, $user)->json('POST', $url, [
+        $response = AuthHelper::asUser($this, $user)->json('POST', $url, [
             'assignment_id' => $assignment->id,
         ]);
 
+        $submissionData = $response->json('data');
+
         $this->assertEquals(1, Submission::count());
+        $this->assertArrayHasKey('id', $submissionData);
+        $this->assertEquals($submissionData['assignmentId'], $assignment->id);
+        $this->assertEquals($submissionData['userId'], $user->id);
     }
 }
