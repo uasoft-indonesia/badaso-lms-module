@@ -5,15 +5,17 @@ namespace Uasoft\Badaso\Module\LMSModule\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Uasoft\Badaso\Module\LMSModule\Factories\AssignmentFactory;
+use Uasoft\Badaso\Module\LMSModule\Traits\Iso8601Serialization;
 
 class Assignment extends Model
 {
-    use HasFactory;
+    use HasFactory,
+        Iso8601Serialization;
 
     public function __construct(array $attributes = [])
     {
         parent::__construct($attributes);
-        $this->setTable(config('badaso.database.prefix').'assignments');
+        $this->setTable(config('badaso.database.prefix') . 'assignments');
     }
 
     protected $fillable = [
@@ -30,6 +32,10 @@ class Assignment extends Model
 
     protected $hidden = [
         'updated_at',
+    ];
+
+    protected $dates = [
+        'due_date',
     ];
 
     public function course()
