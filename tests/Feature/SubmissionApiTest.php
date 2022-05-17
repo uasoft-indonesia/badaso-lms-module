@@ -87,7 +87,7 @@ class SubmissionApiTest extends TestCase
         $assignment = Assignment::factory()
             ->for($course)
             ->create();
-        
+
         Submission::factory()
             ->for($user)
             ->create();
@@ -115,7 +115,7 @@ class SubmissionApiTest extends TestCase
             ->create([
                 'due_date' => '2122-05-10 23:55:00+07:00',
             ]);
-        
+
         AuthHelper::asUser($this, $user)->json('POST', $url, [
             'assignment_id' => $assignment->id,
         ]);
