@@ -127,4 +127,52 @@ class SubmissionApiTest extends TestCase
         $this->assertEquals($submissionData['assignmentId'], $assignment->id);
         $this->assertEquals($submissionData['userId'], $user->id);
     }
+
+    public function testReadSubmissionWithoutLogin()
+    {
+        $url = route('badaso.submission.read', ['id' => 1]);
+        $response = $this->json('GET', $url);
+        $response->assertStatus(401);
+    }
+
+    public function testReadSubmissionButNotExisted()
+    {
+        $url = route('badaso.submission.read', ['id' => 1]);
+        $user = User::factory()->create();
+        $user->rawPassword = 'password';
+
+        $response = AuthHelper::asUser($this, $user)->json('GET', $url);
+
+        $data = $response->json('data');
+
+        $response->assertStatus(200);
+        $this->assertEquals($data['status'], 'no submission');
+    }
+
+    public function testReadSubmissionSuccess()
+    {
+        $user = User::factory()->create();
+        $user->rawPassword = 'password';
+
+        $course = Course::factory()
+            ->hasAttached($user, ['role' => CourseUserRole::STUDENT])
+            ->create();
+
+        $assignment = Assignment::factory()
+            ->for($course)
+            ->create();
+
+        $submission = Submission::factory()
+            ->for($assignment)
+            ->for($user)
+            ->create();
+
+        $url = route('badaso.submission.read', ['id' => $assignment->id]);
+
+        $response = AuthHelper::asUser($this, $user)->json('GET', $url);
+
+        $data = $response->json('data');
+        $response->assertStatus(200);
+        $this->assertEquals($data['status'], 'submitted');
+    }
 }
