@@ -28,7 +28,7 @@ class AssignmentApiTest extends TestCase
         $response = AuthHelper::asUser($this, $user)->json('POST', $url, [
             'course_id' => 1,
             'title' => 'test title',
-            'due_date' => '2022-05-24 23:55:00+07:00',
+            'due_date' => '2022-05-24T23:55:00+07:00',
         ]);
 
         $response->assertStatus(400);
@@ -47,7 +47,7 @@ class AssignmentApiTest extends TestCase
         $response = AuthHelper::asUser($this, $user)->json('POST', $url, [
             'course_id' => $course->id,
             'title' => 'test title',
-            'due_date' => '2022-05-24 23:55:00+07:00',
+            'due_date' => '2022-05-24T23:55:00+07:00',
         ]);
 
         $response->assertStatus(400);
@@ -65,7 +65,7 @@ class AssignmentApiTest extends TestCase
         $url = route('badaso.assignment.add');
         $response = AuthHelper::asUser($this, $user)->json('POST', $url, [
             'course_id' => $course->id,
-            'due_date' => '2022-05-24 23:55:00+07:00',
+            'due_date' => '2022-05-24T23:55:00+07:00',
         ]);
 
         $response->assertStatus(400);
@@ -102,7 +102,7 @@ class AssignmentApiTest extends TestCase
         AuthHelper::asUser($this, $user)->json('POST', $url, [
             'course_id' => $course->id,
             'title' => 'test title',
-            'due_date' => '2022-05-24 23:55:00+07:00',
+            'due_date' => '2022-05-24T23:55:00+07:00',
         ]);
 
         $this->assertEquals(1, Assignment::count());
@@ -111,7 +111,7 @@ class AssignmentApiTest extends TestCase
             [
                 'course_id' => $course->id,
                 'title' => 'test title',
-                'due_date' => '2022-05-24 23:55:00+07:00',
+                'due_date' => '2022-05-24 16:55:00',
                 'created_by' => $user->id,
             ]
         );
@@ -130,7 +130,7 @@ class AssignmentApiTest extends TestCase
         $response = AuthHelper::asUser($this, $user)->json('POST', $url, [
             'course_id' => $course->id,
             'title' => 'test title',
-            'due_date' => '2022-05-24 23:55:00+07:00',
+            'due_date' => '2022-05-24T23:55:00+07:00',
         ]);
 
         $assignmentData = $response->json('data');
@@ -142,7 +142,7 @@ class AssignmentApiTest extends TestCase
         $this->assertEquals($assignmentData['createdBy'], $user->id);
         $this->assertEquals(
             new \DateTime($assignmentData['dueDate']),
-            new \DateTime('2022-05-24 23:55:00+07:00'),
+            new \DateTime('2022-05-24T23:55:00+07:00'),
         );
     }
 
@@ -214,7 +214,7 @@ class AssignmentApiTest extends TestCase
             ->for($course)
             ->for($topic)
             ->create([
-                'due_date' => '2022-05-24 23:55:00+07:00',
+                'due_date' => '2022-05-24T16:55:00Z',
             ]);
 
         $url = route('badaso.assignment.read', ['id' => $assignment->id]);
@@ -225,7 +225,7 @@ class AssignmentApiTest extends TestCase
         $response->assertStatus(200);
         $this->assertEquals(
             new \DateTime($assignmentData['dueDate']),
-            new \DateTime('2022-05-24 23:55:00+07:00'),
+            new \DateTime('2022-05-24T23:55:00+07:00'),
         );
     }
 
@@ -294,7 +294,7 @@ class AssignmentApiTest extends TestCase
         AuthHelper::asUser($this, $user)->json('PUT', $url, [
             'title' => 'new title',
             'topic_id' => null,
-            'due_date' => '2022-05-24 23:55:00+07:00',
+            'due_date' => '2022-05-24T23:55:00+07:00',
             'description' => 'new description',
             'point' => 100,
             'file_url' => 'http://new-file-url.com',
@@ -306,7 +306,7 @@ class AssignmentApiTest extends TestCase
             [
                 'id' => $assignment->id,
                 'topic_id' => null,
-                'due_date' => '2022-05-24 23:55:00+07:00',
+                'due_date' => '2022-05-24 16:55:00',
                 'description' => 'new description',
                 'point' => 100,
                 'file_url' => 'http://new-file-url.com',
@@ -339,7 +339,7 @@ class AssignmentApiTest extends TestCase
         $response = AuthHelper::asUser($this, $user)->json('PUT', $url, [
             'title' => 'new title',
             'topic_id' => null,
-            'due_date' => '2022-05-24 23:55:00+07:00',
+            'due_date' => '2022-05-24T23:55:00+07:00',
             'description' => 'new description',
             'point' => 100,
             'file_url' => 'http://new-file-url.com',
@@ -357,7 +357,7 @@ class AssignmentApiTest extends TestCase
         $this->assertEquals($assignmentData['linkUrl'], 'http://new-link-url.com');
         $this->assertEquals(
             new \DateTime($assignmentData['dueDate']),
-            new \DateTime('2022-05-24 23:55:00+07:00'),
+            new \DateTime('2022-05-24T23:55:00+07:00'),
         );
     }
 

@@ -22,7 +22,7 @@ class AssignmentController extends Controller
                 'course_id' => 'required|integer',
                 'topic_id' => 'nullable|integer|exists:Uasoft\Badaso\Module\LMSModule\Models\Topic,id',
                 'title' => 'required|string|max:255',
-                'due_date' => 'required|date_format:Y-m-d H:i:sP',
+                'due_date' => 'required|date_format:Y-m-d\TH:i:sp',
                 'description' => 'nullable|string|max:65535',
                 'point' => 'nullable|integer',
                 'file_url' => 'nullable|string|max:65535',
@@ -44,7 +44,10 @@ class AssignmentController extends Controller
                 'topic_id' => $request->input('topic_id'),
                 'title' => $request->input('title'),
                 'description' => $request->input('description'),
-                'due_date' => $request->input('due_date'),
+                'due_date' => gmdate(
+                    'Y-m-d H:i:s',
+                    strtotime($request->input('due_date')),
+                ),
                 'point' => $request->input('point'),
                 'file_url' => $request->input('file_url'),
                 'link_url' => $request->input('link_url'),
@@ -93,7 +96,7 @@ class AssignmentController extends Controller
             $request->validate([
                 'topic_id' => 'nullable|integer|exists:Uasoft\Badaso\Module\LMSModule\Models\Topic,id',
                 'title' => 'string|max:255',
-                'due_date' => 'date_format:Y-m-d H:i:sP',
+                'due_date' => 'date_format:Y-m-d\TH:i:sp',
                 'description' => 'nullable|string|max:65535',
                 'point' => 'nullable|integer',
                 'file_url' => 'nullable|string|max:65535',
@@ -127,12 +130,16 @@ class AssignmentController extends Controller
             $assignment->fill($request->only([
                 'topic_id',
                 'title',
-                'due_date',
                 'description',
                 'point',
                 'file_url',
                 'link_url',
-            ]))->save();
+            ]) + [
+                'due_date' => gmdate(
+                    'Y-m-d H:i:s',
+                    strtotime($request->input('due_date')),
+                ),
+            ])->save();
 
             return ApiResponse::success($assignment->toArray());
         } catch (Exception $e) {
