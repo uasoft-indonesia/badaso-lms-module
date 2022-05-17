@@ -148,5 +148,11 @@ Route::group(['prefix' => $api_route_prefix, 'as' => 'badaso.', 'middleware' => 
                 ->middleware(BadasoAuthenticate::class)
                 ->name('delete');
         });
+
+        Route::group(['prefix' => 'submission', 'as' => 'submission.'], function () {
+            Route::post('/', HelpersRoute::getController('SubmissionController@add'))
+                ->middleware(BadasoAuthenticate::class)
+                ->name('add');
+        });
     });
 });
