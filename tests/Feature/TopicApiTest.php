@@ -367,10 +367,6 @@ class TopicApiTest extends TestCase
             ->for($course)
             ->create();
 
-        $assignmentWithNoTopic = Assignment::factory()
-            ->for(null)
-            ->create();
-
         $assignment_A = Assignment::factory()
             ->for($topic)
             ->create();
@@ -390,13 +386,7 @@ class TopicApiTest extends TestCase
                 'courseId' => $course->id,
                 'lessonMaterials' => [],
                 'quizzes' => [],
-                'assignments' => [
-                    [
-                        'id' => $assignmentWithNoTopic->id,
-                        'title' => $assignmentWithNoTopic->title,
-                        'topicId' => $assignmentWithNoTopic->topic_id,
-                    ],
-                ],
+                'assignments' => [],
             ],
             [
                 'id' => $topic->id,
