@@ -140,7 +140,10 @@ class TopicApiTest extends TestCase
             ->hasAttached($user, ['role' => CourseUserRole::TEACHER])
             ->create();
 
-        Topic::factory()->count(5)->create();
+        $otherCourse = Course::factory()
+            ->create();
+
+        Topic::factory()->count(5)->for($otherCourse)->create();
 
         $topic = Topic::factory()
             ->for($course)
@@ -150,10 +153,38 @@ class TopicApiTest extends TestCase
         $response = AuthHelper::asUser($this, $user)->json('GET', $url);
 
         $response->assertStatus(200);
+        $response->assertJsonCount(2, 'data');
+        $response->assertJson(['data' =>[
+            [
+                'courseId' => $course->id,
+                'id' => null,
+                'title' => null,
+            ],
+            [
+                'courseId' => $course->id,
+                'id' => $topic->id,
+                'title' => $topic->title,
+            ],
+        ]]);
+    }
+
+    public function testBrowseTopicGivenNoTopicCreatedExpectResponseNullTopic()
+    {
+        $user = User::factory()->create();
+        $user->rawPassword = 'password';
+
+        $course = Course::factory()
+            ->hasAttached($user, ['role' => CourseUserRole::TEACHER])
+            ->create();
+
+        $url = route('badaso.topic.browse', ['course_id' => $course->id]);
+        $response = AuthHelper::asUser($this, $user)->json('GET', $url);
+
+        $response->assertStatus(200);
         $response->assertJsonCount(1, 'data');
         $response->assertJsonFragment([
-            'id' => $topic->id,
-            'title' => $topic->title,
+            'id' => null,
+            'title' => null,
         ]);
     }
 
@@ -166,36 +197,126 @@ class TopicApiTest extends TestCase
             ->hasAttached($user, ['role' => CourseUserRole::STUDENT])
             ->create();
 
-        $topic1 = Topic::factory()
-            ->for($course)
-            ->create();
-        $topic2 = Topic::factory()
+        $topic = Topic::factory()
             ->for($course)
             ->create();
 
-        LessonMaterial::factory()
-            ->for($topic1)
-            ->count(2)
+        $lessonMaterial_A = LessonMaterial::factory()
+            ->for($course)
+            ->for($topic)
             ->create();
-        LessonMaterial::factory()
-            ->for($topic2)
-            ->count(3)
+
+        $lessonMaterial_B = LessonMaterial::factory()
+            ->for($course)
+            ->for($topic)
+            ->create();
+
+        $lessonMaterial_C = LessonMaterial::factory()
+            ->for($course)
+            ->for($topic)
             ->create();
 
         $url = route('badaso.topic.browse', ['course_id' => $course->id]);
         $response = AuthHelper::asUser($this, $user)->json('GET', $url);
 
-        $topicsData = $response->json('data');
-        $topic2Data = $topicsData[1];
-        $lessonMaterialsData = $topic2Data['lessonMaterials'];
-        $lessonMaterialData = $lessonMaterialsData[0];
+        $response->assertStatus(200);
+        $response->assertJson(['data' =>[
+            [
+                'id' => null,
+                'title' => null,
+                'courseId' => $course->id,
+                'lessonMaterials' => []
+            ],
+            [
+                'id' => $topic->id,
+                'title' => $topic->title,
+                'courseId' => $course->id,
+                'createdBy' => $topic->createdBy->id,
+                'lessonMaterials' => [
+                    [
+                        'id' => $lessonMaterial_A->id,
+                        'title' => $lessonMaterial_A->title,
+                        'topicId' => $lessonMaterial_A->topic_id,
+                    ],
+                    [
+                        'id' => $lessonMaterial_B->id,
+                        'title' => $lessonMaterial_B->title,
+                        'topicId' => $lessonMaterial_B->topic_id,
+                    ],
+                    [
+                        'id' => $lessonMaterial_C->id,
+                        'title' => $lessonMaterial_C->title,
+                        'topicId' => $lessonMaterial_C->topic_id,
+                    ],
+                ]
+            ],
+        ]]);
+    }
+
+    public function testBrowseTopicGivenValidUserExpectRespondsWithQuizzes()
+    {
+        $user = User::factory()->create();
+        $user->rawPassword = 'password';
+
+        $course = Course::factory()
+            ->hasAttached($user, ['role' => CourseUserRole::STUDENT])
+            ->create();
+
+        $topic = Topic::factory()
+            ->for($course)
+            ->create();
+
+        $quiz_A = LessonMaterial::factory()
+            ->for($course)
+            ->for($topic)
+            ->create();
+
+        $quiz_B = LessonMaterial::factory()
+            ->for($course)
+            ->for($topic)
+            ->create();
+
+        $quiz_C = LessonMaterial::factory()
+            ->for($course)
+            ->for($topic)
+            ->create();
+
+        $url = route('badaso.topic.browse', ['course_id' => $course->id]);
+        $response = AuthHelper::asUser($this, $user)->json('GET', $url);
 
         $response->assertStatus(200);
-        $this->assertCount(3, $lessonMaterialsData);
-        $this->assertArrayHasKey('id', $lessonMaterialData);
-        $this->assertArrayHasKey('title', $lessonMaterialData);
-        $this->assertArrayHasKey('createdAt', $lessonMaterialData);
-        $this->assertArrayHasKey('topicId', $lessonMaterialData);
+        $response->assertJson(['data' =>[
+            [
+                'id' => null,
+                'title' => null,
+                'courseId' => $course->id,
+                'lessonMaterials' => [],
+                'quizzes' => [],
+            ],
+            [
+                'id' => $topic->id,
+                'title' => $topic->title,
+                'courseId' => $course->id,
+                'createdBy' => $topic->createdBy->id,
+                'lessonMaterials' => [
+                    [
+                        'id' => $quiz_A->id,
+                        'title' => $quiz_A->title,
+                        'topicId' => $quiz_A->topic_id,
+                    ],
+                    [
+                        'id' => $quiz_B->id,
+                        'title' => $quiz_B->title,
+                        'topicId' => $quiz_B->topic_id,
+                    ],
+                    [
+                        'id' => $quiz_C->id,
+                        'title' => $quiz_C->title,
+                        'topicId' => $quiz_C->topic_id,
+                    ],
+                ]
+            ],
+        ]]);
     }
 
     public function testBrowseTopicGivenValidUserExpectRespondsWithLessonMaterialsThatHaveNoTopic()
