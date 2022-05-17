@@ -20,7 +20,7 @@ class QuizFactory extends Factory
     {
         return [
             'course_id' => Course::factory(),
-            'name' => $this->faker->name(),
+            'title' => $this->faker->text(),
             'link_url' => $this->faker->text(),
             'created_by' => User::factory(),
         ];

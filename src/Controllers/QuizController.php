@@ -20,10 +20,10 @@ class QuizController extends Controller
             $request->validate([
                 'course_id' => 'required|integer',
                 'topic_id' => 'nullable|integer|exists:Uasoft\Badaso\Module\LMSModule\Models\Topic,id',
-                'name' => 'required|string|max:255',
+                'title' => 'required|string|max:255',
                 'description' => 'nullable|string|max:65535',
-                'start_time' => 'nullable|date_format:Y-m-d H:i:sP',
-                'end_time' => 'nullable|date_format:Y-m-d H:i:sP',
+                'start_time' => 'nullable|date_format:Y-m-d\TH:i:sp',
+                'end_time' => 'nullable|date_format:Y-m-d\TH:i:sp',
                 'duration' => 'nullable|integer',
                 'point' => 'nullable|integer',
                 'link_url' => 'required|string|max:65535',
@@ -42,7 +42,7 @@ class QuizController extends Controller
             $quiz = Quiz::create([
                 'course_id' => $request->input('course_id'),
                 'topic_id' => $request->input('topic_id'),
-                'name' => $request->input('name'),
+                'title' => $request->input('title'),
                 'description' => $request->input('description'),
                 'start_time' => $request->input('start_time'),
                 'end_time' => $request->input('end_time'),

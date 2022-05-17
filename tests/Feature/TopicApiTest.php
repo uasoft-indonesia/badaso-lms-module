@@ -307,17 +307,17 @@ class TopicApiTest extends TestCase
                 'quizzes' => [
                     [
                         'id' => $quiz_A->id,
-                        'name' => $quiz_A->name,
+                        'title' => $quiz_A->title,
                         'topicId' => $quiz_A->topic_id,
                     ],
                     [
                         'id' => $quiz_B->id,
-                        'name' => $quiz_B->name,
+                        'title' => $quiz_B->title,
                         'topicId' => $quiz_B->topic_id,
                     ],
                     [
                         'id' => $quiz_C->id,
-                        'name' => $quiz_C->name,
+                        'title' => $quiz_C->title,
                         'topicId' => $quiz_C->topic_id,
                     ],
                 ],

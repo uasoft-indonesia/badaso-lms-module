@@ -19,7 +19,7 @@ class Quiz extends Model
     protected $fillable = [
         'course_id',
         'topic_id',
-        'name',
+        'title',
         'description',
         'start_time',
         'end_time',
