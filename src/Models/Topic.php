@@ -43,6 +43,12 @@ class Topic extends Model
             ->orderBy('created_at', 'desc');
     }
 
+    public function quizzes()
+    {
+        return $this->hasMany(Quiz::class, 'topic_id')
+            ->orderBy('created_at', 'desc');
+    }
+
     public function assignments()
     {
         return $this->hasMany(Assignment::class, 'topic_id')
