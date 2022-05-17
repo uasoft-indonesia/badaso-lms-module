@@ -363,36 +363,60 @@ class TopicApiTest extends TestCase
             ->hasAttached($user, ['role' => CourseUserRole::STUDENT])
             ->create();
 
-        $topic1 = Topic::factory()
-            ->for($course)
-            ->create();
-        $topic2 = Topic::factory()
+        $topic = Topic::factory()
             ->for($course)
             ->create();
 
-        Assignment::factory()
-            ->for($topic1)
-            ->count(2)
+        $assignmentWithNoTopic = Assignment::factory()
+            ->for(null)
             ->create();
-        Assignment::factory()
-            ->for($topic2)
-            ->count(3)
+
+        $assignment_A = Assignment::factory()
+            ->for($topic)
+            ->create();
+
+        $assignment_B = Assignment::factory()
+            ->for($topic)
             ->create();
 
         $url = route('badaso.topic.browse', ['course_id' => $course->id]);
         $response = AuthHelper::asUser($this, $user)->json('GET', $url);
 
-        $topicsData = $response->json('data');
-        $topic2Data = $topicsData[1];
-        $assignmentsData = $topic2Data['assignments'];
-        $assignmentData = $assignmentsData[0];
-
         $response->assertStatus(200);
-        $this->assertCount(3, $assignmentsData);
-        $this->assertArrayHasKey('id', $assignmentData);
-        $this->assertArrayHasKey('title', $assignmentData);
-        $this->assertArrayHasKey('createdAt', $assignmentData);
-        $this->assertArrayHasKey('topicId', $assignmentData);
+        $response->assertJson(['data' =>[
+            [
+                'id' => null,
+                'title' => null,
+                'courseId' => $course->id,
+                'lessonMaterials' => [],
+                'quizzes' => [],
+                'assignments' => [
+                    [
+                        'id' => $assignmentWithNoTopic->id,
+                        'title' => $assignmentWithNoTopic->title,
+                        'topicId' => $assignmentWithNoTopic->topic_id,
+                    ],
+                ],
+            ],
+            [
+                'id' => $topic->id,
+                'title' => $topic->title,
+                'courseId' => $course->id,
+                'createdBy' => $topic->createdBy->id,
+                'lessonMaterials' => [
+                    [
+                        'id' => $assignment_A->id,
+                        'title' => $assignment_A->title,
+                        'topicId' => $assignment_A->topic_id,
+                    ],
+                    [
+                        'id' => $assignment_B->id,
+                        'title' => $assignment_B->title,
+                        'topicId' => $assignment_B->topic_id,
+                    ],
+                ],
+            ],
+        ]]);
     }
 
     public function testBrowseTopicGivenValidUserExpectRespondsWithAssignmentsThatHaveNoTopic()
