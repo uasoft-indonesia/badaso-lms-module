@@ -80,7 +80,6 @@ class SubmissionController extends Controller
 
     public function read($id)
     {
-      
         $user = auth()->user();
 
         $response = [
@@ -99,7 +98,6 @@ class SubmissionController extends Controller
         if (! $submission) {
             $response['status'] = 'no submission';
         } else {
-            
             if (! CourseUserHelper::isUserInCourse(
                 $user->id,
                 $submission->assignment->course_id,
@@ -110,7 +108,7 @@ class SubmissionController extends Controller
             }
 
             $response['file_url'] = $submission->file_url;
-            $response['link_url'] = $submission->link_url; 
+            $response['link_url'] = $submission->link_url;
         }
 
         return ApiRespOnse::success($response);
