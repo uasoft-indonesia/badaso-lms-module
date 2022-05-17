@@ -7,6 +7,7 @@ use Uasoft\Badaso\Module\LMSModule\Enums\CourseUserRole;
 use Uasoft\Badaso\Module\LMSModule\Models\Assignment;
 use Uasoft\Badaso\Module\LMSModule\Models\Course;
 use Uasoft\Badaso\Module\LMSModule\Models\LessonMaterial;
+use Uasoft\Badaso\Module\LMSModule\Models\Quiz;
 use Uasoft\Badaso\Module\LMSModule\Models\Topic;
 use Uasoft\Badaso\Module\LMSModule\Models\User;
 use Uasoft\Badaso\Module\LMSModule\Tests\Helpers\AuthHelper;
@@ -228,6 +229,7 @@ class TopicApiTest extends TestCase
                 'courseId' => $course->id,
                 'lessonMaterials' => [],
                 'quizzes' => [],
+                'assignments' => [],
             ],
             [
                 'id' => $topic->id,
@@ -268,17 +270,17 @@ class TopicApiTest extends TestCase
             ->for($course)
             ->create();
 
-        $quiz_A = LessonMaterial::factory()
+        $quiz_A = Quiz::factory()
             ->for($course)
             ->for($topic)
             ->create();
 
-        $quiz_B = LessonMaterial::factory()
+        $quiz_B = Quiz::factory()
             ->for($course)
             ->for($topic)
             ->create();
 
-        $quiz_C = LessonMaterial::factory()
+        $quiz_C = Quiz::factory()
             ->for($course)
             ->for($topic)
             ->create();
@@ -294,26 +296,28 @@ class TopicApiTest extends TestCase
                 'courseId' => $course->id,
                 'lessonMaterials' => [],
                 'quizzes' => [],
+                'assignments' => [],
             ],
             [
                 'id' => $topic->id,
                 'title' => $topic->title,
                 'courseId' => $course->id,
                 'createdBy' => $topic->createdBy->id,
-                'lessonMaterials' => [
+                'lessonMaterials' => [],
+                'quizzes' => [
                     [
                         'id' => $quiz_A->id,
-                        'title' => $quiz_A->title,
+                        'name' => $quiz_A->name,
                         'topicId' => $quiz_A->topic_id,
                     ],
                     [
                         'id' => $quiz_B->id,
-                        'title' => $quiz_B->title,
+                        'name' => $quiz_B->name,
                         'topicId' => $quiz_B->topic_id,
                     ],
                     [
                         'id' => $quiz_C->id,
-                        'title' => $quiz_C->title,
+                        'name' => $quiz_C->name,
                         'topicId' => $quiz_C->topic_id,
                     ],
                 ],
@@ -393,7 +397,7 @@ class TopicApiTest extends TestCase
                 'title' => $topic->title,
                 'courseId' => $course->id,
                 'createdBy' => $topic->createdBy->id,
-                'lessonMaterials' => [
+                'assignments' => [
                     [
                         'id' => $assignment_A->id,
                         'title' => $assignment_A->title,
