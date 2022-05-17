@@ -25,7 +25,7 @@ class CreateQuizTable extends Migration
             $table->id();
             $table->foreignId('course_id');
             $table->foreignId('topic_id')->nullable();
-            $table->string('name', 255)->nullable();
+            $table->string('title', 255)->nullable();
             $table->text('description')->nullable();
             $table->dateTime('start_time')->nullable();
             $table->dateTime('end_time')->nullable();

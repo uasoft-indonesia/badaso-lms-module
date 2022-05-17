@@ -26,7 +26,7 @@ class QuizApiTest extends TestCase
         $url = route('badaso.quiz.add');
         $response = AuthHelper::asUser($this, $user)->json('POST', $url, [
             'course_id' => 1,
-            'name' => 'test name',
+            'title' => 'test title',
         ]);
 
         $response->assertStatus(400);
@@ -44,7 +44,7 @@ class QuizApiTest extends TestCase
         $url = route('badaso.quiz.add');
         $response = AuthHelper::asUser($this, $user)->json('POST', $url, [
             'course_id' => 1,
-            'name' => 'test name',
+            'title' => 'test title',
             'start_time' => '2022-05-24 19:55:00+07:00',
             'end_time' => '2022-05-24 23:55:00+07:00',
         ]);
@@ -81,7 +81,7 @@ class QuizApiTest extends TestCase
         $url = route('badaso.quiz.add');
         AuthHelper::asUser($this, $user)->json('POST', $url, [
             'course_id' => $course->id,
-            'name' => 'test name',
+            'title' => 'test title',
             'link_url' => 'google.com',
         ]);
 
@@ -90,7 +90,7 @@ class QuizApiTest extends TestCase
             app(Quiz::class)->getTable(),
             [
                 'course_id' => $course->id,
-                'name' => 'test name',
+                'title' => 'test title',
                 'link_url' => 'google.com',
                 'created_by' => $user->id,
             ]
@@ -109,7 +109,7 @@ class QuizApiTest extends TestCase
         $url = route('badaso.quiz.add');
         $response = AuthHelper::asUser($this, $user)->json('POST', $url, [
             'course_id' => $course->id,
-            'name' => 'test name',
+            'title' => 'test title',
             'link_url' => 'google.com',
         ]);
 
@@ -118,7 +118,7 @@ class QuizApiTest extends TestCase
         $response->assertStatus(200);
         $this->assertArrayHasKey('id', $quizData);
         $this->assertEquals($quizData['courseId'], $course->id);
-        $this->assertEquals($quizData['name'], 'test name');
+        $this->assertEquals($quizData['title'], 'test title');
         $this->assertEquals($quizData['linkUrl'], 'google.com');
         $this->assertEquals($quizData['createdBy'], $user->id);
     }
@@ -174,7 +174,7 @@ class QuizApiTest extends TestCase
         $response->assertJson(['data' =>[
             'id' => $quiz->id,
             'courseId' => $course->id,
-            'name' => $quiz->name,
+            'title' => $quiz->title,
             'linkUrl' => $quiz->link_url,
         ]]);
     }
