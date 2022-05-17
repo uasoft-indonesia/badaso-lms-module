@@ -15,7 +15,7 @@ class Assignment extends Model
     public function __construct(array $attributes = [])
     {
         parent::__construct($attributes);
-        $this->setTable(config('badaso.database.prefix') . 'assignments');
+        $this->setTable(config('badaso.database.prefix').'assignments');
     }
 
     protected $fillable = [
