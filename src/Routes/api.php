@@ -153,6 +153,10 @@ Route::group(['prefix' => $api_route_prefix, 'as' => 'badaso.', 'middleware' => 
             Route::post('/', HelpersRoute::getController('SubmissionController@add'))
                 ->middleware(BadasoAuthenticate::class)
                 ->name('add');
+
+            Route::get('/{id}', HelpersRoute::getController('SubmissionController@read'))
+                ->middleware(BadasoAuthenticate::class)
+                ->name('read');
         });
     });
 });

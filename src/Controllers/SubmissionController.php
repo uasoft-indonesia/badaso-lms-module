@@ -77,4 +77,42 @@ class SubmissionController extends Controller
             return ApiResponse::failed($e);
         }
     }
+
+    public function read($id)
+    {
+      
+        $user = auth()->user();
+
+        $response = [
+            'status' => 'submitted',
+            'file_url' => null,
+            'link_url' => null,
+        ];
+
+        $submission = Submission::with([
+            'assignment:id,course_id',
+        ])->where([
+            ['assignment_id', '=', $id],
+            ['user_id', '=', $user->id],
+        ])->first();
+
+        if (! $submission) {
+            $response['status'] = 'no submission';
+        } else {
+            
+            if (! CourseUserHelper::isUserInCourse(
+                $user->id,
+                $submission->assignment->course_id,
+            )) {
+                throw ValidationException::withMessages([
+                    'id' => 'Must enroll the course to submit assignment',
+                ]);
+            }
+
+            $response['file_url'] = $submission->file_url;
+            $response['link_url'] = $submission->link_url; 
+        }
+
+        return ApiRespOnse::success($response);
+    }
 }
