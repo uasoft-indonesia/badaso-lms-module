@@ -26,14 +26,14 @@ class SubmissionController extends Controller
 
             $assignment = Assignment::find($request->input('assignment_id'));
 
-            # Check if assignment exist
-            if (!$assignment) {
+            // Check if assignment exist
+            if (! $assignment) {
                 throw ValidationException::withMessages([
                     'id' => 'assignment not found',
                 ]);
             }
 
-            # Check if user is in the course
+            // Check if user is in the course
             if (! CourseUserHelper::isUserInCourse(
                 $user->id,
                 $assignment->course_id,
@@ -48,7 +48,7 @@ class SubmissionController extends Controller
                 ['user_id', '=', $user->id],
             ])->first();
 
-            # Check if there is existing submission
+            // Check if there is existing submission
             if ($existingSubmission) {
                 throw ValidationException::withMessages([
                     'duplicate' => 'There is already a submission for this assignment',
@@ -58,9 +58,8 @@ class SubmissionController extends Controller
             $due_date = strtotime($assignment->due_date);
             $current_date = strtotime(date('Y-m-d H:i:sP'));
 
-            # Check if submission pass due date
-            if ($current_date > $due_date)
-            {
+            // Check if submission pass due date
+            if ($current_date > $due_date) {
                 throw ValidationException::withMessages([
                     'date' => 'You have passed submission due date',
                 ]);
