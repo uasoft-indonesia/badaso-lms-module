@@ -228,7 +228,7 @@ class SubmissionApiTest extends TestCase
             ->for($assignment)
             ->for($user)
             ->create();
-        
+
         $url = route('badaso.submission.edit', ['id' => $submission->id]);
 
         $response = AuthHelper::asUser($this, $user)->json('PUT', $url, [
@@ -257,7 +257,7 @@ class SubmissionApiTest extends TestCase
             ->for($assignment)
             ->for($user)
             ->create();
-        
+
         $url = route('badaso.submission.edit', ['id' => $submission->id]);
 
         $response = AuthHelper::asUser($this, $user)->json('PUT', $url, [

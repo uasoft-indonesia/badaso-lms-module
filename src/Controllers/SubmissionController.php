@@ -134,7 +134,7 @@ class SubmissionController extends Controller
             if (! $submission) {
                 throw ValidationException::withMessages([
                     'id' => 'Submission not found',
-                ]);;
+                ]);
             }
 
             if (! CourseUserHelper::isUserInCourse(
