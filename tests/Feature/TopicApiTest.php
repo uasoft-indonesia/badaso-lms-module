@@ -226,7 +226,8 @@ class TopicApiTest extends TestCase
                 'id' => null,
                 'title' => null,
                 'courseId' => $course->id,
-                'lessonMaterials' => []
+                'lessonMaterials' => [],
+                'quizzes' => [],
             ],
             [
                 'id' => $topic->id,
@@ -249,7 +250,7 @@ class TopicApiTest extends TestCase
                         'title' => $lessonMaterial_C->title,
                         'topicId' => $lessonMaterial_C->topic_id,
                     ],
-                ]
+                ],
             ],
         ]]);
     }
@@ -315,7 +316,7 @@ class TopicApiTest extends TestCase
                         'title' => $quiz_C->title,
                         'topicId' => $quiz_C->topic_id,
                     ],
-                ]
+                ],
             ],
         ]]);
     }

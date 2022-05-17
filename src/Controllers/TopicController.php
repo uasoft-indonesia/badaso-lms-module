@@ -85,7 +85,7 @@ class TopicController extends Controller
                 ->select('id', 'title', 'created_at', 'topic_id')
                 ->orderBy('created_at', 'desc')
                 ->get();
-            
+
             $nullTopic = [
                 'id' => null,
                 'title' => null,
