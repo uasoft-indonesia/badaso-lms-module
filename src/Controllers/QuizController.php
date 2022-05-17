@@ -35,7 +35,7 @@ class QuizController extends Controller
                 CourseUserRole::TEACHER,
             )) {
                 throw ValidationException::withMessages([
-                    'course_id' => 'Quiz not found',
+                    'course_id' => 'Course not found',
                 ]);
             }
 

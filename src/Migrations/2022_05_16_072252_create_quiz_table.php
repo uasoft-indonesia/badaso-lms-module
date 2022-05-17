@@ -45,6 +45,11 @@ class CreateQuizTable extends Migration
                 ->on(DatabaseHelper::getBadasoTableName('topics'))
                 ->onDelete('set null')
                 ->onUpdate('cascade');
+            $table->foreign('created_by')
+                ->references('id')
+                ->on(DatabaseHelper::getBadasoTableName('users'))
+                ->onDelete('cascade')
+                ->onUpdate('cascade');
         });
     }
 
