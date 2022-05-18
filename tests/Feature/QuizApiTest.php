@@ -45,8 +45,7 @@ class QuizApiTest extends TestCase
         $response = AuthHelper::asUser($this, $user)->json('POST', $url, [
             'course_id' => 1,
             'title' => 'test title',
-            'start_time' => '2022-05-24 19:55:00+07:00',
-            'end_time' => '2022-05-24 23:55:00+07:00',
+            'link_url' => 'google.com',
         ]);
 
         $response->assertStatus(400);
