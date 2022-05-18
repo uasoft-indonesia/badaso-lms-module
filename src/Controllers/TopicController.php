@@ -60,7 +60,7 @@ class TopicController extends Controller
 
             $topic = Topic::with(
                 'lessonMaterials:id,title,created_at,topic_id',
-                'quizzes:id,name,created_at,topic_id',
+                'quizzes:id,title,created_at,topic_id',
                 'assignments:id,title,created_at,topic_id',
             )
                 ->where('course_id', $courseId)
