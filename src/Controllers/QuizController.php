@@ -44,8 +44,14 @@ class QuizController extends Controller
                 'topic_id' => $request->input('topic_id'),
                 'title' => $request->input('title'),
                 'description' => $request->input('description'),
-                'start_time' => $request->input('start_time'),
-                'end_time' => $request->input('end_time'),
+                'start_time' => gmdate(
+                    'Y-m-d H:i:s',
+                    strtotime($request->input('start_time')),
+                ),
+                'end_time' => gmdate(
+                    'Y-m-d H:i:s',
+                    strtotime($request->input('end_time')),
+                ),
                 'duration' => $request->input('duration'),
                 'point' => $request->input('point'),
                 'link_url' => $request->input('link_url'),

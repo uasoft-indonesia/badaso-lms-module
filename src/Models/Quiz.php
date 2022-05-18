@@ -5,10 +5,12 @@ namespace Uasoft\Badaso\Module\LMSModule\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Uasoft\Badaso\Module\LMSModule\Factories\QuizFactory;
+use Uasoft\Badaso\Module\LMSModule\Traits\Iso8601Serialization;
 
 class Quiz extends Model
 {
-    use HasFactory;
+    use HasFactory,
+        Iso8601Serialization;
 
     public function __construct(array $attributes = [])
     {
@@ -32,6 +34,11 @@ class Quiz extends Model
     protected $hidden = [
         'created_at',
         'updated_at',
+    ];
+
+    protected $dates = [
+        'start_time',
+        'end_time',
     ];
 
     public function course()
