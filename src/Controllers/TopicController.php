@@ -76,7 +76,7 @@ class TopicController extends Controller
 
             $quizzesWithNoTopic = Quiz::whereNull('topic_id')
                 ->where('course_id', $courseId)
-                ->select('id', 'name', 'created_at', 'topic_id')
+                ->select('id', 'title', 'created_at', 'topic_id')
                 ->orderBy('created_at', 'desc')
                 ->get();
 
