@@ -86,6 +86,7 @@ class SubmissionController extends Controller
             'status' => 'submitted',
             'file_url' => null,
             'link_url' => null,
+            'id' => null,
         ];
 
         $submission = Submission::with([
@@ -109,6 +110,7 @@ class SubmissionController extends Controller
 
             $response['file_url'] = $submission->file_url;
             $response['link_url'] = $submission->link_url;
+            $response['id'] = $submission->id;
         }
 
         return ApiResponse::success($response);
