@@ -4,10 +4,10 @@ namespace Uasoft\Badaso\Module\LMSModule\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Uasoft\Badaso\Module\LMSModule\Factories\AssignmentFactory;
+use Uasoft\Badaso\Module\LMSModule\Factories\QuizFactory;
 use Uasoft\Badaso\Module\LMSModule\Traits\Iso8601Serialization;
 
-class Assignment extends Model
+class Quiz extends Model
 {
     use HasFactory,
         Iso8601Serialization;
@@ -15,7 +15,7 @@ class Assignment extends Model
     public function __construct(array $attributes = [])
     {
         parent::__construct($attributes);
-        $this->setTable(config('badaso.database.prefix').'assignments');
+        $this->setTable(config('badaso.database.prefix').'quizzes');
     }
 
     protected $fillable = [
@@ -23,19 +23,22 @@ class Assignment extends Model
         'topic_id',
         'title',
         'description',
+        'start_time',
+        'end_time',
+        'duration',
         'point',
-        'file_url',
         'link_url',
-        'due_date',
         'created_by',
     ];
 
     protected $hidden = [
+        'created_at',
         'updated_at',
     ];
 
     protected $dates = [
-        'due_date',
+        'start_time',
+        'end_time',
     ];
 
     public function course()
@@ -53,8 +56,15 @@ class Assignment extends Model
         return $this->belongsTo(User::class, 'created_by');
     }
 
+    public function users()
+    {
+        return $this->belongsToMany(User::class, app(CourseUser::class)->getTable())
+            ->using(CourseUser::class)
+            ->withPivot('role');
+    }
+
     protected static function newFactory()
     {
-        return AssignmentFactory::new();
+        return QuizFactory::new();
     }
 }
