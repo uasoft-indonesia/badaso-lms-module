@@ -167,7 +167,7 @@ class QuizController extends Controller
                 CourseUserRole::TEACHER,
             )) {
                 throw ValidationException::withMessages([
-                    'id' => 'Must enroll the course to edit the quiz',
+                    'id' => 'Must enroll the course to delete the quiz',
                 ]);
             }
 
