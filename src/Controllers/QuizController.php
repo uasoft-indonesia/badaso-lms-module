@@ -92,4 +92,88 @@ class QuizController extends Controller
             return ApiResponse::failed($e);
         }
     }
+
+    public function edit(Request $request, $id)
+    {
+        try {
+            $user = auth()->user();
+            $request->validate([
+                'title' => 'string|max:255',
+                'description' => 'nullable|string|max:65535',
+                'start_time' => 'nullable|date_format:Y-m-d\TH:i:sp',
+                'end_time' => 'nullable|date_format:Y-m-d\TH:i:sp',
+                'duration' => 'nullable|integer',
+                'point' => 'nullable|integer',
+                'link_url' => 'nullable|string|max:65535',
+            ]);
+
+            $quiz = Quiz::find($id);
+            if ($quiz?->created_by != $user->id) {
+                throw ValidationException::withMessages([
+                    'id' => 'Quiz not found',
+                ]);
+            }
+
+            if (! CourseUserHelper::isUserInCourse(
+                $user->id,
+                $quiz->course_id,
+                CourseUserRole::TEACHER,
+            )) {
+                throw ValidationException::withMessages([
+                    'id' => 'Must enroll the course to edit the quiz',
+                ]);
+            }
+
+            $quiz->fill($request->only([
+                'title',
+                'description',
+                'duration',
+                'point',
+                'link_url',
+            ]) + [
+                'start_time' => gmdate(
+                    'Y-m-d H:i:s',
+                    strtotime($request->input('start_time')),
+                ),
+                'end_time' => gmdate(
+                    'Y-m-d H:i:s',
+                    strtotime($request->input('end_time')),
+                ),
+            ])->save();
+
+            return ApiResponse::success($quiz->toArray());
+        } catch (Exception $e) {
+            return ApiResponse::failed($e);
+        }
+    }
+
+    public function delete($id)
+    {
+        try {
+            $user = auth()->user();
+
+            $quiz = Quiz::find($id);
+            if ($quiz?->created_by != $user->id) {
+                throw ValidationException::withMessages([
+                    'id' => 'Quiz not found',
+                ]);
+            }
+
+            if (! CourseUserHelper::isUserInCourse(
+                $user->id,
+                $quiz->course_id,
+                CourseUserRole::TEACHER,
+            )) {
+                throw ValidationException::withMessages([
+                    'id' => 'Must enroll the course to delete the quiz',
+                ]);
+            }
+
+            $quiz->delete();
+
+            return ApiResponse::success();
+        } catch (Exception $e) {
+            return ApiResponse::failed($e);
+        }
+    }
 }
