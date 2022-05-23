@@ -65,7 +65,7 @@ class MaterialCommentController extends Controller
                 'lessonMaterial:id,course_id',
             ])->find($id);
 
-            if (! CourseUserHelper::isUserInCourse($user->id, $materialComment->lessonMaterial->course_id)) {
+            if (! CourseUserHelper::isUserInCourse($user->id, $materialComment?->lessonMaterial->course_id)) {
                 throw ValidationException::withMessages([
                     'id' => 'Must enroll the course to edit the comment',
                 ]);
@@ -81,7 +81,7 @@ class MaterialCommentController extends Controller
         }
     }
 
-    public function delete(Request $request, $id)
+    public function delete($id)
     {
         try {
             $user = auth()->user();
@@ -90,14 +90,14 @@ class MaterialCommentController extends Controller
                 'lessonMaterial:id,course_id',
             ])->find($id);
 
-            if (! CourseUserHelper::isUserInCourse($user->id, $materialComment->lessonMaterial->course_id)) {
+            if (! CourseUserHelper::isUserInCourse($user->id, $materialComment?->lessonMaterial->course_id)) {
                 throw ValidationException::withMessages([
                     'id' => 'Must enroll the course to edit the comment',
                 ]);
             }
 
             $courseuser = CourseUser::where('user_id', '=', $user->id)
-                ->where('course_id', '=', $materialComment->lessonMaterial->course_id)
+                ->where('course_id', '=', $materialComment?->lessonMaterial->course_id)
                 ->first();
 
             if ($courseuser->role == 'teacher') {
