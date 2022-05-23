@@ -137,6 +137,7 @@ class QuizController extends Controller
                     'Y-m-d H:i:s',
                     strtotime($request->input('start_time')),
                 ),
+            ] + [
                 'end_time' => gmdate(
                     'Y-m-d H:i:s',
                     strtotime($request->input('end_time')),
