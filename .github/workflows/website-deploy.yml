@@ -2,10 +2,8 @@ name: Deploy Website to GitHub Pages
 
 on:
   push:
-    branches:
-      - '**'
-    paths: 
-      - website/**
+    branches: [**]
+    paths: [website/**]
 
 jobs:
   deploy:
