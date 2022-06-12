@@ -2,8 +2,10 @@ name: Deploy Website to GitHub Pages
 
 on:
   push:
-    branches: [aldi/documentation]
-    paths: [website/**]
+    branches:
+      - aldi/documentation
+    paths: 
+      - website/**
 
 jobs:
   deploy:
