@@ -1,40 +1,53 @@
 {
-    "name": "badaso/lms-module",
-    "version": "0.1.0",
-    "description": "Learning management system on badaso",
-    "keywords": [
-        "laravel",
-        "admin",
-        "panel",
-        "dashboard",
-        "pwa",
-        "vue",
-        "generator",
-        "lms",
-        "badaso"
-    ],
-    "license": "MIT",
-    "homepage": "https://badaso-lms.uatech.co.id/",
-    "support": {
-        "issues": "https://github.com/uasoft-indonesia/badaso-lms-module/issues",
-        "discussion": "https://github.com/uasoft-indonesia/badaso-lms-module/discussions",
-        "source": "https://github.com/uasoft-indonesia/badaso-lms-module"
-    },
-    "type": "library",
-    "autoload": {
-        "psr-4": {
-            "Uasoft\\Badaso\\Module\\LMS\\": "src/"
-        }
-    },
-    "authors": [
-        {
-            "name": "Uasoft",
-            "email": "hello@uatech.co.id"
-        },
-        {
-            "name": "nofamex",
-            "email": "nsiren517@gmail.com"
-        }
-    ],
-    "require": {}
+  "name": "badaso/lms-module",
+  "version": "1.0.0",
+  "description": "Learning management system on badaso",
+  "keywords": [
+      "laravel",
+      "admin",
+      "panel",
+      "dashboard",
+      "pwa",
+      "vue",
+      "generator",
+      "lms",
+      "badaso"
+  ],
+  "license": "MIT",
+  "homepage": "https://badaso.uatech.co.id/",
+  "support": {
+    "issues": "https://github.com/uasoft-indonesia/badaso-lms-module/issues",
+    "discussion": "https://github.com/uasoft-indonesia/badaso-lms-module/discussions",
+    "source": "https://github.com/uasoft-indonesia/badaso-lms-module"
+  },
+  "type": "library",
+  "authors": [
+    {
+      "name": "UASOFT",
+      "email": "hello@uatech.co.id"
+    }
+  ],
+  "minimum-stability": "alpha",
+  "autoload": {
+    "psr-4": {
+      "Uasoft\\Badaso\\Module\\LMSModule\\": "src/",
+      "Uasoft\\Badaso\\Module\\LMSModule\\Seeders\\": "src/Seeders",
+      "Uasoft\\Badaso\\Module\\LMSModule\\Factories\\": "src/Factories"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Uasoft\\Badaso\\Module\\LMSModule\\Tests\\": "tests/"
+    }
+  },
+  "extra": {
+    "laravel": {
+      "providers": [
+        "Uasoft\\Badaso\\Module\\LMSModule\\Providers\\LMSModuleProvider"
+      ]
+    }
+  },
+  "require-dev": {
+    "phpunit/phpunit": "^9.5"
+  }
 }
